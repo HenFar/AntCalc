@@ -254,7 +254,9 @@ NormalizeStoredResultKeyValue[value_] :=
    so entries written with the former raw-stage payload are not replayed. *)
 StoredResultRouteSemanticVersion["BuildAntenna"] := 5;
 StoredResultRouteSemanticVersion["BuildAntennaObject"] := 4;
-StoredResultRouteSemanticVersion["IntegrateAntenna"] := 4;
+(* The Breve A22 one-loop-self master convention changed; do not replay
+   integrations cached under the former +7 Zeta[3]/(6 Epsilon) pole. *)
+StoredResultRouteSemanticVersion["IntegrateAntenna"] := 5;
 StoredResultRouteSemanticVersion["BuildRRatio"] := 2;
 StoredResultRouteSemanticVersion["TObject"] := 4;
 StoredResultRouteSemanticVersion[_] := 1;

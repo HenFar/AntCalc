@@ -1,9 +1,9 @@
 (* Symbolic audit of the NNLO SMQCD R-ratio convention ledger.
 
    This script performs no antenna build or IBP reduction.  It checks that the
-   encoded direct component targets, after the observable-only convention map,
-   reproduce a pole-free NNLO R-ratio and the known finite coefficient.  It
-   also prints the two literal-source discrepancies that motivated the map. *)
+   encoded direct component targets and the observable-only convention map.
+   The Breve A22 shift is deliberately zero: arXiv:2211.08446v2 Eq. (B.7)
+   corrects the integrated source itself to contain -7 Zeta[3]/(6 epsilon). *)
 
 Get["AntennaPipeline.wl"];
 
@@ -88,7 +88,7 @@ Module[{eps},
   Print[SafeIntegratedResidualSimplify[
     task10bLiteralA31Nf - task10bA31[[3]]
   ]];
-  Print["Direct A22 breve term minus observable-normalized breve term:"];
+  Print["Direct A22 breve term minus corrected observable breve term:"];
   Print[SafeIntegratedResidualSimplify[
     -task10bLedger["A22OneLoopSelfPoleShift"]
   ]];

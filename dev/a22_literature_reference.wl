@@ -3,7 +3,8 @@
 
   This file intentionally does not call A22TTermTargets or any route
   diagnostics.  It is a transcription of hep-ph/0403057v2, Eqs. (4.8)--(4.10),
-  into the package's documented paper-facing component convention.  The
+  into the package's documented paper-facing component convention, except for
+  the Breve single-pole correction from arXiv:2211.08446v2, Eq. (B.7).  The
   release worker compares freshly recomputed route output to these expressions.
 *)
 
@@ -17,14 +18,14 @@ A22LiteratureReferenceMetadata[] := <|
   "Equations" -> <|
     "TwoLoopTreeDefinition" -> "(4.8)",
     "TwoLoopTreeColourBrackets" -> "(4.9)",
-    "OneLoopSelfInterference" -> "(4.10)",
+    "OneLoopSelfInterference" -> "(4.10); corrected by arXiv:2211.08446v2 Eq. (B.7)",
     "TwoLoopLoopNormalization" -> "(A.1)"
     |>,
   "Renormalization" -> "MSbar; mu^2 = q^2 as stated below Eq. (4.12)",
   "PackageConvention" ->
     "The public A22 slots are the paper-facing colour brackets: Leading, " <>
     "Subleading and Nf are the N, 1/N and Nf brackets in Eq. (4.9), and " <>
-    "Breve is Eq. (4.10).  The common (N - 1/N) Tqqbar^(2) prefactor in " <>
+    "Breve is Eq. (4.10), corrected in arXiv:2211.08446v2 Eq. (B.7).  The common (N - 1/N) Tqqbar^(2) prefactor in " <>
     "the paper is not part of an individual public slot."
   |>;
 
@@ -44,7 +45,7 @@ A22LiteratureReferenceTargets[order_Integer] := Module[{eps, targets},
       (4085/1296 - 91 Pi^2/216 + Zeta[3]/18),
     1/(4 eps^4) + 3/(4 eps^3) +
       (41/16 - Pi^2/24)/eps^2 +
-      (7 - Pi^2/8 + 7 Zeta[3]/6)/eps +
+      (7 - Pi^2/8 - 7 Zeta[3]/6)/eps +
       (18 - 41 Pi^2/96 - 7 Zeta[3]/2 - 7 Pi^4/480)
     };
   Normal[Series[#, {eps, 0, order}]]& /@ targets

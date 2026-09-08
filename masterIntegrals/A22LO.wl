@@ -48,8 +48,9 @@ A22LOBackendCoreCheck[] :=
 
 A22LOVirtualConventionFactor[] :=
   1 - Pi^2 eps^2 / 6 +
-    (26 Zeta[3] / 3) eps^3 +
-    (Pi^4 / 120 - 28 Zeta[3]) eps^4;
+    (* Corrected one-loop-self convention, arXiv:2211.08446v2 Eq. (B.7). *)
+    (-2 Zeta[3] / 3) eps^3 +
+    (Pi^4 / 120) eps^4;
 
 A22LOTwoLoopTreeVirtualConventionFactor[] :=
   1 - 2 Pi^2 eps^2 - (28 Zeta[3] eps^3) / 3 +

@@ -24,7 +24,8 @@ report = <|
     metadata["Source"] === "arXiv:hep-ph/0403057v2",
     metadata["Equations"]["TwoLoopTreeDefinition"] === "(4.8)",
     metadata["Equations"]["TwoLoopTreeColourBrackets"] === "(4.9)",
-    metadata["Equations"]["OneLoopSelfInterference"] === "(4.10)",
+    metadata["Equations"]["OneLoopSelfInterference"] ===
+      "(4.10); corrected by arXiv:2211.08446v2 Eq. (B.7)",
     Length[paperTargets] === 4,
     And @@ (TrueQ[# === 0]& /@
       (FullSimplify /@ (paperTargets - runtimeTargets))),

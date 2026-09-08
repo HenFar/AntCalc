@@ -1,8 +1,8 @@
 # AntCalc
 
-> **New in 0.3.0 β2 - Thesis Version:** massive `A30` now has a derived MX30 master-basis
-> closure and an end-to-end integrated route; invariant-only `A22` builds are
-> also available. `D30` remains an experimental research track.
+> **New in 0.3.1 β1 - Thesis Version:** the Breve `A22` one-loop/self
+> integration convention incorporates the corrected single-pole term from
+> arXiv:2211.08446. `D30` remains an experimental research track.
 
 AntCalc is a Wolfram Language package that builds and integrates QCD antenna
 functions. The main workflow has two steps:
@@ -17,7 +17,7 @@ massive `A30` is a beta extension and `D30` remains experimental.
 
 ## Status
 
-Current development release: **AntCalc 0.3.0 β2 - Thesis Version**.
+Current development release: **AntCalc 0.3.1 β1 - Thesis Version**.
 
 The current release target is the massless antenna workflow for the NNLO SMQCD
 R-ratio, with a beta massive-`A30` extension. Before using a route in a

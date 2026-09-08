@@ -320,20 +320,22 @@ BuildRRatioSMQCDReferenceFiniteExpression[maxOrder_:NNLO] :=
   ];
 
 (* The public component conventions are intentionally preserved for direct
-   literature comparison.  The inclusive observable uses the corresponding
-   channel conventions from hep-ph/0403057, including the self-interference
-   single-pole term required by the closed NNLO channel sum. *)
+   literature comparison.  The corrected Breve A22 integration itself now
+   contains the -7 Zeta[3]/(6 eps) single pole from arXiv:2211.08446 Eq.
+   (B.7), so the observable adapter must not apply the former compensating
+   self-interference shift. *)
 SMQCDRRatioObservableConventionLedger[] :=
   <|
     "Source" -> "hep-ph/0403057",
-    "ConventionStatus" -> "ClosureNormalizedObservableAdapter",
+    "CorrectionSource" -> "arXiv:2211.08446v2",
+    "ConventionStatus" -> "CorrectedObservableAdapter",
     "A22PublicContract" -> "DirectPaperTqq6Components",
-    "A22OneLoopSelfPoleShift" -> -7 Zeta[3]/(3 FeynCalc`Epsilon),
+    "A22OneLoopSelfPoleShift" -> 0,
     "A40LeadingMultiplier" -> 1,
     "A40SubleadingMultiplier" -> 1/2,
     "B40Multiplier" -> 1,
     "C40Multiplier" -> 2,
-    "Note" -> "The adapter is applied only to the observable assembly. The public A40 subleading entry is tilde A4^0 itself; its minus sign is supplied by the colour coefficient in the qqbargg assembly. The self-interference shift is the closure-normalized convention required by the complete NNLO channel sum."
+    "Note" -> "The adapter is applied only to the observable assembly. The public A40 subleading entry is tilde A4^0 itself; its minus sign is supplied by the colour coefficient in the qqbargg assembly. The Breve A22 self-interference shift is zero because the corrected integrated result already contains the -7 Zeta[3]/(6 Epsilon) pole of arXiv:2211.08446v2 Eq. (B.7)."
   |>;
 
 ApplySMQCDRRatioObservableConvention[ingredients_Association] :=
@@ -556,7 +558,7 @@ BuildRRatioStoredResultKey[model_Symbol, options_Association] :=
   StoredResultKeyAssociation[
     "BuildRRatio",
     <|
-      "ImplementationVersion" -> 7,
+      "ImplementationVersion" -> 8,
       "Model" -> SymbolName[Unevaluated[model]],
       "quarkMass" -> Lookup[options, "quarkMass", 0],
       "NestedBuildAndIntegrateDefaults" ->

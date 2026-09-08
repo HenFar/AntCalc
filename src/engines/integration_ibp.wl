@@ -138,6 +138,7 @@ A22TwoLoopTreeMasterCoreA3::usage = "A22TwoLoopTreeMasterCoreA3[] returns the en
 A22TwoLoopTreeMasterCoreA4::usage = "A22TwoLoopTreeMasterCoreA4[] returns the encoded core series for the A22 tree/two-loop A4 master.";
 A22TwoLoopTreeMasterCoreA6::usage = "A22TwoLoopTreeMasterCoreA6[] returns the encoded core series for the A22 tree/two-loop A6 master.";
 A22VirtualTwoPartonConventionFactor::usage = "A22VirtualTwoPartonConventionFactor[] returns the virtual two-parton normalization factor used in the A22 notebook convention.";
+A22OneLoopSelfVirtualConventionFactor::usage = "A22OneLoopSelfVirtualConventionFactor[] returns the corrected virtual two-parton normalization factor used only by the Breve A22 one-loop/self branch.";
 A22TwoLoopTreeVirtualConventionFactor::usage = "A22TwoLoopTreeVirtualConventionFactor[] returns the tree/two-loop normalization factor used by the A22 exact-topology data.";
 A22TwoLoopTreePaperConventionRules::usage = "A22TwoLoopTreePaperConventionRules[expr] rewrites an A22 tree/two-loop expression into the paper normalization convention.";
 A22TwoLoopTreePaperConventionFactor::usage = "A22TwoLoopTreePaperConventionFactor[] returns the overall factor needed to move an A22 tree/two-loop master into the paper convention.";
@@ -2141,6 +2142,17 @@ A22VirtualTwoPartonConventionFactor[] :=
     (26 Zeta[3] / 3) eps^3 +
     (Pi^4 / 120 - 28 Zeta[3]) eps^4;
 
+A22OneLoopSelfVirtualConventionFactor[] :=
+  1 - Pi^2 eps^2 / 6 +
+    (* arXiv:2211.08446v2 Eq. (B.7): the one-loop-self bracket needs
+       a -7 Zeta[3]/3 correction at its single pole.  The reduction maps
+       one quarter of this eps^3 coefficient to that pole, so 26/3 becomes
+       -2/3. *)
+    (-2 Zeta[3] / 3) eps^3 +
+    (* The accompanying eps^4 correction keeps the finite coefficient in
+       Eq. (B.7) unchanged after expanding the two-particle normalization. *)
+    (Pi^4 / 120) eps^4;
+
 (* The tree/two-loop interference uses a different external two-parton
    convention than the one-loop self-interference.  Matching the Appendix A.1
    masters to the bare T_{qq}^{(6,[2x0])} bracket fixes an additional factor
@@ -2223,7 +2235,7 @@ A22TwoLoopTreeMasterValueA6Basis8Like[] :=
 
 A22OneLoopSelfMasterCoefficientRules[] :=
   {
-    A22LOMI -> A22LOMasterCore[] A22VirtualTwoPartonConventionFactor[]
+    A22LOMI -> A22LOMasterCore[] A22OneLoopSelfVirtualConventionFactor[]
   };
 
 A22TwoLoopTreeMasterCoefficientRules[] :=

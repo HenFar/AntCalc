@@ -460,7 +460,9 @@ A22TTermTargets[order_Integer] :=
         (4085/1296 - 91 Pi^2/216 + Zeta[3]/18),
       1/(4 eps^4) + 3/(4 eps^3) +
         (41/16 - Pi^2/24)/eps^2 +
-        (7 - Pi^2/8 + 7 Zeta[3]/6)/eps +
+        (* arXiv:2211.08446v2, Eq. (B.7), corrects the sign of this
+           Zeta[3] contribution relative to hep-ph/0403057 Eq. (4.10). *)
+        (7 - Pi^2/8 - 7 Zeta[3]/6)/eps +
         (18 - 41 Pi^2/96 - 7 Zeta[3]/2 - 7 Pi^4/480)
     };
     IntegratedAntennaSeries[#, order]& /@ targets
