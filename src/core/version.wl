@@ -19,6 +19,8 @@ $AntCalcReleaseHistory = {<|"Version" -> "0.3.0-beta.2", "Date" -> "2026-07-18",
    "Beta", "Summary" -> "Derived massive A30 MX30 closure, invariant-only A22 builds, and beta-route public integration."
   |>, <|"Version" -> "0.3.1-beta.1", "Date" -> "2026-09-07", "Stage" ->
    "Beta", "Summary" -> "Corrected the integrated Breve A22 one-loop/self convention using arXiv:2211.08446v2."
+  |>, <|"Version" -> "0.3.1-beta.2", "Date" -> "2026-09-14", "Stage" ->
+   "Beta", "Summary" -> "Made A22 open-master combinations component-resolved for the Leading, Subleading, and Nf branches."
   |>};
 
 $AntCalcVersion = Last[$AntCalcReleaseHistory]["Version"];
@@ -36,7 +38,7 @@ AntCalcVersionHistory[] :=
 AntCalcDisplayVersion::usage = "AntCalcDisplayVersion[] returns the typeset user-facing release version.";
 
 AntCalcDisplayVersion[] :=
-  Row[{"0.3.1", Style[" β ", "Text"], "1 - Thesis Version"}];
+  Row[{"0.3.1", Style[" β ", "Text"], "2 - Thesis Version"}];
 
 LiteRed2InstallationVersion::usage = "LiteRed2InstallationVersion[] reads the installed LiteRed2 release identity without loading LiteRed.";
 

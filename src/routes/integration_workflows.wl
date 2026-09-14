@@ -190,7 +190,7 @@ IntegrateRouteObject[obj_, options_Association] :=
      loaded, computed, computedResult, computedDiagnostics, optionsAssoc,
      recordStages, recordMetadata, diagnosticsWithMetadata, ibpNeedsDiagnostics,
      quarkMassOpt, routeKind, progressActive, finishProgress, publicResult,
-     publicDiagnostics},
+     publicDiagnostics, componentReductionQ},
     routeKind = Lookup[options, "RouteKind", "IntegrateAntenna"];
     If[!AntennaObjectQ[obj],
       diagnostics = <|"Failed" -> True, "Reason" -> "InvalidAntennaObject"
@@ -302,6 +302,13 @@ IntegrateRouteObject[obj_, options_Association] :=
     ];
     contribution = CanonicalAntennaComponentName[contributionInput];
     componentName = CanonicalAntennaComponentName[componentInput];
+    (* A stitched A22 branch is rebuilt with one selected colour component.
+       Reduce that scalar payload, rather than the object's full four-slot
+       expression, so an open-master request remains component-resolved. *)
+    componentReductionQ = componentName =!= "All" &&
+      (MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 2, 2}] ||
+       MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 1}] ||
+       MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 4, 0}]);
     (* Stage 6 is the public-return formatting event.  Do not emit a second
        6/6 "finished" line afterwards: it adds no state information and
        separates the master-basis legend from the single terminal stage. *)
@@ -506,14 +513,13 @@ IntegrateRouteObject[obj_, options_Association] :=
     ];
     backend = profile["DefaultBackend"];
     storedComponent = Lookup[data, "SelectedComponent", All];
-(* Selected A31/A40 calls reduce only the requested raw component.  A31's
+(* Selected A22/A31/A40 calls reduce only the requested raw component.  A31's
    scalar post-processing below restores its component-specific counterterm
    and common A21 A30 extraction term; Component -> All retains the combined
    payload and existing list-valued path. *)
     antenna =
       If[
-        MemberQ[{{A, 3, 1}, {A, 4, 0}}, key] &&
-          componentName =!= "All",
+        componentReductionQ,
         SelectAntennaComponent[
           Lookup[data, "IntegrationFullAntenna",
             Lookup[data, "FullAntenna", Lookup[data, "Antenna", $Failed]]],
@@ -608,7 +614,7 @@ IntegrateRouteObject[obj_, options_Association] :=
         ,
         IntegratedAntennaTTerms[key, rawIntegrated, ExpansionOrder ->
            expansionOrder, Component -> If[
-             MemberQ[{{A, 3, 1}, {A, 4, 0}}, key] && componentName =!= "All",
+             componentReductionQ,
              componentInput,
              All
            ]]
@@ -626,7 +632,7 @@ IntegrateRouteObject[obj_, options_Association] :=
           ,
           ExtractIntegratedAntenna[key, tTerms, ExpansionOrder -> expansionOrder
             , Component -> If[
-              MemberQ[{{A, 3, 1}, {A, 4, 0}}, key] && componentName =!= "All",
+              componentReductionQ,
               componentInput,
               All
             ]]
@@ -636,10 +642,10 @@ IntegrateRouteObject[obj_, options_Association] :=
       heavyIntegrationProgressPrint[routeKind, key, componentInput, contributionInput,
          4, 6, "extracting integrated result"]
     ];
-    (* Direct A31/A40 component routes are scalar by this point, so each is
+    (* Direct A22/A31/A40 component routes are scalar by this point, so each is
        already the requested result. *)
     selectedIntegrated = SelectAntennaComponent[finalIntegrated, key,
-       If[MemberQ[{{A, 3, 1}, {A, 4, 0}}, key] && componentName =!= "All",
+       If[componentReductionQ,
           All, componentInput]];
     If[TrueQ[progressActive],
       heavyIntegrationProgressPrint[routeKind, key, componentInput, contributionInput,

@@ -48,6 +48,9 @@ report = <|
     ContainsAll[Keys[masterCombination], expectedComponents],
   "NoComponentMasterMissingQ" -> AssociationQ[masterCombination] &&
     AllTrue[Values[masterCombination], !MissingQ[#] && # =!= $Failed &],
+  "TreeComponentMastersAreDistinctQ" -> AssociationQ[masterCombination] &&
+    DuplicateFreeQ[Values[KeyTake[masterCombination,
+      {"Leading", "Subleading", "Nf"}]]],
   "DirectReturnMasterCombination" -> record["Result"],
   "ComponentMasterStatus" -> componentStatus
 |>;
