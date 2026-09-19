@@ -1,0 +1,14 @@
+{
+    "_notes": "",
+    "build": 1,
+    "integrate": 1,
+    "build_method": "mathematica",
+    "integrate_method": "mathematica",
+    "family": "A",
+    "multiplicity": 3,
+    "loop_order": 0,
+    "p1_mass": "mq",
+    "p2_mass": "mq",
+    "p3_mass": 0,
+    "p4_mass": 0
+}

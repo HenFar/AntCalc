@@ -1,0 +1,4 @@
+Antenna,Variant,Stage,TimeSeconds,Success,BaselineBytes,PeakBytes,DeltaBytes
+A30,Massive,Build,2.807148,True,206914144,211731944,4817800
+A30,Massive,Integrate,0.249613,True,211730560,218852720,7122160
+A30,Massive,EndToEnd,3.089930,True,206912672,218983536,12070864
