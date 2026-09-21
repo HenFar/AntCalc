@@ -857,6 +857,23 @@ IBPBasisLoadedQ[name_] :=
     {LiteRed`CheckDefinitions::warn}
   ];
 
+(* LiteRed retains scalar-product declarations globally.  A22 fixes k1.q to
+   q2/2, but k1.q is an independent invariant for the A31 three-parton
+   phase space.  Reassert the active family's kinematics even when the basis
+   itself was already loaded in this kernel. *)
+ConfigureIBPFamilyKinematics[profile_Association] :=
+  Switch[Lookup[profile, "BasisFamily", "Unknown"],
+    "A22OneLoopSelf" | "A22TwoLoopTree",
+      LiteRed`sp[k1, q] = q2 / 2;
+      LiteRed`sp[q, k1] = q2 / 2
+    ,
+    "A31",
+      Quiet[Unset[LiteRed`sp[k1, q]]];
+      Quiet[Unset[LiteRed`sp[q, k1]]]
+    ,
+    _, Null
+  ];
+
 LoadIBPBases[profile_Association] :=
   Module[{records, loaded, missing},
     EnsureLiteRedLoaded[];
@@ -864,6 +881,7 @@ LoadIBPBases[profile_Association] :=
       Return[<|"Bases" -> {}, "Records" -> {}, "LoadedQ" -> False, "Missing"
          -> {}, "Profile" -> profile|>]
     ];
+    ConfigureIBPFamilyKinematics[profile];
     Quiet[Off[LiteRed`CheckDefinitions::warn]];
     records = LoadSingleIBPBasis[#, profile]& /@ IBPBasisRecords[profile
       ];
@@ -1880,7 +1898,10 @@ A22TwoLoopTreeCanonicalIdentificationReport[] :=
     A22A3Basis8LikeMI -> <|"Master" -> A3MI, "Status" -> "Established",
       "LoopShift" -> "L1 = l1 - k1, L2 = l2"|>,
     A22A4NfLikeMI -> <|"Master" -> A4MI, "Status" -> "Established",
-      "LoopShift" -> "K = l1, L = -l2 (with p1 = k1)"|>,
+      "LoopShift" -> "K = l1, L = -l2 (with p1 = k1)",
+      "Jacobian" -> 1,
+      "NormalizationConclusion" ->
+        "The scalar Nf topology is exactly the four-propagator Appendix-A.1 A4 integral. Its topology map supplies no factor 1/2; the former half-factor compensated an upstream SMQCD flavour double count."|>,
     A22A4Basis46LikeMI -> <|"Master" -> A4MI, "Status" -> "Established",
       "LoopShift" -> "K = l1, L = k1 - l2 (with p1 = q - k1)"|>,
     A22A4Basis7LikeMI -> <|"Master" -> A4MI, "Status" -> "Established",

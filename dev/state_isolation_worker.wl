@@ -14,7 +14,7 @@ workerMode = SelectFirst[workerArgs, MemberQ[{"fresh", "contaminated"}, #]&,
 workerScenario = SelectFirst[
   workerArgs,
   MemberQ[{"A30ThenA40", "A30Sequential", "A21ThenA40", "A31ThenMX30",
-    "MX30ThenA31", "A40ThenA30", "C40ThenA31ThenA22"}, #]&,
+    "MX30ThenA31", "A40ThenA30", "C40ThenA31ThenA22", "A22ThenA31"}, #]&,
   "A30ThenA40"
 ];
 workerTimeout = ToExpression[SelectFirst[workerArgs,
@@ -191,6 +191,8 @@ WorkerScenarioCalls["MX30ThenA31"] := {{"MX30OpenMaster"}, "A31Integrated"};
 WorkerScenarioCalls["A40ThenA30"] := {{"A40Build"}, "A30Integrated"};
 WorkerScenarioCalls["C40ThenA31ThenA22"] :=
   {{"C40MasterRecord", "A31Integrated"}, "A22MasterRecord"};
+WorkerScenarioCalls["A22ThenA31"] :=
+  {{"A22MasterRecord"}, "A31Integrated"};
 
 {workerPredecessors, workerTarget} = WorkerScenarioCalls[workerScenario];
 workerPrintLog = {};

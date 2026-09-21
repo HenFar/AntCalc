@@ -121,9 +121,44 @@ this correction: its fitted bridge absorbed a pole-level residual. Any such
 residual is therefore a validation signal for the upstream source or its
 normalisation, not a reason to reinstate topology-dependent master values.
 
+### The A4 half-factor is not a topology factor
+
+The `Nf` component reduces to the single label `A22A4NfLikeMI`, with active
+denominators
+
+\[
+ (l_1+l_2-k_1)^2,\quad l_1^2,\quad(l_1-q)^2,\quad l_2^2.
+\]
+
+With \(K=l_1\), \(L=-l_2\), \(p_1=k_1\), and \(p_2=q-k_1\), these become
+exactly
+
+\[
+ K^2L^2(K-p_1-p_2)^2(K-L-p_1)^2,
+\]
+
+the four-propagator Appendix-A.1 definition of \(A_4\). The transformation
+has unit Jacobian, so it supplies neither a symmetry factor nor a factor
+\(1/2\).
+
+The old runtime half came from the A22 source cleanup, not from this master:
+the FeynArts SMQCD model has an up-type class `F[3]` and a down-type class
+`F[4]`, each with a three-generation sum.  The massless two-loop diagrams
+therefore contain two equal quark-vacuum-polarization insertions.  Replacing
+each sum by total `Nf` produced `Nf + Nf = 2 Nf` instead of
+\(N_f=N_{f,u}+N_{f,d}\).  The old `A4.wl` half accidentally compensated that
+upstream double count.
+
+`CleanTwoLoopAmplitude` now maps each SMQCD quark-class sum to `Nf/2`, so the
+pair gives total `Nf`.  `A4BackendPackageExact[]` is the direct
+Appendix-to-tree/two-loop package lift and `A4BackendPackageLiftRatio[]` is 1.
+Thus, after source-level flavour normalization, substitution of the Section
+4.2.5 \(A_4\) formula is a first-principles statement rather than a fitted
+normalization.
+
 ## Consequence for implementation
 
 `A22TwoLoopTreeValueForExactTopology` is now an invariant-level substitution
 boundary: the ten backend labels map to the four published single-scale
-masters. The historical stitched route remains a separate regression
-comparison because it used the removed fitted bridge.
+masters. Older cached A22 source payloads retain the doubled `Nf` coefficient;
+the build-cache semantic version invalidates them.

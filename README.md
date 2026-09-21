@@ -1,8 +1,8 @@
 # AntCalc
 
-> **New in 0.3.1 β2 - Thesis Version:** `A22` open-master combinations are
-> now component-resolved for the leading, subleading, and `Nf` branches.
-> `D30` remains an experimental research track.
+> **New in 0.3.1 β3 - Thesis Version:** LiteRed kinematics are isolated when
+> switching between `A22` and `A31` integration routes. `D30` remains an
+> experimental research track.
 
 AntCalc is a Wolfram Language package that builds and integrates QCD antenna
 functions. The main workflow has two steps:
@@ -17,7 +17,7 @@ massive `A30` is a beta extension and `D30` remains experimental.
 
 ## Status
 
-Current development release: **AntCalc 0.3.1 β2 - Thesis Version**.
+Current development release: **AntCalc 0.3.1 β3 - Thesis Version**.
 
 The current release target is the massless antenna workflow for the NNLO SMQCD
 R-ratio, with a beta massive-`A30` extension. Before using a route in a

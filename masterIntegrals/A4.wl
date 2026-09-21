@@ -5,8 +5,12 @@ Get[FileNameJoin[{DirectoryName[$InputFileName], "common.wl"}]];
    This file separates the literature master from the current repo layers:
    - the appendix/timelike core with S_Gamma and (-q^2)^(-2 eps);
    - the current backend core, which matches the appendix-sign choice;
-   - the backend package value, which additionally carries the later 1/2
-     normalization fix used by the validated A22 tree/two-loop route. *)
+   - the backend package value, equal to the direct Appendix lift.
+
+   Older runtime data divided that lift by 2 to compensate an upstream A22
+   flavour-counting error: the separate SMQCD F[3] and F[4] generation sums
+   were each replaced by total Nf.  The A22 Nf topology is a unit-Jacobian
+   image of A4 and supplies no extra factor. *)
 
 A4Source[] :=
   <|
@@ -50,13 +54,19 @@ A4TwoLoopTreeVirtualConventionFactor[] :=
   1 - 2 Pi^2 eps^2 - (28 Zeta[3] eps^3) / 3 +
     (2 (Pi^4 + 42 Zeta[3]) eps^4) / 3;
 
-A4BackendPackageExact[] :=
-  (-(Pi^4/2) A4VirtualConventionFactor[] * A4TwoLoopTreeVirtualConventionFactor[] q2^(-2 eps) *
+A4AppendixToTwoLoopTreePackageLift[] :=
+  (-Pi^4 A4VirtualConventionFactor[] * A4TwoLoopTreeVirtualConventionFactor[] q2^(-2 eps) *
     Gamma[1 - 2 eps] Gamma[1 + eps] Gamma[1 - eps]^4 Gamma[1 + 2 eps]) /
     (2 (1 - 2 eps) eps^2 Gamma[2 - 3 eps]);
 
+A4BackendPackageExact[] :=
+  A4AppendixToTwoLoopTreePackageLift[];
+
+A4BackendPackageLiftRatio[] :=
+  1;
+
 A4BackendConventionRemark =
-  "The validated backend package value includes an additional overall 1/2 normalization adjustment relative to the straightforward appendix-to-package lift.";
+  "The runtime value is the direct Appendix-A.1-to-tree/two-loop package lift. The former extra factor 1/2 compensated double counting in the A22 source, where each of SMQCD's up- and down-type generation sums was mapped to total Nf.";
 
 A4Report[order_:2] :=
   <|
@@ -71,8 +81,7 @@ A4Report[order_:2] :=
         "A4LoopDefinition"
       },
       "NotYetEncoded" -> {
-        "A direct local derivation of the two-loop vertex integral",
-        "A clean local bridge from the appendix master to the backend package value including the validated extra 1/2 normalization"
+        "A direct local derivation of the two-loop vertex integral"
       }
     |>,
     "SGamma" -> A4SGamma[],
@@ -82,6 +91,8 @@ A4Report[order_:2] :=
     "BackendCoreCheck" -> A4BackendCoreCheck[],
     "VirtualConventionFactor" -> A4VirtualConventionFactor[],
     "TwoLoopTreeVirtualConventionFactor" -> A4TwoLoopTreeVirtualConventionFactor[],
+    "AppendixToTwoLoopTreePackageLift" -> A4AppendixToTwoLoopTreePackageLift[],
+    "BackendPackageLiftRatio" -> A4BackendPackageLiftRatio[],
     "BackendConventionRemark" -> A4BackendConventionRemark,
     "BackendPackageExact" -> A4BackendPackageExact[],
     "BackendPackageSeries" -> MIFullExpand[A4BackendPackageExact[], order]

@@ -21,12 +21,12 @@ EnvironmentString[name_String] :=
   With[{value = Environment[name]}, If[StringQ[value], value, ""]];
 
 allScenarios = {"A30ThenA40", "A30Sequential", "A21ThenA40", "A31ThenMX30",
-  "MX30ThenA31", "A40ThenA30", "C40ThenA31ThenA22"};
+  "MX30ThenA31", "A40ThenA30", "C40ThenA31ThenA22", "A22ThenA31"};
 requestedScenarios = StringSplit[EnvironmentString["ANTCALC_STATE_SCENARIOS"], ","];
 scenarios = Select[requestedScenarios, MemberQ[allScenarios, #]&];
 (* The beta-critical sequence is expensive: run it by default, while retaining
    the older scenarios for explicit broader sweeps. *)
-If[scenarios === {}, scenarios = {"C40ThenA31ThenA22"}];
+If[scenarios === {}, scenarios = {"A22ThenA31"}];
 timeoutSeconds = With[{requested = EnvironmentString["ANTCALC_STATE_TIMEOUT"]},
   If[StringMatchQ[requested, DigitCharacter..], ToExpression[requested], 10800]
 ];

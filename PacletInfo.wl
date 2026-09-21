@@ -1,6 +1,6 @@
 Paclet[
   Name -> "AntCalc",
-  Version -> "0.3.1-beta.2",
+  Version -> "0.3.1-beta.3",
   WolframVersion -> "13+",
   Description -> "Antenna-function construction and integration pipeline.",
   Creator -> "AntCalc",

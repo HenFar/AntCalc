@@ -85,7 +85,7 @@ massless contract:
 | A31 external literature contract | complete: fresh uncached acceptance passed on 2026-07-29 against `hep-ph/0505111v3`, Eqs. (5.18)--(5.20) |
 | A22 loop-only IBP compaction | all three colour components reduce exactly with zero unmatched terms: leading is a 567-leaf seven-master expression, subleading an 857-leaf nine-master expression, and `N_f` an 87-leaf single-master expression; the presentation boundary now preserves those masters while using the public \(d=4-2\epsilon\) notation, guarded by exact reconstruction |
 | A22 UV-renormalisation boundary | complete: the public build-side unintegrated-A21 skin is separated from the prototype payload consumed by integration, which retains the authoritative integrated-A21 subtraction; fresh all-component acceptance passed on 2026-07-31 |
-| A22 loop-level master substitutions | complete for the public build boundary: loop dependence is reduced to its declared scalar-master representation, leaving only invariant dependence and PaVe scalar functions where applicable |
+| A22 loop-level master substitutions | topology and normalization crosswalk complete: the Nf topology maps to Appendix A.1 A4 with unit Jacobian. The former runtime factor 1/2 was traced to an upstream SMQCD flavour double count (the F[3] and F[4] generation sums were each mapped to total Nf); the source now maps each class to Nf/2 and the runtime uses the direct A4 lift |
 | Catani-operator validation | not yet implemented |
 | Factorisation-limit validation | not yet implemented |
 | Massive A30 second-master derivation | complete for the beta MX30 route: explicit numerator reduction plus independently matched cut-measure factor activate the runtime dotted-master substitution |
