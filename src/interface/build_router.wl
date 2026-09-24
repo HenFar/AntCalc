@@ -106,10 +106,13 @@ A31PublicBuildComponents::usage =
   "A31PublicBuildComponents[key, data, options] builds the package-facing renormalized A31 component association while preserving the prototype branch separately.";
 
 ResolveA22LowerAntenna::usage =
-  "ResolveA22LowerAntenna[key, options] rebuilds the unintegrated lower A21 antenna used solely for the A22 public build-side UV-counterterm skin.";
+  "ResolveA22LowerAntenna[key, options] expands the evaluated real A21 closed form to the subtraction order available in the integrated A22 route.";
+
+A22EvaluatedA21Real::usage =
+  "A22EvaluatedA21Real[epsilon] gives the evaluated real A21 closed form, including the timelike Cos[Pi epsilon] phase.";
 
 A22PublicBuildComponents::usage =
-  "A22PublicBuildComponents[key, data, options] returns the loop-integrated, Mandelstam-only public A22 components with the invariant A21 UV counterterm attached, while leaving the prototype integration payload unchanged.";
+  "A22PublicBuildComponents[key, data, options] returns the real, scale-normalized public A22 epsilon series divided by C(epsilon,2), while leaving the prototype integration payload unchanged.";
 
 AntennaComponentOrder::usage =
   "AntennaComponentOrder[key] returns the canonical component ordering used when a route has multiple public components.";
@@ -757,6 +760,7 @@ Options[BuildAntenna] = {ReturnDiagnostics -> False, ReturnBuildData
   prefactor -> 1, quarkMass -> 0, ApplyStripCouplings -> AllCouplings,
   ApplyCasimirSubstitution -> True, ApplyDimReg -> True,
   LoopMomentum -> l, ReductionBackend -> Automatic, Component -> All,
+  ExpansionOrder -> Automatic,
   IntermediateSteps -> {}, PrintIntermediateSteps -> False,
   PrintComponentLegend -> Automatic,
   LoopMomenta -> {l1, l2},
@@ -1418,86 +1422,80 @@ A31PublicBuildComponents[key_, data_Association, options_Association] :=
     |>
   ];
 
-(* The A22 public unintegrated result must carry the same coupling-
-   renormalisation convention that is visible after integration.  The actual
-   integrated subtraction remains in IntegratedAntennaTTerms; this build-side
-   expression is a presentation skin and is deliberately kept out of the
-   AntennaObject integration payload below. *)
+(* The A21 interference has Re[(-q2)^(-eps)] = q2^(-eps) Cos[Pi eps].
+   Its rational factor also appears squared in the A22 one-loop-self source. *)
+A22EvaluatedA21Real[eps_] :=
+  -q2^(-eps) Cos[Pi eps] Exp[eps EulerGamma] *
+    Gamma[1 + eps] Gamma[1 - eps]^2/Gamma[1 - 2 eps] *
+    (2 - eps + 2 eps^2)/(2 eps^2 (1 - 2 eps));
+
+(* The integrated A22 route uses the evaluated A21 series through eps^2.
+   Project the closed form to that same available order before attaching the
+   counterterm, so the public integrated coefficients remain unchanged. *)
 ResolveA22LowerAntenna[key_, options_Association] :=
-  Module[{keyType, lowerData, loopMomenta},
-    keyType = First[key];
-    loopMomenta = Lookup[options, "LoopMomenta", {l1, l2}];
-    lowerData =
-      BuildRouteBuildData[
-        {keyType, 2, 1},
-        <|
-          "printDiagram" -> False,
-          "prefactor" -> Lookup[options, "prefactor", 1],
-          "quarkMass" -> Lookup[options, "quarkMass", 0],
-          "ApplyStripCouplings" -> Lookup[options, "ApplyStripCouplings",
-            AllCouplings],
-          "ApplyCasimirSubstitution" -> Lookup[options,
-            "ApplyCasimirSubstitution", True],
-          "ApplyDimReg" -> Lookup[options, "ApplyDimReg", True],
-          "LoopMomentum" -> First[loopMomenta],
-          "ReductionBackend" -> Lookup[options, "ReductionBackend",
-            Automatic]
-        |>
-      ];
-    Lookup[Lookup[lowerData, "Components", <||>], "Antenna", $Failed]
-  ];
+  IntegratedAntennaSeries[
+    A22EvaluatedA21Real[Epsilon] /. q2 -> 1,
+    Min[2, Lookup[options, "ExpansionOrder", 0] + 2]];
 
 A22PublicBuildComponents[key_, data_Association, options_Association] :=
-  Module[{prototypeComponents, lowerAntenna, eps, renormalizedComponents,
-     loopReduction, reduceComponent, invariantComponents},
+  Module[{prototypeComponents, lowerAntenna, eps, order,
+     availableNames, selectedName, selectedInternalName, loopReduction,
+     invariantComponents, seriesComponents, seriesAtOrder, c2},
     prototypeComponents =
       Lookup[data, "PrototypeComponents", Lookup[data, "Components", <||>]];
     lowerAntenna = ResolveA22LowerAntenna[key, options];
     eps = Epsilon;
+    order = Lookup[options, "ExpansionOrder", 0];
     If[lowerAntenna === $Failed || !AssociationQ[prototypeComponents],
       Return[prototypeComponents]
     ];
-    renormalizedComponents = Join[
-      prototypeComponents,
-      <|
-        "Lead" -> Simplify[
-          prototypeComponents["Lead"] - 11/(6 eps) lowerAntenna
-        ],
-        "QuarkLoop" -> Simplify[
-          prototypeComponents["QuarkLoop"] - (-2/(6 eps)) lowerAntenna
-        ]
-      |>
+    availableNames = Select[{"Lead", "SubLead", "QuarkLoop", "Breve"},
+      Lookup[prototypeComponents, #, $Failed] =!= $Failed &];
+    selectedName = CanonicalAntennaComponentName[
+      Lookup[options, "Component", All]];
+    selectedInternalName = Switch[selectedName,
+      "Leading", "Lead", "Subleading", "SubLead",
+      "Nf", "QuarkLoop", "Breve", "Breve", _, "All"];
+    If[selectedInternalName =!= "All",
+      availableNames = Select[availableNames,
+        # === selectedInternalName &]
     ];
-    (* The lower A21 counterterm is already loop-free at build level.  Reduce
-       only the genuine A22 loop source, then attach that invariant counterterm
-       after the master substitution. *)
-    reduceComponent[name_String, contribution_] :=
-      A22InvariantOnlyReduction[prototypeComponents[name],
-        Contribution -> contribution];
-    loopReduction = <|
-      "Lead" -> reduceComponent["Lead", TwoLoopTree],
-      "SubLead" -> reduceComponent["SubLead", TwoLoopTree],
-      "QuarkLoop" -> reduceComponent["QuarkLoop", TwoLoopTree],
-      "Breve" -> reduceComponent["Breve", OneLoopSelf]
-    |>;
+    (* Reduce only the selected genuine A22 loop source. *)
+    loopReduction = AssociationMap[
+      A22InvariantOnlyReduction[prototypeComponents[#],
+        Contribution -> If[# === "Breve", OneLoopSelf, TwoLoopTree]] &,
+      availableNames];
     If[!And @@ (TrueQ[Lookup[#, "InvariantOnlyQ", False]]& /@
         Values[loopReduction]),
-      Return[renormalizedComponents]
+      Return[prototypeComponents]
     ];
     invariantComponents = AssociationMap[
       loopReduction[#]["InvariantExpression"]&,
-      {"Lead", "SubLead", "QuarkLoop", "Breve"}
+      availableNames
     ];
-    invariantComponents = Join[invariantComponents, <|
-      "Lead" -> Simplify[
-        invariantComponents["Lead"] - 11/(6 eps) (lowerAntenna /. q2 -> s12)
-      ],
-      "QuarkLoop" -> Simplify[
-        invariantComponents["QuarkLoop"] - (-2/(6 eps))
-          (lowerAntenna /. q2 -> s12)
-      ]
-    |>];
-    Join[renormalizedComponents, invariantComponents]
+    (* Expand the bare master result before adding the evaluated A21 series.
+       Simplifying their unexpanded gamma-function sum is prohibitively slow. *)
+    seriesAtOrder[expr_] :=
+      Collect[Together[Normal[Series[expr, {eps, 0, order}]]],
+        eps, Simplify];
+    seriesComponents = AssociationMap[
+      seriesAtOrder[invariantComponents[#]] &, availableNames];
+    If[KeyExistsQ[seriesComponents, "Lead"],
+      seriesComponents = Join[seriesComponents, <|
+        "Lead" -> seriesAtOrder[
+          seriesComponents["Lead"] - 11/(6 eps) lowerAntenna]|>]
+    ];
+    If[KeyExistsQ[seriesComponents, "QuarkLoop"],
+      seriesComponents = Join[seriesComponents, <|
+        "QuarkLoop" -> seriesAtOrder[
+          seriesComponents["QuarkLoop"] + 1/(3 eps) lowerAntenna]|>]
+    ];
+    (* mu^2 = q^2.  The two-particle phase space contributes no integral;
+       its sole factor is C(eps,2) = G_2/S_eps^2. *)
+    c2 = (8 Pi^2)^2/((4 Pi)^eps Exp[-eps EulerGamma])^2;
+    Join[prototypeComponents,
+      AssociationMap[seriesComponents[#]/c2 &, availableNames]
+    ]
   ];
 
 BuildOutputBoundaryAssociation[key_, data_Association,
@@ -1706,6 +1704,7 @@ BuildAntennaStoredResultKey[type_, numFinalParticles_, loopOrder_,
       "LoopMomentum" -> Lookup[options, "LoopMomentum", l],
       "ReductionBackend" -> Lookup[options, "ReductionBackend", Automatic],
       "Component" -> Lookup[options, "Component", All],
+      "ExpansionOrder" -> Lookup[options, "ExpansionOrder", Automatic],
       "LoopMomenta" -> Lookup[options, "LoopMomenta", {l1, l2}],
       "BuildOutputBranch" -> Lookup[options, "BuildOutputBranch", "Public"]
     |>
@@ -2228,6 +2227,7 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
       "Component" -> OptionValue["Component"],
       "LoopMomenta" -> OptionValue["LoopMomenta"],
       "BuildOutputBranch" -> outputBranch,
+      "ExpansionOrder" -> OptionValue["ExpansionOrder"],
       "AllowPrototypeTargets" -> OptionValue["AllowPrototypeTargets"],
       "UseSourceModelRoute" -> OptionValue["UseSourceModelRoute"]
     |>;
@@ -2290,6 +2290,7 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
             LoopMomentum -> OptionValue["LoopMomentum"],
             ReductionBackend -> OptionValue["ReductionBackend"],
             Component -> OptionValue["Component"],
+            ExpansionOrder -> OptionValue["ExpansionOrder"],
             IntermediateSteps -> If[StoredResultsEnabledQ[useStored,
                 storeStored, refreshStored],
               BuildIntermediateStepLabels[],
@@ -2386,7 +2387,10 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
           "LoopMomentum" -> OptionValue["LoopMomentum"],
           "ReductionBackend" -> reductionBackend,
           "LoopMomenta" -> OptionValue["LoopMomenta"],
-          "Component" -> OptionValue["Component"]
+          "Component" -> OptionValue["Component"],
+          "ExpansionOrder" -> If[OptionValue["ExpansionOrder"] === Automatic,
+            AntennaIntegrationProfile[key]["ExpansionOrder"],
+            OptionValue["ExpansionOrder"]]
         |>]
     ];
     If[TrueQ[progressActive],

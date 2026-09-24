@@ -168,7 +168,7 @@ IntegrateViaIBP::usage = "IntegrateViaIBP[antenna, ...] runs the full LiteRed-ba
 A22LoopOnlyIBPReduction::usage =
   "A22LoopOnlyIBPReduction[expr, ...] reduces an unintegrated A22 virtual expression over its loop momenta to an unreplaced LiteRed master combination. It deliberately performs neither phase-space integration nor master-value substitution.";
 A22InvariantOnlyReduction::usage =
-  "A22InvariantOnlyReduction[expr, ...] performs the A22 loop reduction and literature-master substitution while retaining the public Mandelstam invariant and applying neither phase-space integration nor T-terms.";
+  "A22InvariantOnlyReduction[expr, ...] performs the A22 loop reduction and literature-master substitution at q2 = 1, without phase-space integration or T-terms.";
 A22LoopOnlyMasterLabels::usage =
   "A22LoopOnlyMasterLabels[expr] returns the exact topology-labelled A22 loop masters appearing in an unreplaced reduction.";
 A22CompactLoopOnlyMasterCombination::usage =
@@ -2786,8 +2786,8 @@ A22LoopOnlyIBPReduction[expr_, OptionsPattern[]] :=
   ];
 
 (* This is the A22 counterpart of the scalar-integral build boundary used by
-   A31.  It performs loop integration only: unlike IntegrateAntenna, it does
-   not apply phase-space integration, T-terms, or q2 -> 1 normalization. *)
+   A31.  It performs loop integration only and adopts the public q2 = 1 scale;
+   it does not apply phase-space integration or T-terms. *)
 Options[A22InvariantOnlyReduction] = Options[A22LoopOnlyIBPReduction];
 
 A22InvariantOnlyReduction[expr_, OptionsPattern[]] :=
@@ -2803,22 +2803,28 @@ A22InvariantOnlyReduction[expr_, OptionsPattern[]] :=
     ];
     profile = loopOnly["Profile"];
     invariantExpression =
-      ReplaceAll[
-        loopOnly["CompactMasterCombination"],
-        IBPMasterValues[profile]
+      If[OptionValue[Contribution] === TwoLoopTree,
+        A22TwoLoopTreePaperConventionRules[#],
+        #
+      ]&[
+        ReplaceAll[
+          loopOnly["CompactMasterCombination"],
+          IBPMasterValues[profile]
+        ]
       ] /. {
           d -> 4 - 2 Epsilon,
           eps -> Epsilon,
           FeynCalc`Epsilon -> Epsilon,
-          q2 -> s12
+          q2 -> 1,
+          s12 -> 1
         } // Together // FullSimplify;
     Join[loopOnly, <|
       "InvariantExpression" -> invariantExpression,
       "InvariantOnlyQ" -> FreeQ[invariantExpression,
         l | l1 | l2 | LiteRed`j | FeynCalc`FeynAmpDenominator |
           FeynAmpDenominator],
-      "KinematicInvariant" -> s12,
-      "Normalization" -> "LoopIntegratedOnly; no phase-space or T-term normalization"
+      "KinematicInvariant" -> 1,
+      "Normalization" -> "LoopIntegratedOnly; q2 = 1; no phase-space or T-term normalization"
     |>]
   ];
 

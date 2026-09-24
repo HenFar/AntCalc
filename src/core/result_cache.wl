@@ -251,9 +251,10 @@ NormalizeStoredResultKeyValue[value_] :=
   ];
 
 (* Build-stage replay now uses the compact physics-facing stage association.
-   Version 6 also invalidates A22 entries made before the SMQCD F[3]/F[4]
-   generation sums were normalized to one total Nf. *)
-StoredResultRouteSemanticVersion["BuildAntenna"] := 6;
+   Version 6 invalidated A22 entries made before the SMQCD F[3]/F[4]
+   generation sums were normalized to one total Nf. Version 7 invalidates
+   A22 builds before the real, scale-normalized epsilon-series boundary. *)
+StoredResultRouteSemanticVersion["BuildAntenna"] := 7;
 StoredResultRouteSemanticVersion["BuildAntennaObject"] := 4;
 (* The Breve A22 one-loop-self master convention changed; do not replay
    integrations cached under the former +7 Zeta[3]/(6 Epsilon) pole. *)
