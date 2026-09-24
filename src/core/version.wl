@@ -25,6 +25,8 @@ $AntCalcReleaseHistory = {<|"Version" -> "0.3.0-beta.2", "Date" -> "2026-07-18",
    "Beta", "Summary" -> "Reasserted family-specific LiteRed scalar-product kinematics when switching from A22 to A31."
   |>, <|"Version" -> "0.3.1-beta.4", "Date" -> "2026-09-24", "Stage" ->
    "Beta", "Summary" -> "Made public A22 builds real, scale-normalized epsilon series with evaluated A21 counterterms."
+  |>, <|"Version" -> "0.3.1-beta.5", "Date" -> "2026-09-24", "Stage" ->
+   "Beta", "Summary" -> "Included lower-antenna master counterterms in public A22 and A31 master combinations."
   |>};
 
 $AntCalcVersion = Last[$AntCalcReleaseHistory]["Version"];
@@ -42,7 +44,7 @@ AntCalcVersionHistory[] :=
 AntCalcDisplayVersion::usage = "AntCalcDisplayVersion[] returns the typeset user-facing release version.";
 
 AntCalcDisplayVersion[] :=
-  Row[{"0.3.1", Style[" β ", "Text"], "4 - Thesis Version"}];
+  Row[{"0.3.1", Style[" β ", "Text"], "5 - Thesis Version"}];
 
 LiteRed2InstallationVersion::usage = "LiteRed2InstallationVersion[] reads the installed LiteRed2 release identity without loading LiteRed.";
 

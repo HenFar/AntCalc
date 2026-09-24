@@ -438,6 +438,56 @@ PublicMasterCombinationDisplayForm[expr_] :=
     }
   ];
 
+(* The lower antennae are written in their own master bases at mu^2=q2=1.
+   B0 and C0 denote the real scalar-master magnitudes; the A21 interference
+   supplies their common timelike Cos[Pi Epsilon] continuation. *)
+CouplingCountertermMasterData[key_, component_] :=
+  Module[{name, epsilon, lower},
+    name = CanonicalAntennaComponentName[component];
+    epsilon = Epsilon;
+    If[!MemberQ[{"Leading", "Nf"}, name], Return[Missing["None"]]];
+    Switch[key,
+      {a_Symbol /; SymbolName[a] === "A", 2, 2},
+        lower = -Cos[Pi epsilon] ((3 + 2 epsilon) B0/2 + C0);
+        <|"Coefficient" -> If[name === "Leading", -11/(6 epsilon),
+            1/(3 epsilon)], "LowerMasterCombination" -> lower|>,
+      {a_Symbol /; SymbolName[a] === "A", 3, 1},
+        (* The X30 lower master j[NLOBasis123,1,1,1,0,0] maps to R3. *)
+        lower = (4 - 12 epsilon + 10 epsilon^2 - 4 epsilon^3) *
+          R3/epsilon^2 *
+          (IBPNormalization[<|"BasisFamily" -> "X30"|>] /.
+            {q2 -> 1, eps -> Epsilon});
+        <|"Coefficient" -> If[name === "Leading", -11/(6 epsilon),
+            1/(3 epsilon)], "LowerMasterCombination" -> lower|>,
+      _, Missing["None"]
+    ]
+  ];
+
+RenormalizedMasterCombination[bare_, diagnostics_Association] :=
+  Module[{profile, sourceObject, key, component, counterterm,
+     normalizedBare},
+    profile = Lookup[diagnostics, "Profile", <||>];
+    If[!AssociationQ[profile], Return[Missing["None"]]];
+    sourceObject = Lookup[diagnostics, "SourceObject", Missing["None"]];
+    key = If[AntennaObjectQ[sourceObject],
+      Lookup[AntennaObjectData[sourceObject], "Key", Missing["None"]],
+      Lookup[diagnostics, "Key", Missing["None"]]];
+    component = Lookup[diagnostics, "BuildComponent",
+      Lookup[diagnostics, "SelectedComponent", All]];
+    counterterm = CouplingCountertermMasterData[key, component];
+    If[MissingQ[counterterm], Return[counterterm]];
+    normalizedBare = Switch[key,
+      {a_Symbol /; SymbolName[a] === "A", 3, 1},
+        bare * A31PaperConventionFactor[] *
+          (IBPNormalization[<|"BasisFamily" -> "A31"|>] /.
+            {q2 -> 1, eps -> Epsilon}),
+      _, A22TwoLoopTreePaperConventionRules[bare] /. eps -> Epsilon
+    ];
+    normalizedBare = normalizedBare /. {q2 -> 1, s12 -> 1};
+    normalizedBare + counterterm["Coefficient"] *
+      counterterm["LowerMasterCombination"]
+  ];
+
 MasterCombinationView[diagnostics_Association] :=
   Module[{backendDiagnostics, profile, key, combination, rawCombination, masters,
      basisFamily, genericDefinitions, massiveA30Q},
@@ -697,8 +747,8 @@ PrintMasterCombinationBasisSummary[expr_, diagnostics_Association:<||>] :=
    combination representation instead of the final integrated series. *)
 ResolveIntegrationPublicResult[result_, diagnostics_,
    returnMasterCombination_, routeLabel_:Automatic] :=
-  Module[{backendDiagnostics, masterCombination, label, reason,
-     diagnosticsWithMasterView},
+  Module[{backendDiagnostics, masterCombination, bareCombination,
+     renormalizedCombination, label, reason, diagnosticsWithMasterView},
     diagnosticsWithMasterView = AttachMasterCombinationView[diagnostics];
     If[!TrueQ[returnMasterCombination],
       Return[{result, diagnosticsWithMasterView}]
@@ -712,6 +762,23 @@ ResolveIntegrationPublicResult[result_, diagnostics_,
       Lookup[diagnosticsWithMasterView, "BackendDiagnostics", Missing["NotAvailable"]];
     masterCombination = BackendMasterCombination[backendDiagnostics];
     masterCombination = PublicMasterCombinationDisplayForm[masterCombination];
+    bareCombination = masterCombination;
+    If[AssociationQ[diagnosticsWithMasterView] &&
+        !MatchQ[masterCombination, _Missing] && masterCombination =!= $Failed,
+      renormalizedCombination = RenormalizedMasterCombination[
+        masterCombination, diagnosticsWithMasterView];
+      If[!MissingQ[renormalizedCombination],
+        masterCombination = renormalizedCombination;
+        diagnosticsWithMasterView = Join[diagnosticsWithMasterView, <|
+          "BareMasterCombination" -> bareCombination,
+          "MasterCombination" -> masterCombination,
+          "MasterCombinationView" -> Join[
+            diagnosticsWithMasterView["MasterCombinationView"],
+            <|"BareExpression" -> bareCombination,
+              "Expression" -> masterCombination|>]
+        |>]
+      ]
+    ];
     label =
       If[routeLabel === Automatic,
         "this route"

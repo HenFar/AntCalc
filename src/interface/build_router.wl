@@ -1185,7 +1185,8 @@ IntegrationRecordIntermediateStepsView[routeKind_String,
       RecordStageAssociation[
         {
           "Method" -> IntegrationMethodValue[diagnostics],
-          "MasterCombination" -> masterCombination,
+          "MasterCombination" -> Lookup[diagnostics,
+            "MasterCombination", masterCombination],
           "DimensionExpression" -> dimensionExpression,
           "Result" -> resultValue
         }
@@ -1194,7 +1195,7 @@ IntegrationRecordIntermediateStepsView[routeKind_String,
   ];
 
 IntegrationRecordAliases[stages_Association, diagnostics_Association] :=
-  Module[{backendDiagnostics, masterCombination},
+  Module[{backendDiagnostics, masterCombination, aliases},
     backendDiagnostics =
       Lookup[stages, "BackendDiagnostics",
         Lookup[diagnostics, "BackendDiagnostics", Missing["NotAvailable"]]];
@@ -1203,7 +1204,7 @@ IntegrationRecordAliases[stages_Association, diagnostics_Association] :=
     ];
     masterCombination = BackendMasterCombination[backendDiagnostics];
     masterCombination = MasterCombinationNormalForm[masterCombination];
-    <|
+    aliases = <|
       "InputAntenna" -> Lookup[stages, "InputAntenna",
         Missing["NotAvailable"]],
       "RawIntegrated" -> Lookup[stages, "RawIntegrated",
@@ -1226,7 +1227,8 @@ IntegrationRecordAliases[stages_Association, diagnostics_Association] :=
         "MasterMappedExpression", Missing["NotAvailable"]],
       "RawMasterCombination" -> Lookup[backendDiagnostics,
         "RawMasterCombination", Missing["NotAvailable"]],
-      "MasterCombination" -> masterCombination,
+      "MasterCombination" -> Lookup[diagnostics, "MasterCombination",
+        masterCombination],
       "MasterCombinationView" -> Lookup[diagnostics,
         "MasterCombinationView", MasterCombinationView[diagnostics]],
       "MasterSubstitutedExpression" -> Lookup[backendDiagnostics,
@@ -1245,7 +1247,12 @@ IntegrationRecordAliases[stages_Association, diagnostics_Association] :=
         "OpenMasterSeriesResult", Missing["NotAvailable"]],
       "OpenMasterRouteDiagnostics" -> Lookup[backendDiagnostics,
         "OpenMasterRouteDiagnostics", Missing["NotAvailable"]]
-    |>
+    |>;
+    If[KeyExistsQ[diagnostics, "BareMasterCombination"],
+      Append[aliases, "BareMasterCombination" ->
+        diagnostics["BareMasterCombination"]],
+      aliases
+    ]
   ];
 
 MakeAntennaRunRecord[assoc_Association] :=

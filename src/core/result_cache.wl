@@ -256,9 +256,10 @@ NormalizeStoredResultKeyValue[value_] :=
    A22 builds before the real, scale-normalized epsilon-series boundary. *)
 StoredResultRouteSemanticVersion["BuildAntenna"] := 7;
 StoredResultRouteSemanticVersion["BuildAntennaObject"] := 4;
-(* The Breve A22 one-loop-self master convention changed; do not replay
-   integrations cached under the former +7 Zeta[3]/(6 Epsilon) pole. *)
-StoredResultRouteSemanticVersion["IntegrateAntenna"] := 5;
+(* Version 5 invalidated the old Breve one-loop-self master convention.
+   Version 6 invalidates public master-combination returns before their
+   coupling counterterms were included. *)
+StoredResultRouteSemanticVersion["IntegrateAntenna"] := 6;
 StoredResultRouteSemanticVersion["BuildRRatio"] := 2;
 StoredResultRouteSemanticVersion["TObject"] := 4;
 StoredResultRouteSemanticVersion[_] := 1;
