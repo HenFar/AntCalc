@@ -253,13 +253,16 @@ NormalizeStoredResultKeyValue[value_] :=
 (* Build-stage replay now uses the compact physics-facing stage association.
    Version 6 invalidated A22 entries made before the SMQCD F[3]/F[4]
    generation sums were normalized to one total Nf. Version 7 invalidates
-   A22 builds before the real, scale-normalized epsilon-series boundary. *)
-StoredResultRouteSemanticVersion["BuildAntenna"] := 7;
+   A22 builds before the real, scale-normalized epsilon-series boundary.
+   Version 8 records explicit SeriesData truncation and the public A31 q2
+   Passarino-Veltman arguments. *)
+StoredResultRouteSemanticVersion["BuildAntenna"] := 8;
 StoredResultRouteSemanticVersion["BuildAntennaObject"] := 4;
 (* Version 5 invalidated the old Breve one-loop-self master convention.
-   Version 6 invalidates public master-combination returns before their
-   coupling counterterms were included. *)
-StoredResultRouteSemanticVersion["IntegrateAntenna"] := 6;
+   Version 6 invalidated public master-combination returns before their
+   coupling counterterms were included. Version 7 records normalized,
+   family-consistent named master combinations for every A22/A31 component. *)
+StoredResultRouteSemanticVersion["IntegrateAntenna"] := 7;
 StoredResultRouteSemanticVersion["BuildRRatio"] := 2;
 StoredResultRouteSemanticVersion["TObject"] := 4;
 StoredResultRouteSemanticVersion[_] := 1;

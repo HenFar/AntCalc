@@ -282,7 +282,7 @@ HeavyIntegrationRouteQ[key_, component_, contribution_] :=
 
 HeavyIntegrationRouteLabel[key_, component_, contribution_] :=
   StringJoin[
-    ToString[key, InputForm],
+    ContextFreeAntennaKeyLabel[key],
     " with Component -> ",
     CanonicalAntennaComponentName[component]
   ];
@@ -300,7 +300,7 @@ MaybeWarnHeavyIntegrationRoute[key_, component_, contribution_] :=
       Return[Null]
     ];
     noticeKey = StringJoin[
-      ToString[key, InputForm],
+      ContextFreeAntennaKeyLabel[key],
       "::",
       componentName,
       "::",
@@ -426,21 +426,213 @@ MasterCombinationNormalForm[expr_] :=
     Collect[expr, masters, Simplify]
   ];
 
+PublicDimensionSymbolRules[expr_] :=
+  Thread[DeleteDuplicates @ Cases[expr,
+    symbol_Symbol /; SymbolName[Unevaluated[symbol]] === "d", Infinity] ->
+      (4 - 2 Epsilon)];
+
 (* This is deliberately a return-boundary skin. The raw LiteRed reduction
    remains in BackendDiagnostics["RawLiteRedCombination"] with its native d
    and eps symbols for provenance and backend debugging. *)
 PublicMasterCombinationDisplayForm[expr_] :=
   MasterCombinationNormalForm[
-    expr /. {
+    expr /. Join[PublicDimensionSymbolRules[expr], {
       d -> 4 - 2 Epsilon,
       eps -> Epsilon,
       FeynCalc`Epsilon -> Epsilon
+    }]
+  ];
+
+MasterCombinationFamilyTag[key_] :=
+  Which[
+    MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 2, 2}], "A22",
+    MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 1}], "A31",
+    True, Missing["NoMasterCombinationFamily"]
+  ];
+
+IntegrationDiagnosticsAntennaKey[diagnostics_Association] :=
+  Module[{sourceObject, profile, key},
+    sourceObject = Lookup[diagnostics, "SourceObject", Missing["NoSource"]];
+    profile = Lookup[diagnostics, "Profile", <||>];
+    If[!AssociationQ[profile], profile = <||>];
+    key = If[AntennaObjectQ[sourceObject],
+      Lookup[AntennaObjectData[sourceObject], "Key", Missing["NoKey"]],
+      Missing["NoKey"]
+    ];
+    If[!MissingQ[key], Return[key]];
+    Lookup[diagnostics, "Key", Lookup[profile, "Key", Missing["NoKey"]]]
+  ];
+
+IntegrationDiagnosticsAntennaKey[_] := Missing["NoKey"];
+
+(* The A31 normalization is common to its three public components.  The
+   explicit form follows from 2 Pi^2 IBPNormalization[A31] at q2 = 1. *)
+A31MasterCombinationPrefactor[] :=
+  2^(10 - 6 Epsilon) Pi^(7 - 3 Epsilon) Exp[2 Epsilon EulerGamma] *
+    Gamma[2 - 2 Epsilon]/Gamma[1 - Epsilon];
+
+MasterCombinationFamilyPrefactor[key_] :=
+  Switch[MasterCombinationFamilyTag[key],
+    "A22", 1,
+    "A31", A31MasterCombinationPrefactor[],
+    _, Missing["NoMasterCombinationPrefactor"]
+  ];
+
+A22PublicMasterSymbolForRawMaster[master_LiteRed`j] :=
+  Module[{basis, label, canonical},
+    basis = First[List @@ master];
+    If[basis === A22OneLoopSelfBasis, Return[Global`A22LO]];
+    label = A22TwoLoopTreeExactTopologyLabel[master, basis];
+    If[MissingQ[label], Return[label]];
+    canonical = A22TwoLoopTreeCanonicalMasterForExactTopology[label];
+    Switch[canonical,
+      A22LOMI, Global`A22LO,
+      A3MI, Global`A3,
+      A4MI, Global`A4,
+      A6MI, Global`A6,
+      _, Missing["UnknownA22PublicMaster", master]
+    ]
+  ];
+
+A22PublicMasterFactorForRawMaster[master_, component_] :=
+  Module[{basis, label, exactValue, canonicalValue},
+    basis = First[List @@ master];
+    If[CanonicalAntennaComponentName[component] === "Breve" &&
+        basis === A22OneLoopSelfBasis,
+      Return[(A22LOMasterCore[] A22OneLoopSelfVirtualConventionFactor[] /
+        A22TwoLoopTreeMasterValueA22LO[]) /.
+          {eps -> Epsilon, q2 -> 1}]
+    ];
+    If[basis === A22OneLoopSelfBasis, Return[1]];
+    label = A22TwoLoopTreeExactTopologyLabel[master, basis];
+    If[MissingQ[label], Return[1]];
+    exactValue = A22TwoLoopTreeValueForExactTopology[label];
+    canonicalValue = A22TwoLoopTreeCanonicalValueForExactTopology[label];
+    If[MissingQ[exactValue] || MissingQ[canonicalValue], Return[1]];
+    Together[exactValue/canonicalValue] /.
+      {eps -> Epsilon, q2 -> 1, s12 -> 1}
+  ];
+
+A22NamedMasterRules[expr_, component_] :=
+  Module[{masters, topologyRules, public, factor},
+    masters = DeleteDuplicates @ Cases[expr,
+      HoldPattern[LiteRed`j[___]], Infinity];
+    topologyRules = DeleteCases[
+      (With[{public = A22PublicMasterSymbolForRawMaster[#],
+          factor = A22PublicMasterFactorForRawMaster[#, component]},
+          If[MissingQ[public], Nothing, # -> factor public]]& /@ masters),
+      Nothing
+    ];
+    Join[topologyRules, {
+      A22LOMI -> A22PublicMasterFactorForRawMaster[
+        LiteRed`j[A22OneLoopSelfBasis, 1, 0, 1, 1, 0, 1, 0], component] *
+          Global`A22LO,
+      A3MI -> Global`A3,
+      A4MI -> Global`A4,
+      A6MI -> Global`A6
+    }]
+  ];
+
+PublicNamedMasterVariables["A22"] :=
+  {Global`A22LO, Global`A3, Global`A4, Global`A6, Global`B0, Global`C0};
+
+PublicNamedMasterVariables["A31"] :=
+  {Global`V5a, Global`V5b, Global`V8, Global`R3};
+
+PublicNamedMasterCombination[expr_, "A22", component_] :=
+  Module[{named},
+    named = expr /. A22NamedMasterRules[expr, component];
+    If[!FreeQ[named, HoldPattern[LiteRed`j[___]]],
+      Return[Missing["UnmappedA22Master", named]]
+    ];
+    Collect[named, PublicNamedMasterVariables["A22"], Simplify]
+  ];
+
+PublicNamedMasterCombination[expr_, "A31", _] :=
+  Module[{named},
+    named = expr /. A31MasterRules[] /.
+      {qMI -> Global`V5a, qkMI -> Global`V5b, qsMI -> Global`V8};
+    If[!FreeQ[named, HoldPattern[LiteRed`j[___]]],
+      Return[Missing["UnmappedA31Master", named]]
+    ];
+    Collect[named, PublicNamedMasterVariables["A31"], Simplify]
+  ];
+
+NormalizedNamedBareMasterCombination[bare_, key_, component_] :=
+  Module[{family, normalizedBare},
+    family = MasterCombinationFamilyTag[key];
+    normalizedBare = Switch[family,
+      "A22",
+        If[CanonicalAntennaComponentName[component] === "Breve",
+          bare,
+          A22TwoLoopTreePaperConventionRules[bare]
+        ] /. Join[
+          PublicDimensionSymbolRules[bare],
+          {d -> 4 - 2 Epsilon, eps -> Epsilon,
+            FeynCalc`Epsilon -> Epsilon, q2 -> 1, s12 -> 1}
+        ],
+      "A31",
+        bare /. Join[
+          PublicDimensionSymbolRules[bare],
+          {d -> 4 - 2 Epsilon, eps -> Epsilon,
+            FeynCalc`Epsilon -> Epsilon, q2 -> 1, s12 -> 1}
+        ],
+      _, Return[Missing["NoMasterCombinationFamily"]]
+    ];
+    PublicNamedMasterCombination[normalizedBare, family, component]
+  ];
+
+A22PublicMasterValueRules[] :=
+  Module[{g},
+    g = Exp[Epsilon EulerGamma] Gamma[1 + Epsilon] Gamma[1 - Epsilon]^2/
+      Gamma[1 - 2 Epsilon];
+    {
+      Global`A22LO -> (A22TwoLoopTreeMasterValueA22LO[] /.
+        {q2 -> 1, eps -> Epsilon}),
+      Global`A3 -> (A22TwoLoopTreeMasterValueA3[] /.
+        {q2 -> 1, eps -> Epsilon}),
+      Global`A4 -> (A22TwoLoopTreeMasterValueA4[] /.
+        {q2 -> 1, eps -> Epsilon}),
+      Global`A6 -> (A22TwoLoopTreeMasterValueA6[] /.
+        {q2 -> 1, eps -> Epsilon}),
+      Global`B0 -> g/(Epsilon (1 - 2 Epsilon)),
+      Global`C0 -> g/Epsilon^2
     }
   ];
 
+A31PublicMasterValueRules[] :=
+  Module[{namedRules},
+    namedRules = A31MasterCoefficientRules[] /.
+      {qMI -> Global`V5a, qkMI -> Global`V5b, qsMI -> Global`V8};
+    Join[
+      (First[#] -> (Last[#] /. {q2 -> 1, eps -> Epsilon}))& /@ namedRules,
+      {Global`R3 -> (IBPPhaseSpaceMeasure[3] /.
+        {q2 -> 1, eps -> Epsilon})}
+    ]
+  ];
+
+MasterCombinationConventionDescription["A22"] :=
+  <|"MasterPoint" -> "real spacelike values at -q^2 = 1",
+    "Continuation" ->
+      "Cos[2 Pi Epsilon] on tree-times-two-loop powers, with integer-power signs; Cos[Pi Epsilon] on the A21 counterterm; no phase on Breve",
+    "MasterSymbols" -> {"A22LO", "A3", "A4", "A6", "B0", "C0"},
+    "MasterValues" -> "A22PublicMasterValueRules[]",
+    "BreveA22LOConversion" ->
+      "The Breve coefficient includes its one-loop-self master value divided by the shared tree A22LO value."|>;
+
+MasterCombinationConventionDescription["A31"] :=
+  <|"MasterPoint" -> "A31 runtime masters at q2 = 1 in the A31 IBP convention",
+    "Continuation" ->
+      "V5a and V5b retain their explicit i and Cos[Pi Epsilon] factors; V8 retains its explicit i without a cosine; R3 is the real phase-space master",
+    "MasterSymbols" -> {"V5a", "V5b", "V8", "R3"},
+    "MasterValues" -> "A31PublicMasterValueRules[]",
+    "LowerA30MasterConvention" ->
+      "The prefactor-free A30 combination is multiplied by IBPNormalization[X30]/A31MasterCombinationPrefactor[] before it is attached to an A31 component."|>;
+
 (* The lower antennae are written in their own master bases at mu^2=q2=1.
-   B0 and C0 denote the real scalar-master magnitudes; the A21 interference
-   supplies their common timelike Cos[Pi Epsilon] continuation. *)
+   Global`B0 and Global`C0 are the public real scalar-master symbols, distinct
+   from FeynCalc's B0[...]/C0[...] functions.  The A21 interference supplies
+   their common timelike Cos[Pi Epsilon] continuation. *)
 CouplingCountertermMasterData[key_, component_] :=
   Module[{name, epsilon, lower},
     name = CanonicalAntennaComponentName[component];
@@ -448,15 +640,16 @@ CouplingCountertermMasterData[key_, component_] :=
     If[!MemberQ[{"Leading", "Nf"}, name], Return[Missing["None"]]];
     Switch[key,
       {a_Symbol /; SymbolName[a] === "A", 2, 2},
-        lower = -Cos[Pi epsilon] ((3 + 2 epsilon) B0/2 + C0);
+        lower = -Cos[Pi epsilon] ((3 + 2 epsilon) Global`B0/2 + Global`C0);
         <|"Coefficient" -> If[name === "Leading", -11/(6 epsilon),
             1/(3 epsilon)], "LowerMasterCombination" -> lower|>,
       {a_Symbol /; SymbolName[a] === "A", 3, 1},
         (* The X30 lower master j[NLOBasis123,1,1,1,0,0] maps to R3. *)
         lower = (4 - 12 epsilon + 10 epsilon^2 - 4 epsilon^3) *
-          R3/epsilon^2 *
+          Global`R3/epsilon^2 *
           (IBPNormalization[<|"BasisFamily" -> "X30"|>] /.
-            {q2 -> 1, eps -> Epsilon});
+            {q2 -> 1, eps -> Epsilon}) /
+          A31MasterCombinationPrefactor[];
         <|"Coefficient" -> If[name === "Leading", -11/(6 epsilon),
             1/(3 epsilon)], "LowerMasterCombination" -> lower|>,
       _, Missing["None"]
@@ -464,28 +657,28 @@ CouplingCountertermMasterData[key_, component_] :=
   ];
 
 RenormalizedMasterCombination[bare_, diagnostics_Association] :=
-  Module[{profile, sourceObject, key, component, counterterm,
-     normalizedBare},
+  Module[{profile, key, component, counterterm, family,
+     namedBare, normalizedCounterterm, innerCombination},
     profile = Lookup[diagnostics, "Profile", <||>];
     If[!AssociationQ[profile], Return[Missing["None"]]];
-    sourceObject = Lookup[diagnostics, "SourceObject", Missing["None"]];
-    key = If[AntennaObjectQ[sourceObject],
-      Lookup[AntennaObjectData[sourceObject], "Key", Missing["None"]],
-      Lookup[diagnostics, "Key", Missing["None"]]];
+    key = IntegrationDiagnosticsAntennaKey[diagnostics];
     component = Lookup[diagnostics, "BuildComponent",
       Lookup[diagnostics, "SelectedComponent", All]];
+    family = MasterCombinationFamilyTag[key];
+    If[MissingQ[family], Return[Missing["NoMasterCombinationFamily"]]];
+    namedBare = NormalizedNamedBareMasterCombination[bare, key, component];
+    If[MissingQ[namedBare], Return[namedBare]];
     counterterm = CouplingCountertermMasterData[key, component];
-    If[MissingQ[counterterm], Return[counterterm]];
-    normalizedBare = Switch[key,
-      {a_Symbol /; SymbolName[a] === "A", 3, 1},
-        bare * A31PaperConventionFactor[] *
-          (IBPNormalization[<|"BasisFamily" -> "A31"|>] /.
-            {q2 -> 1, eps -> Epsilon}),
-      _, A22TwoLoopTreePaperConventionRules[bare] /. eps -> Epsilon
+    normalizedCounterterm = If[MissingQ[counterterm],
+      0,
+      counterterm["Coefficient"] * counterterm["LowerMasterCombination"]
     ];
-    normalizedBare = normalizedBare /. {q2 -> 1, s12 -> 1};
-    normalizedBare + counterterm["Coefficient"] *
-      counterterm["LowerMasterCombination"]
+    If[family === "A31",
+      innerCombination = namedBare + normalizedCounterterm;
+      Collect[innerCombination, PublicNamedMasterVariables[family], Simplify],
+      Collect[namedBare + normalizedCounterterm,
+        PublicNamedMasterVariables[family], Simplify]
+    ]
   ];
 
 MasterCombinationView[diagnostics_Association] :=
@@ -496,7 +689,7 @@ MasterCombinationView[diagnostics_Association] :=
     profile = Lookup[diagnostics, "Profile",
       Lookup[backendDiagnostics, "Profile", <||>]];
     If[!AssociationQ[profile], profile = <||>];
-    key = Lookup[profile, "Key", Missing["NotAvailable"]];
+    key = IntegrationDiagnosticsAntennaKey[diagnostics];
     basisFamily = Lookup[profile, "BasisFamily",
       Lookup[backendDiagnostics, "BasisFamily", Missing["NotAvailable"]]];
     massiveA30Q =
@@ -747,8 +940,9 @@ PrintMasterCombinationBasisSummary[expr_, diagnostics_Association:<||>] :=
    combination representation instead of the final integrated series. *)
 ResolveIntegrationPublicResult[result_, diagnostics_,
    returnMasterCombination_, routeLabel_:Automatic] :=
-  Module[{backendDiagnostics, masterCombination, bareCombination,
-     renormalizedCombination, label, reason, diagnosticsWithMasterView},
+  Module[{backendDiagnostics, rawMasterCombination, masterCombination,
+     bareCombination, namedBareCombination, renormalizedCombination,
+     family, key, component, label, reason, diagnosticsWithMasterView},
     diagnosticsWithMasterView = AttachMasterCombinationView[diagnostics];
     If[!TrueQ[returnMasterCombination],
       Return[{result, diagnosticsWithMasterView}]
@@ -760,23 +954,46 @@ ResolveIntegrationPublicResult[result_, diagnostics_,
     ];
     backendDiagnostics =
       Lookup[diagnosticsWithMasterView, "BackendDiagnostics", Missing["NotAvailable"]];
-    masterCombination = BackendMasterCombination[backendDiagnostics];
-    masterCombination = PublicMasterCombinationDisplayForm[masterCombination];
+    rawMasterCombination = BackendMasterCombination[backendDiagnostics];
+    masterCombination = PublicMasterCombinationDisplayForm[rawMasterCombination];
     bareCombination = masterCombination;
     If[AssociationQ[diagnosticsWithMasterView] &&
         !MatchQ[masterCombination, _Missing] && masterCombination =!= $Failed,
+      key = IntegrationDiagnosticsAntennaKey[diagnosticsWithMasterView];
+      component = Lookup[diagnosticsWithMasterView, "BuildComponent",
+        Lookup[diagnosticsWithMasterView, "SelectedComponent", All]];
+      family = MasterCombinationFamilyTag[key];
       renormalizedCombination = RenormalizedMasterCombination[
-        masterCombination, diagnosticsWithMasterView];
+        rawMasterCombination, diagnosticsWithMasterView];
       If[!MissingQ[renormalizedCombination],
+        namedBareCombination = NormalizedNamedBareMasterCombination[
+          rawMasterCombination, key, component];
         masterCombination = renormalizedCombination;
         diagnosticsWithMasterView = Join[diagnosticsWithMasterView, <|
+          "RawMasterCombination" -> rawMasterCombination,
           "BareMasterCombination" -> bareCombination,
+          "NamedBareMasterCombination" -> namedBareCombination,
           "MasterCombination" -> masterCombination,
+          "MasterCombinationPrefactor" -> MasterCombinationFamilyPrefactor[key],
+          "MasterCombinationConvention" ->
+            MasterCombinationConventionDescription[family],
           "MasterCombinationView" -> Join[
             diagnosticsWithMasterView["MasterCombinationView"],
             <|"BareExpression" -> bareCombination,
+              "NamedBareExpression" -> namedBareCombination,
+              "RawExpression" -> rawMasterCombination,
               "Expression" -> masterCombination|>]
         |>]
+        ,
+        If[!MissingQ[family],
+          masterCombination = Missing["MasterCombinationNormalizationFailed", family];
+          diagnosticsWithMasterView = Join[diagnosticsWithMasterView, <|
+            "MasterCombinationAvailable" -> False,
+            "MasterCombinationRequestFailed" -> True,
+            "MasterCombinationRequestReason" ->
+              "MasterCombinationNormalizationFailed"
+          |>]
+        ]
       ]
     ];
     label =
@@ -792,8 +1009,11 @@ ResolveIntegrationPublicResult[result_, diagnostics_,
           Join[diagnosticsWithMasterView, <|
             "RequestedResultKind" -> "MasterCombination",
             "MasterCombinationAvailable" -> False,
-            "MasterCombinationRequestFailed" -> False,
-            "MasterCombinationRequestReason" -> "NotAvailable"
+            "MasterCombinationRequestFailed" -> TrueQ[Lookup[
+              diagnosticsWithMasterView, "MasterCombinationRequestFailed", False]],
+            "MasterCombinationRequestReason" -> Lookup[
+              diagnosticsWithMasterView, "MasterCombinationRequestReason",
+              "NotAvailable"]
           |>]
         }
       ,
@@ -1254,7 +1474,7 @@ LegacyIntegrateAntennaObjectImplementation[obj_AntennaObject, OptionsPattern[]] 
               loaded["Result"],
               loaded["Diagnostics"],
               OptionValue["ReturnMasterCombination"],
-              ToString[key, InputForm]
+              ContextFreeAntennaKeyLabel[key]
             ];
           Return[
             FormatStoredResultReturn[publicResult,
@@ -1305,7 +1525,7 @@ LegacyIntegrateAntennaObjectImplementation[obj_AntennaObject, OptionsPattern[]] 
           computedResult,
           computedDiagnostics,
           OptionValue["ReturnMasterCombination"],
-          ToString[key, InputForm]
+          ContextFreeAntennaKeyLabel[key]
         ];
       Return[
         FormatFreshIntegrationReturn[publicResult, publicDiagnostics,
@@ -1446,7 +1666,7 @@ LegacyIntegrateAntennaObjectImplementation[obj_AntennaObject, OptionsPattern[]] 
               selectedIntegrated,
               diagnosticsWithMetadata,
               True,
-              ToString[key, InputForm]
+              ContextFreeAntennaKeyLabel[key]
             ]
             ,
             MassiveA30DefaultMasterEndpointResult[
@@ -1455,7 +1675,7 @@ LegacyIntegrateAntennaObjectImplementation[obj_AntennaObject, OptionsPattern[]] 
               "IntegrateAntenna",
               selectedIntegrated,
               diagnosticsWithMetadata,
-              ToString[key, InputForm]
+              ContextFreeAntennaKeyLabel[key]
             ]
           ];
         Return[
@@ -1661,7 +1881,7 @@ LegacyIntegrateAntennaObjectImplementation[obj_AntennaObject, OptionsPattern[]] 
               finalIntegrated,
               diagnosticsWithMetadata,
               OptionValue["ReturnMasterCombination"],
-              ToString[key, InputForm]
+              ContextFreeAntennaKeyLabel[key]
             ];
           Return[
             FormatFreshIntegrationReturn[publicResult,
@@ -1798,7 +2018,7 @@ LegacyIntegrateAntennaObjectImplementation[obj_AntennaObject, OptionsPattern[]] 
         selectedIntegrated,
         diagnosticsWithMetadata,
         OptionValue["ReturnMasterCombination"],
-        ToString[key, InputForm]
+        ContextFreeAntennaKeyLabel[key]
       ];
     output = FormatFreshIntegrationReturn[publicResult,
       publicDiagnostics, OptionValue["ReturnDiagnostics"], OptionValue[

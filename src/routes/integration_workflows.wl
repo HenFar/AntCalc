@@ -182,7 +182,7 @@ IntegrateBackendDirectRoute[antenna_, integrationMethod_, options_Association
 IntegrateRouteObject[obj_, options_Association] :=
   Module[{data, key, profile, contributionInput, contribution, componentInput,
      componentName, storedComponent, backend, antenna, diagnostics, output,
-     ibpResult, backendDiagnostics = <||>, rawIntegrated, tTerms, finalIntegrated,
+     ibpResult, paveResult, backendDiagnostics = <||>, rawIntegrated, tTerms, finalIntegrated,
      selectedIntegrated, expansionOrder, leadingCall, subleadingCall, nfCall,
      breveCall, leadingResult, subleadingResult, nfResult, breveResult, leadingDiag,
      subleadingDiag, nfDiag, breveDiag, treeDiags, intermediateSteps, collectedSteps,
@@ -392,11 +392,11 @@ IntegrateRouteObject[obj_, options_Association] :=
               If[TrueQ[Lookup[options, "ReturnMasterCombination", False
                 ]],
                 ResolveIntegrationPublicResult[selectedIntegrated, diagnosticsWithMetadata,
-                   True, ToString[key, InputForm]]
+                   True, ContextFreeAntennaKeyLabel[key]]
                 ,
                 MassiveA30DefaultMasterEndpointResult[obj, options, routeKind,
-                   selectedIntegrated, diagnosticsWithMetadata, ToString[key, InputForm
-                  ]]
+                   selectedIntegrated, diagnosticsWithMetadata,
+                   ContextFreeAntennaKeyLabel[key]]
               ]
           },
             FormatFreshIntegrationReturn[publicReturn[[1]], publicReturn
@@ -547,13 +547,23 @@ IntegrateRouteObject[obj_, options_Association] :=
     rawIntegrated =
       Switch[backend,
         PaVe,
-          IntegrateViaPaVe[antenna, profile, True, Lookup[options, "ApplyFeynCalcMS",
-             False], Lookup[options, "quarkMass", 0], PaVeEvaluation -> Lookup[profile,
-             "PaVeEvaluation", "PaXEvaluate"], ExpansionOrder -> expansionOrder, KinematicScale
-             -> Lookup[profile, "KinematicScale", Lookup[options, "KinematicScale",
-             q2]], NormalizeKinematicScale -> Lookup[options, "NormalizeKinematicScale",
-             False], LoopMomentum -> Lookup[options, "LoopMomentum", l], ApplyDimReg
-             -> Lookup[options, "ApplyDimReg", True]]
+          paveResult = IntegrateViaPaVe[antenna, profile, True,
+            Lookup[options, "ApplyFeynCalcMS", False],
+            Lookup[options, "quarkMass", 0],
+            PaVeEvaluation -> Lookup[profile, "PaVeEvaluation", "PaXEvaluate"],
+            ExpansionOrder -> expansionOrder,
+            KinematicScale -> Lookup[profile, "KinematicScale",
+              Lookup[options, "KinematicScale", q2]],
+            NormalizeKinematicScale -> Lookup[options,
+              "NormalizeKinematicScale", False],
+            LoopMomentum -> Lookup[options, "LoopMomentum", l],
+            ApplyDimReg -> Lookup[options, "ApplyDimReg", True],
+            ReturnDiagnostics -> ibpNeedsDiagnostics];
+          If[TrueQ[ibpNeedsDiagnostics],
+            backendDiagnostics = paveResult[[2]];
+            paveResult[[1]],
+            paveResult
+          ]
         ,
         IBP,
           ibpResult =
@@ -698,7 +708,7 @@ IntegrateRouteObject[obj_, options_Association] :=
       ];
     {publicResult, publicDiagnostics} = ResolveIntegrationPublicResult[
       selectedIntegrated, diagnosticsWithMetadata, Lookup[options, "ReturnMasterCombination",
-       False], ToString[key, InputForm]];
+       False], ContextFreeAntennaKeyLabel[key]];
     output = FormatFreshIntegrationReturn[publicResult, publicDiagnostics,
        Lookup[options, "ReturnDiagnostics", False], Lookup[options, "ReturnRecord",
        False], intermediateSteps, Lookup[options, "PrintIntermediateSteps",

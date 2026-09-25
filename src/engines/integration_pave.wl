@@ -32,7 +32,7 @@ MasslessTwoPartonPaXPaperConversionFactor::usage =
 
 Options[IntegrateViaPaVe] = {PaVeEvaluation -> "PaXEvaluate",
    ExpansionOrder -> 2, KinematicScale -> q2, NormalizeKinematicScale ->
-    True, LoopMomentum -> l, ApplyDimReg -> True};
+    True, LoopMomentum -> l, ApplyDimReg -> True, ReturnDiagnostics -> False};
 
 (* IntegrateViaPaVe[antenna, profile, ...]
    =======================================
@@ -40,7 +40,7 @@ Options[IntegrateViaPaVe] = {PaVeEvaluation -> "PaXEvaluate",
    with the configured PaVe backend. *)
 IntegrateViaPaVe[antenna_, profile_Association, ExpandPaVeFunction_,
    ApplyFeynCalc_, quarkMass_, OptionsPattern[]] :=
-  Module[{paVeAntenna, evaluatedAntenna, output},
+  Module[{paVeAntenna, evaluatedAntenna, output, diagnostics},
     paVeAntenna =
       If[FreeQ[antenna, _FeynAmpDenominator | _PropagatorDenominator],
         antenna
@@ -57,9 +57,22 @@ IntegrateViaPaVe[antenna_, profile_Association, ExpandPaVeFunction_,
            "ApplyDimReg"]]
         ,
         paVeAntenna
-      ];
+    ];
     output = evaluatedAntenna // Simplify;
-    output
+    If[TrueQ[OptionValue[ReturnDiagnostics]],
+      diagnostics = <|
+        "Profile" -> profile,
+        "RawLiteRedCombination" -> paVeAntenna,
+        "RawMasterCombination" -> paVeAntenna,
+        "MasterMappedExpression" -> paVeAntenna,
+        "MasterSymbols" -> DeleteDuplicates @ Cases[paVeAntenna,
+          _Global`B0 | _Global`C0 | _Global`D0 | _FeynCalc`PaVe |
+            _Global`PaVe, Infinity],
+        "IntegratedResultKind" -> "Series"
+      |>;
+      {output, diagnostics},
+      output
+    ]
   ];
 
 Options[EvaluatePaVeAntenna] = {PaVeEvaluation -> "PaXEvaluate",

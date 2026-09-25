@@ -159,9 +159,21 @@ AntennaRunRecordQ::usage =
 longBuildRouteQ[key_] :=
   MemberQ[{{A, 3, 1}, {A, 2, 2}, {A, 4, 0}, {B, 4, 0}, {C, 4, 0}}, key];
 
+ContextFreeAntennaKeyPart[part_Symbol] :=
+  SymbolName[Unevaluated[part]];
+
+ContextFreeAntennaKeyPart[part_] :=
+  ToString[Unevaluated[part], InputForm];
+
+ContextFreeAntennaKeyLabel[key_List] :=
+  "{" <> StringRiffle[ContextFreeAntennaKeyPart /@ key, ", "] <> "}";
+
+ContextFreeAntennaKeyLabel[key_] :=
+  ToString[Unevaluated[key], InputForm];
+
 buildRouteProgressLabel[key_, component_, contribution_] :=
   StringJoin[
-    ToString[key, InputForm],
+    ContextFreeAntennaKeyLabel[key],
     " with Component -> ",
     CanonicalAntennaComponentName[component]
   ];
@@ -1374,7 +1386,7 @@ MaybePrintComponentLegend[result_, returnRecord_, metadata_Association:<||>] :=
     If[TrueQ[shouldPrint] && !TrueQ[returnRecord] && component === All &&
         ListQ[result] && Length[componentOrder] > 1,
       Print[""];
-      Print["[AntCalc] ", ToString[key, InputForm],
+      Print["[AntCalc] ", ContextFreeAntennaKeyLabel[key],
         " component order: ", componentOrder]
     ];
     Null
@@ -1447,7 +1459,8 @@ ResolveA22LowerAntenna[key_, options_Association] :=
 A22PublicBuildComponents[key_, data_Association, options_Association] :=
   Module[{prototypeComponents, lowerAntenna, eps, order,
      availableNames, selectedName, selectedInternalName, loopReduction,
-     invariantComponents, seriesComponents, seriesAtOrder, c2},
+     invariantComponents, seriesComponents, seriesAtOrder, publicSeriesComponents,
+     c2},
     prototypeComponents =
       Lookup[data, "PrototypeComponents", Lookup[data, "Components", <||>]];
     lowerAntenna = ResolveA22LowerAntenna[key, options];
@@ -1482,9 +1495,11 @@ A22PublicBuildComponents[key_, data_Association, options_Association] :=
     ];
     (* Expand the bare master result before adding the evaluated A21 series.
        Simplifying their unexpanded gamma-function sum is prohibitively slow. *)
-    seriesAtOrder[expr_] :=
+    seriesAtOrder[expr_] := FunctionExpand @ Series[
       Collect[Together[Normal[Series[expr, {eps, 0, order}]]],
-        eps, Simplify];
+        eps, Simplify],
+      {eps, 0, order}
+    ];
     seriesComponents = AssociationMap[
       seriesAtOrder[invariantComponents[#]] &, availableNames];
     If[KeyExistsQ[seriesComponents, "Lead"],
@@ -1500,8 +1515,13 @@ A22PublicBuildComponents[key_, data_Association, options_Association] :=
     (* mu^2 = q^2.  The two-particle phase space contributes no integral;
        its sole factor is C(eps,2) = G_2/S_eps^2. *)
     c2 = (8 Pi^2)^2/((4 Pi)^eps Exp[-eps EulerGamma])^2;
+    publicSeriesComponents = AssociationMap[
+      Function[name, FunctionExpand @ Series[
+        seriesComponents[name]/c2, {eps, 0, order}]],
+      availableNames
+    ];
     Join[prototypeComponents,
-      AssociationMap[seriesComponents[#]/c2 &, availableNames]
+      publicSeriesComponents
     ]
   ];
 
@@ -1935,6 +1955,26 @@ AntennaObjectWithSelection[obj_AntennaObject, component_] :=
    Convert route-owned component associations into the canonical public result
    shape for each antenna family. *)
 
+A31BuildPaVeArgumentsToQ2[expr_] :=
+  expr /. {
+    HoldPattern[FeynCalc`PaVe[args___]] :>
+      (FeynCalc`PaVe[args] /. HoldPattern[s12 + s13 + s23] :> q2),
+    HoldPattern[Global`PaVe[args___]] :>
+      (Global`PaVe[args] /. HoldPattern[s12 + s13 + s23] :> q2),
+    HoldPattern[FeynCalc`B0[args___]] :>
+      (FeynCalc`B0[args] /. HoldPattern[s12 + s13 + s23] :> q2),
+    HoldPattern[FeynCalc`C0[args___]] :>
+      (FeynCalc`C0[args] /. HoldPattern[s12 + s13 + s23] :> q2),
+    HoldPattern[FeynCalc`D0[args___]] :>
+      (FeynCalc`D0[args] /. HoldPattern[s12 + s13 + s23] :> q2),
+    HoldPattern[Global`B0[args___]] :>
+      (Global`B0[args] /. HoldPattern[s12 + s13 + s23] :> q2),
+    HoldPattern[Global`C0[args___]] :>
+      (Global`C0[args] /. HoldPattern[s12 + s13 + s23] :> q2),
+    HoldPattern[Global`D0[args___]] :>
+      (Global`D0[args] /. HoldPattern[s12 + s13 + s23] :> q2)
+  };
+
 BuildAntennaResult[{A, 2, 0}, data_Association] :=
   BuildAntennaResultFromBranch[{A, 2, 0}, data, "Public"];
 
@@ -1957,7 +1997,8 @@ BuildAntennaResult[{A, 2, 1}, data_Association] :=
   BuildAntennaResultFromBranch[{A, 2, 1}, data, "Public"];
 
 BuildAntennaResult[{A, 3, 1}, data_Association] :=
-  BuildAntennaResultFromBranch[{A, 3, 1}, data, "Public"];
+  A31BuildPaVeArgumentsToQ2[
+    BuildAntennaResultFromBranch[{A, 3, 1}, data, "Public"]];
 
 BuildAntennaResult[{A, 2, 2}, data_Association] :=
   BuildAntennaResultFromBranch[{A, 2, 2}, data, "Public"];
@@ -1992,7 +2033,8 @@ BuildAntennaResult[{type_Symbol /; SymbolName[type] === "A", 2, 1},
 
 BuildAntennaResult[{type_Symbol /; SymbolName[type] === "A", 3, 1},
    data_Association] :=
-  BuildAntennaResultFromBranch[{type, 3, 1}, data, "Public"];
+  A31BuildPaVeArgumentsToQ2[
+    BuildAntennaResultFromBranch[{type, 3, 1}, data, "Public"]];
 
 BuildAntennaResult[{type_Symbol /; SymbolName[type] === "A", 2, 2},
    data_Association] :=

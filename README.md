@@ -1,6 +1,6 @@
 # AntCalc
 
-> **New in 0.3.2 β1 - Thesis Version:** A22 builds return real, scale-normalized
+> **New in 0.3.2 β2 - Thesis Version:** A22 builds return real, scale-normalized
 > epsilon series, and public A22/A31 master combinations include lower-antenna
 > coupling counterterms. LiteRed kinematics remain isolated between routes;
 > `D30` remains an experimental research track.
@@ -18,7 +18,7 @@ massive `A30` is a beta extension and `D30` remains experimental.
 
 ## Status
 
-Current development release: **AntCalc 0.3.2 β1 - Thesis Version**.
+Current development release: **AntCalc 0.3.2 β2 - Thesis Version**.
 
 The current release target is the massless antenna workflow for the NNLO SMQCD
 R-ratio, with a beta massive-`A30` extension. Before using a route in a
