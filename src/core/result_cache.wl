@@ -261,8 +261,10 @@ StoredResultRouteSemanticVersion["BuildAntennaObject"] := 4;
 (* Version 5 invalidated the old Breve one-loop-self master convention.
    Version 6 invalidated public master-combination returns before their
    coupling counterterms were included. Version 7 records normalized,
-   family-consistent named master combinations for every A22/A31 component. *)
-StoredResultRouteSemanticVersion["IntegrateAntenna"] := 7;
+   family-consistent named master combinations for every A22/A31 component.
+   Version 8 enforces q2 = 1 after master naming and exposes the family factor
+   separately from the returned combination. *)
+StoredResultRouteSemanticVersion["IntegrateAntenna"] := 8;
 StoredResultRouteSemanticVersion["BuildRRatio"] := 2;
 StoredResultRouteSemanticVersion["TObject"] := 4;
 StoredResultRouteSemanticVersion[_] := 1;

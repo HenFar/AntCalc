@@ -81,15 +81,17 @@ If[MatchQ[result, {_, _Association}],
     Print["NO_FEYNCALC_SCALARS = ",
       FreeQ[result[[1]], FeynCalc`B0 | FeynCalc`C0]];
     Print["FAMILY_PREFACTOR = ",
-      InputForm[Lookup[result[[2]], "MasterCombinationPrefactor", Missing[]]]];
+      InputForm[Lookup[result[[2]], "FamilyPrefactor",
+        Lookup[result[[2]], "MasterCombinationPrefactor", Missing[]]]]];
     Print["MASTER_CONVENTION = ", InputForm[Lookup[result[[2]],
       "MasterCombinationConvention", Missing[]]]];
     masterRules = If[familyName === "A22",
       A22PublicMasterValueRules[], A31PublicMasterValueRules[]];
     epsilonRules = {eps -> Epsilon, FeynCalc`Epsilon -> Epsilon,
       q2 -> 1, s12 -> 1};
-    prefactor = Lookup[result[[2]], "MasterCombinationPrefactor",
-      Missing["NoMasterCombinationPrefactor"]];
+    prefactor = Lookup[result[[2]], "FamilyPrefactor",
+      Lookup[result[[2]], "MasterCombinationPrefactor",
+        Missing["NoFamilyPrefactor"]]];
     Print["FAMILY_PREFACTOR_AVAILABLE = ", !MissingQ[prefactor]];
     namedBare = Lookup[result[[2]], "NamedBareMasterCombination",
       Missing["NoNamedBareMasterCombination"]];

@@ -559,7 +559,7 @@ PublicNamedMasterCombination[expr_, "A31", _] :=
   ];
 
 NormalizedNamedBareMasterCombination[bare_, key_, component_] :=
-  Module[{family, normalizedBare},
+  Module[{family, normalizedBare, namedBare},
     family = MasterCombinationFamilyTag[key];
     normalizedBare = Switch[family,
       "A22",
@@ -579,7 +579,12 @@ NormalizedNamedBareMasterCombination[bare_, key_, component_] :=
         ],
       _, Return[Missing["NoMasterCombinationFamily"]]
     ];
-    PublicNamedMasterCombination[normalizedBare, family, component]
+    namedBare = PublicNamedMasterCombination[normalizedBare, family, component];
+    If[MissingQ[namedBare], Return[namedBare]];
+    (* Master renaming can introduce scale factors through topology-specific
+       coefficient rules.  Set the public master point only after that mapping
+       so every component of a family is returned at q2 = 1. *)
+    MasterCombinationNormalForm[namedBare /. {q2 -> 1, s12 -> 1}]
   ];
 
 A22PublicMasterValueRules[] :=
@@ -645,6 +650,9 @@ CouplingCountertermMasterData[key_, component_] :=
             1/(3 epsilon)], "LowerMasterCombination" -> lower|>,
       {a_Symbol /; SymbolName[a] === "A", 3, 1},
         (* The X30 lower master j[NLOBasis123,1,1,1,0,0] maps to R3. *)
+        (* Keep the A31 combination in raw-coefficient convention: the family
+           prefactor is exposed separately, so remove it from this lower
+           counterterm before adding it to the returned combination. *)
         lower = (4 - 12 epsilon + 10 epsilon^2 - 4 epsilon^3) *
           Global`R3/epsilon^2 *
           (IBPNormalization[<|"BasisFamily" -> "X30"|>] /.
@@ -673,12 +681,10 @@ RenormalizedMasterCombination[bare_, diagnostics_Association] :=
       0,
       counterterm["Coefficient"] * counterterm["LowerMasterCombination"]
     ];
-    If[family === "A31",
-      innerCombination = namedBare + normalizedCounterterm;
-      Collect[innerCombination, PublicNamedMasterVariables[family], Simplify],
-      Collect[namedBare + normalizedCounterterm,
-        PublicNamedMasterVariables[family], Simplify]
-    ]
+    innerCombination = Collect[namedBare + normalizedCounterterm,
+      PublicNamedMasterVariables[family], Simplify];
+    (* Keep counterterms and bare pieces at the same family master point. *)
+    MasterCombinationNormalForm[innerCombination /. {q2 -> 1, s12 -> 1}]
   ];
 
 MasterCombinationView[diagnostics_Association] :=
@@ -974,6 +980,8 @@ ResolveIntegrationPublicResult[result_, diagnostics_,
           "BareMasterCombination" -> bareCombination,
           "NamedBareMasterCombination" -> namedBareCombination,
           "MasterCombination" -> masterCombination,
+          "FamilyPrefactor" -> MasterCombinationFamilyPrefactor[key],
+          (* Retain the beta.2 key as a compatibility alias. *)
           "MasterCombinationPrefactor" -> MasterCombinationFamilyPrefactor[key],
           "MasterCombinationConvention" ->
             MasterCombinationConventionDescription[family],
