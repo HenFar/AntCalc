@@ -646,7 +646,11 @@ IBPProfile["X40"] :=
      -> 0, "GenerateMissingBases" -> False|>;
 
 IBPProfile["A31"] :=
-  <|"BasisFamily" -> "A31", "NumFinalParticles" -> 3, "NumLoops" -> 1,
+  ( (* A22's loaded LiteRed basis installs sp[k1,k1] = 0 globally.  Clear
+       that cut-propagator rule before this profile evaluates its phase-space
+       product, then LoadIBPBases reasserts the family setup as usual. *)
+    ConfigureIBPFamilyKinematics[<|"BasisFamily" -> "A31"|>];
+    <|"BasisFamily" -> "A31", "NumFinalParticles" -> 3, "NumLoops" -> 1,
      "BasisRoot" -> DefaultIBPBasisRoot["A31"], "BasisNames" ->
       Join[
         Table[<|"Basis" -> Symbol["A31Basis" <> ToString[i]],
@@ -660,7 +664,8 @@ IBPProfile["A31"] :=
      {p[1] -> k1, p[2] -> k2, p[3] -> -k1 - k2 + q},
      "PhaseSpace" -> LiteRed`sp[k1, k1] LiteRed`sp[k2, k2] LiteRed`sp[
         -k1 - k2 + q, -k1 - k2 + q], "ExpansionOrder" -> 0,
-     "GenerateMissingBases" -> False|>;
+     "GenerateMissingBases" -> False|>
+  );
 
 IBPProfile["X31"] :=
   IBPProfile["A31"];
@@ -868,6 +873,7 @@ ConfigureIBPFamilyKinematics[profile_Association] :=
       LiteRed`sp[q, k1] = q2 / 2
     ,
     "A31",
+      Quiet[Unset[LiteRed`sp[k1, k1]]];
       Quiet[Unset[LiteRed`sp[k1, q]]];
       Quiet[Unset[LiteRed`sp[q, k1]]]
     ,

@@ -56,7 +56,7 @@ AntennaFamilyRegressionExpectedPrefactor["A31"] :=
 AntennaFamilyRegressionRunCase[case_Association] :=
   Module[{family, label, key, component, elapsed, result, expression,
       diagnostics, prefactor, expectedPrefactor, masterRules, epsilonRules,
-      tTerms, mappedTTerms, residual, structural, tex},
+      tTerms, mappedTTerms, residual, structural, tex, expressionAvailable},
     family = case["Family"];
     label = case["Label"];
     key = case["Key"];
@@ -80,6 +80,7 @@ AntennaFamilyRegressionRunCase[case_Association] :=
     ];
     expression = result[[1]];
     diagnostics = result[[2]];
+    expressionAvailable = !MissingQ[expression] && expression =!= $Failed;
     prefactor = Lookup[diagnostics, "FamilyPrefactor",
       Lookup[diagnostics, "MasterCombinationPrefactor", Missing["NoFamilyPrefactor"]]];
     expectedPrefactor = AntennaFamilyRegressionExpectedPrefactor[family];
@@ -90,18 +91,23 @@ AntennaFamilyRegressionRunCase[case_Association] :=
     tTerms = Lookup[diagnostics, "TTerms", Missing["NoTTerms"]];
     mappedTTerms = If[MissingQ[tTerms], tTerms, tTerms /. epsilonRules];
     structural = <|
+      "MasterCombinationAvailable" -> expressionAvailable,
       "CorrectComponent" ->
-        (CanonicalAntennaComponentName[
+        (expressionAvailable && CanonicalAntennaComponentName[
           Lookup[diagnostics, "BuildComponent", Missing["NoComponent"]]] === label),
-      "ScaleFree" -> (AntennaFamilyRegressionScaleSymbols[expression] === {}),
+      "ScaleFree" -> (expressionAvailable &&
+        AntennaFamilyRegressionScaleSymbols[expression] === {}),
       "NoLiteRedMasters" ->
-        (AntennaFamilyRegressionNamedJCalls[expression] === {}),
+        (expressionAvailable &&
+          AntennaFamilyRegressionNamedJCalls[expression] === {}),
       "NoEmbeddedFamilyPrefactorPieces" ->
-        TrueQ[AntennaFamilyRegressionNoA31PrefactorPiecesQ[expression, family]],
+        (expressionAvailable &&
+          TrueQ[AntennaFamilyRegressionNoA31PrefactorPiecesQ[expression, family]]),
       "FamilyPrefactorMatches" ->
-        TrueQ[FullSimplify[prefactor - expectedPrefactor] === 0]
+        (expressionAvailable &&
+          TrueQ[FullSimplify[prefactor - expectedPrefactor] === 0])
     |>;
-    residual = If[MissingQ[tTerms] || MissingQ[prefactor],
+    residual = If[!expressionAvailable || MissingQ[tTerms] || MissingQ[prefactor],
       Missing["NoTTermsOrFamilyPrefactor"],
       TimeConstrained[
         FunctionExpand @ FullSimplify[Together[
