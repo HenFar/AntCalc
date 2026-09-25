@@ -26,7 +26,7 @@ MasterIntegralRuntimeValuesAssociation[] :=
     "GeneratedFrom" -> "masterIntegrals",
     "A22TwoLoopTree" -> <|
       "A22LO" -> A22LOBackendPackageExact[],
-      "A3" -> A3BackendPackageExact[],
+      "A3" -> A3AppendixToTwoLoopTreePackageLift[],
       "A4" -> A4BackendPackageExact[],
       "A6" -> A6BackendPackageExact[]
     |>,

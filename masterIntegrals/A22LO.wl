@@ -56,6 +56,12 @@ A22LOTwoLoopTreeVirtualConventionFactor[] :=
   1 - 2 Pi^2 eps^2 - (28 Zeta[3] eps^3) / 3 +
     (2 (Pi^4 + 42 Zeta[3]) eps^4) / 3;
 
+(* The A22 tree/two-loop master lift uses the same virtual factor as the
+   Appendix-A.1 A4 lift. Keep it distinct from the one-loop-self factor above. *)
+A22LOTwoLoopTreeMasterVirtualFactor[] :=
+  1 - Pi^2 eps^2 / 6 + (26 Zeta[3] eps^3) / 3 +
+    (Pi^4 / 120 - 28 Zeta[3]) eps^4;
+
 A22LOPaperConventionRules[expr_] :=
   expr /. {
     HoldPattern[Power[-q2, -2 eps]] :> q2^(-2 eps) Cos[2 Pi eps]
@@ -66,13 +72,10 @@ A22LOPaperConventionFactor[] :=
     ((4 Pi)^(2 eps) Cos[2 Pi eps]);
 
 A22LOBackendPackageExact[] :=
-  q2^(-2 eps) * (
-    (-3*Pi^4)/(8*eps^2) -
-    Pi^4/eps +
-    (Pi^4*(-53 + 14*Pi^2))/32 -
-    (Pi^4*(-2239 + 6*Pi^2 + 3264*Zeta[3])/288) * eps +
-    (Pi^4*(1338445 - 141690*Pi^2 + 3468*Pi^4 - 888480*Zeta[3])/17280) * eps^2
-  );
+  -Pi^4 * A22LOTwoLoopTreeMasterVirtualFactor[] *
+    A22LOTwoLoopTreeVirtualConventionFactor[] * q2^(-2 eps) *
+    Gamma[1 + eps]^2 * Gamma[1 - eps]^6 /
+      (eps^2 Gamma[2 - 2 eps]^2);
 
 A22LOBackendPackageSeries[order_:2] :=
   MIExpand[A22LOBackendPackageExact[], order];
@@ -87,14 +90,14 @@ A22LOReport[order_:2] :=
       "DerivedHere" -> {
         "A22LOSGamma[]",
         "A22LOPaperClosedForm[]",
-        "A22LOBackendCoreCheck[]"
+        "A22LOBackendCoreCheck[]",
+        "A22LOBackendPackageExact[]"
       },
       "ImportedFromPaper" -> {
         "A22LOLoopDefinition"
       },
       "NotYetEncoded" -> {
-        "A direct local derivation of the disconnected two-bubble integral",
-        "A clean local bridge from the appendix master to the compact package-convention series"
+        "A direct local derivation of the disconnected two-bubble integral"
       }
     |>,
     "SGamma" -> A22LOSGamma[],

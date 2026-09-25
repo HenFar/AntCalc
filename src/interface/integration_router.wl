@@ -177,7 +177,7 @@ CollectIntegrationIntermediateSteps[antenna_, rawIntegrated_, tTerms_,
 
 (*************************************************)
 
-LegacyIntegrateAntennaBackendDirect[antenna_, integrationMethod:(PaVe | IBP),
+LegacyIntegrateAntennaBackendDirect[antenna_, integrationMethod:(Global`PaVe | IBP),
    OptionsPattern[]] :=
   IntegrateBackendDirectRoute[
     antenna,
@@ -1337,7 +1337,7 @@ A22CombineIntegratedComponentDiagnostics[treeComponentDiags_Association,
         "OneLoopSelf" -> breveDiag|>|>
   ];
 
-LegacyIntegrateAntennaBackendDirectRoute[antenna_, integrationMethod:(PaVe | IBP),
+LegacyIntegrateAntennaBackendDirectRoute[antenna_, integrationMethod:(Global`PaVe | IBP),
    OptionsPattern[]] :=
   IntegrateBackendDirectRoute[
     antenna,
@@ -1927,7 +1927,7 @@ LegacyIntegrateAntennaObjectImplementation[obj_AntennaObject, OptionsPattern[]] 
       TrueQ[OptionValue["ReturnMasterCombination"]];
     rawIntegrated =
       Switch[backend,
-        PaVe,
+        Global`PaVe,
           IntegrateViaPaVe[antenna, profile, True, OptionValue[
             "ApplyFeynCalcMS"], OptionValue[
             "quarkMass"], PaVeEvaluation -> OptionValue["PaVeEvaluation"],

@@ -45,11 +45,11 @@ TwoLoopExcludedParticles::usage =
 TwoLoopDropSumOver::usage =
   "TwoLoopDropSumOver[numFinalParticles, antennaType] returns whether SumOver cleanup should be applied after two-loop generation.";
 
-CleanTwoLoopAmplitude::usage =
-  "CleanTwoLoopAmplitude[amp, numFinalParticles] applies the standard post-processing rules to raw two-loop amplitudes.";
-
 TwoLoopSMQCDGenerationMultiplicity::usage =
   "TwoLoopSMQCDGenerationMultiplicity[] returns the flavour multiplicity assigned to each of the two SMQCD quark classes in the massless A22 source route.";
+
+CleanTwoLoopAmplitude::usage =
+  "CleanTwoLoopAmplitude[amp, numFinalParticles] applies the standard post-processing rules to raw two-loop amplitudes.";
 
 MAmpTwoLoops::usage =
   "MAmpTwoLoops[numFinalParticles, ...] is a compatibility wrapper around MAmpTwoLoop.";
@@ -193,11 +193,8 @@ TwoLoopDropSumOver[numFinalParticles_, antennaType_] :=
   Lookup[AntennaProfile[{antennaType, numFinalParticles, 2}], "DropSumOver",
     False];
 
-(* SMQCD has two quark classes: F[3] (three up-type generations) and F[4]
-   (three down-type generations).  The massless A22 vacuum-polarization
-   contribution therefore contains one generation sum for each class.  Nf
-   denotes their total, Nf = NfUp + NfDown, so each class contributes Nf/2.
-   Mapping both sums to Nf doubles the two-loop Nf coefficient. *)
+(* SMQCD has two quark classes, F[3] and F[4].  Each class carries half of
+   the total Nf sum, so the pair contributes Nf overall. *)
 TwoLoopSMQCDGenerationMultiplicity[] := Nf / 2;
 
 CleanTwoLoopAmplitude[amp_, numFinalParticles_] :=

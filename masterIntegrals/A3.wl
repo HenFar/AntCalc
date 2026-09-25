@@ -93,6 +93,22 @@ A3BackendPackageExact[] :=
     (Pi^4*(-480097 + 114348*Pi^2 - 2934*Pi^4 + 332928*Zeta[3])/15552) * eps^3
   );
 
+(* Literal Appendix-A.1 A3 lifted into the A22 tree/two-loop package
+   convention. The R8a bridge above remains a separate, route-specific value. *)
+A3TwoLoopTreeMasterVirtualFactor[] :=
+  1 - Pi^2 eps^2 / 6 + (26 Zeta[3] eps^3) / 3 +
+    (Pi^4 / 120 - 28 Zeta[3]) eps^4;
+
+A3TwoLoopTreeVirtualConventionFactor[] :=
+  1 - 2 Pi^2 eps^2 - (28 Zeta[3] eps^3) / 3 +
+    (2 (Pi^4 + 42 Zeta[3]) eps^4) / 3;
+
+A3AppendixToTwoLoopTreePackageLift[] :=
+  Pi^4 * A3TwoLoopTreeMasterVirtualFactor[] *
+    A3TwoLoopTreeVirtualConventionFactor[] * q2^(1 - 2 eps) *
+    Gamma[1 + 2 eps] * Gamma[1 - eps]^5 /
+      (2 (1 - 2 eps) eps Gamma[3 - 3 eps]);
+
 A3BackendPackageSeries[order_:3] :=
   MIFullExpand[A3BackendPackageExact[], order];
 
@@ -121,7 +137,8 @@ A3Report[order_:3] :=
         "A3SGamma[]",
         "A3PaperClosedForm[]",
         "A3BackendCoreCheck[]",
-        "A3PackageCheck[order]"
+        "A3PackageCheck[order]",
+        "A3AppendixToTwoLoopTreePackageLift[]"
       },
       "ImportedFromPaper" -> {
         "A3LoopDefinition"
@@ -147,6 +164,8 @@ A3Report[order_:3] :=
     "BackendReducedPackageSeries" -> A3BackendReducedPackageSeries[order],
     "BackendPackageExact" -> A3BackendPackageExact[],
     "BackendPackageSeries" -> A3BackendPackageSeries[order],
+    "A22TwoLoopTreePackageLift" ->
+      MIFullExpand[A3AppendixToTwoLoopTreePackageLift[], order],
     "ExpectedPackageSeries" -> A3ExpectedPackageSeries[order],
     "PackageCheck" -> A3PackageCheck[order]
   |>;

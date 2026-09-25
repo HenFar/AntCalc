@@ -30,7 +30,24 @@ Global`$FeynCalcStartupMessages = False;
 $LoadAddOns = {"FeynArts", "FeynHelpers", "FeynCalcLegacy"};
 Global`$LoadAddOns = $LoadAddOns;
 
-<<FeynCalc`
+(* AntCalc retains these four Global` names for its backend selector, public
+   scalar masters, and legacy scalar-integral forms.  Reserve them before
+   FeynCalc adds its same-named symbols to $ContextPath, then keep only those
+   known import-time collisions quiet.  Source references are context-qualified. *)
+Quiet[
+  Scan[Symbol, {"Global`PaVe", "Global`B0", "Global`C0", "Global`D0"}];
+  Get["FeynCalc`"],
+  {
+    Global`PaVe::shdw,
+    Global`B0::shdw,
+    Global`C0::shdw,
+    Global`D0::shdw,
+    FeynCalc`PaVe::shdw,
+    FeynCalc`B0::shdw,
+    FeynCalc`C0::shdw,
+    FeynCalc`D0::shdw
+  }
+]
 
 FeynArts`$FAVerbose = 0;
 

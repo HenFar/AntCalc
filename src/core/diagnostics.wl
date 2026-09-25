@@ -323,7 +323,8 @@ PaperDiagnosticsFor[{C, 4, 0}, result_] :=
 
 PaperDiagnosticsFor[{A, 2, 1}, result_] :=
   Module[{target, mode},
-    If[!FreeQ[result, B0 | C0],
+    If[!FreeQ[result,
+        Global`B0 | Global`C0 | FeynCalc`B0[___] | FeynCalc`C0[___]],
       target = A21PaperPaVe /. D -> 4 - 2 Epsilon;
       mode = "PaVe"
       ,

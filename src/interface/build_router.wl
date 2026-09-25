@@ -501,7 +501,7 @@ ResolveIntegrableLoopBuildReductionBackend[key_, requestedBackend_] :=
     integrationBackend =
       Lookup[AntennaIntegrationProfile[key], "DefaultBackend", None];
     Switch[integrationBackend,
-      PaVe,
+      Global`PaVe,
         "PaVe"
       ,
       IBP,

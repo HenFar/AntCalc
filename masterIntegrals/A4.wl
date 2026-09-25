@@ -7,10 +7,9 @@ Get[FileNameJoin[{DirectoryName[$InputFileName], "common.wl"}]];
    - the current backend core, which matches the appendix-sign choice;
    - the backend package value, equal to the direct Appendix lift.
 
-   Older runtime data divided that lift by 2 to compensate an upstream A22
-   flavour-counting error: the separate SMQCD F[3] and F[4] generation sums
-   were each replaced by total Nf.  The A22 Nf topology is a unit-Jacobian
-   image of A4 and supplies no extra factor. *)
+   The A22 source separately assigns Nf/2 to each of SMQCD's two quark
+   generation classes.  That source-side flavour sum does not change the
+   scalar master-integral value. *)
 
 A4Source[] :=
   <|
@@ -66,7 +65,7 @@ A4BackendPackageLiftRatio[] :=
   1;
 
 A4BackendConventionRemark =
-  "The runtime value is the direct Appendix-A.1-to-tree/two-loop package lift. The former extra factor 1/2 compensated double counting in the A22 source, where each of SMQCD's up- and down-type generation sums was mapped to total Nf.";
+  "The A22 package value is the direct Appendix-A.1-to-tree/two-loop lift; source flavour multiplicities are applied separately.";
 
 A4Report[order_:2] :=
   <|

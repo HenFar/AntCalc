@@ -1863,10 +1863,9 @@ A22TwoLoopTreeExactTopologyLabels[] :=
     A22A6Basis8LikeMI
   };
 
-(* The labels preserve the originating LiteRed family for diagnostics.  This
-   table is the separate physical identification layer: every representative
-   is an established unit-Jacobian shift image of one of the four virtual
-   masters in Appendix A.1 of hep-ph/0403057. *)
+(* The labels preserve the originating LiteRed family for diagnostics.  The
+   A4 representatives are related to the single Appendix-A.1 master by the
+   recorded unit-Jacobian loop shifts. *)
 A22TwoLoopTreeCanonicalMasterForExactTopology[label_] :=
   Switch[label,
     A22A22LOQQMI, A22LOMI,
@@ -1907,7 +1906,7 @@ A22TwoLoopTreeCanonicalIdentificationReport[] :=
       "LoopShift" -> "K = l1, L = -l2 (with p1 = k1)",
       "Jacobian" -> 1,
       "NormalizationConclusion" ->
-        "The scalar Nf topology is exactly the four-propagator Appendix-A.1 A4 integral. Its topology map supplies no factor 1/2; the former half-factor compensated an upstream SMQCD flavour double count."|>,
+        "The scalar Nf topology maps to the direct Appendix-A.1 A4 value with unit Jacobian; each SMQCD generation sum remains Nf/2."|>,
     A22A4Basis46LikeMI -> <|"Master" -> A4MI, "Status" -> "Established",
       "LoopShift" -> "K = l1, L = k1 - l2 (with p1 = q - k1)"|>,
     A22A4Basis7LikeMI -> <|"Master" -> A4MI, "Status" -> "Established",
@@ -2242,20 +2241,13 @@ A22TwoLoopTreeMasterValueA4NfLike[] :=
 A22TwoLoopTreeMasterValueA4Basis46Like[] :=
   A22TwoLoopTreeMasterValueA4[];
 
-(* The canonical topology map records that these representatives are related
-   to A4 by unit-Jacobian loop shifts.  Their relation to the established
-   stitched A22 integration normalisation has not yet been closed at the
-   master-value level, however.  Preserve the validated route-local values
-   here; the canonical mapping remains available for the loop-only audit and
-   must not silently alter the public integrated antenna. *)
+(* These are momentum-shift representatives of the same scalar A4 integral;
+   their shifts have unit Jacobian and add no normalization factor. *)
 A22TwoLoopTreeMasterValueA4Basis7Like[] :=
-  (Pi^4*(-18 + eps*(-90 + eps*(-342 + 33*Pi^2) +
-        2*eps^3*(-390 + 55*Pi^2 + 52*Zeta[3]))))/(72*eps^2);
+  A22TwoLoopTreeMasterValueA4[];
 
 A22TwoLoopTreeMasterValueA4Basis8Like[] :=
-  (Pi^4*(-360 + eps*(-1800 + eps*(-6840 + 660*Pi^2 +
-        eps^2*(83760 - 13640*Pi^2 + 79*Pi^4 - 16640*Zeta[3]) -
-        60*eps*(-390 + 55*Pi^2 + 52*Zeta[3])))))/(1440*eps^2);
+  A22TwoLoopTreeMasterValueA4[];
 
 A22TwoLoopTreeMasterValueA6Basis8Like[] :=
   A22TwoLoopTreeMasterValueA6[];

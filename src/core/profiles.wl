@@ -641,7 +641,7 @@ BornInterference[] :=
      structure. *)
 
 AntennaIntegrationProfile[{A, 2, 1}] :=
-  <|"DefaultBackend" -> PaVe, "PaVeFamily" -> "MasslessTwoPartonVertex",
+  <|"DefaultBackend" -> Global`PaVe, "PaVeFamily" -> "MasslessTwoPartonVertex",
      "PaVeEvaluation" -> "PaXEvaluate", "PaXConvention" -> "PaperRealMasslessTwoParton", "KinematicScale" ->
      q2, "ExpansionOrder" -> 2, "ConventionProfile" -> IntegrationAntennaConventionProfile[
     {A, 2, 1}]|>;
@@ -678,7 +678,7 @@ AntennaIntegrationProfile[{A, 2, 2}] :=
 
 AntennaIntegrationProfile[{type_Symbol /; SymbolName[type] === "A", 2,
    1}] :=
-  <|"DefaultBackend" -> PaVe, "PaVeFamily" -> "MasslessTwoPartonVertex",
+  <|"DefaultBackend" -> Global`PaVe, "PaVeFamily" -> "MasslessTwoPartonVertex",
      "PaVeEvaluation" -> "PaXEvaluate", "PaXConvention" -> "PaperRealMasslessTwoParton", "KinematicScale" ->
      q2, "ExpansionOrder" -> 2, "ConventionProfile" -> IntegrationAntennaConventionProfile[
     {A, 2, 1}]|>;

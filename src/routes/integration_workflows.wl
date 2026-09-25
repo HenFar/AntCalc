@@ -133,7 +133,7 @@ IntegrateBackendDirectRoute[antenna_, integrationMethod_, options_Association
       |>;
     output =
       Switch[integrationMethod,
-        PaVe,
+        Global`PaVe,
           IntegrateViaPaVe[antenna, profile, True, applyFeynCalcOpt,
             quarkMassOpt, PaVeEvaluation -> Lookup[profile, "PaVeEvaluation", "PaXEvaluate"
             ], ExpansionOrder -> profile["ExpansionOrder"], KinematicScale -> Lookup[
@@ -546,7 +546,7 @@ IntegrateRouteObject[obj_, options_Association] :=
     ];
     rawIntegrated =
       Switch[backend,
-        PaVe,
+        Global`PaVe,
           paveResult = IntegrateViaPaVe[antenna, profile, True,
             Lookup[options, "ApplyFeynCalcMS", False],
             Lookup[options, "quarkMass", 0],

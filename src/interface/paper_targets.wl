@@ -19,7 +19,8 @@
 
 (*************************************************)
 
-A21PaperPaVe = 1/2 ((D - 7) B0[q2, 0, 0] - 2 q2 C0[0, 0, q2, 0, 0, 0]
+A21PaperPaVe = 1/2 ((D - 7) FeynCalc`B0[q2, 0, 0] -
+  2 q2 FeynCalc`C0[0, 0, q2, 0, 0, 0]
   );
 
 A21IntegratedPaper =

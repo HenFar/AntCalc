@@ -44,7 +44,9 @@ A6TwoLoopTreeVirtualConventionFactor[] :=
     (2 (Pi^4 + 42 Zeta[3]) eps^4) / 3;
 
 A6BackendPackageExact[] :=
-  -Pi^4 A6VirtualConventionFactor[] *
+  (* The Appendix bracket already carries the negative leading pole; the
+     package lift keeps that sign instead of applying an extra minus. *)
+  Pi^4 A6VirtualConventionFactor[] *
     A6TwoLoopTreeVirtualConventionFactor[] q2^(-2 - 2 eps) *
     A6PaperBracket[];
 
@@ -60,8 +62,7 @@ A6Report[order_:0] :=
         "A6PaperBracket[]"
       },
       "NotYetEncoded" -> {
-        "A direct local derivation of the crossed two-loop vertex integral",
-        "A clean local bridge from the appendix timelike series to the backend package value"
+        "A direct local derivation of the crossed two-loop vertex integral"
       }
     |>,
     "SGamma" -> A6SGamma[],

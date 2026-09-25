@@ -1,9 +1,9 @@
 # AntCalc
 
-> **New in 0.3.2 β2 - Thesis Version:** A22 builds return real, scale-normalized
-> epsilon series, and public A22/A31 master combinations include lower-antenna
-> coupling counterterms. LiteRed kinematics remain isolated between routes;
-> `D30` remains an experimental research track.
+> **New in 0.3.2 β3 - Thesis Version:** A22/A31 master-integral normalization
+> and integration routing have been updated during A22 master-combination
+> validation. LiteRed kinematics remain isolated between routes; `D30` remains
+> an experimental research track.
 
 AntCalc is a Wolfram Language package that builds and integrates QCD antenna
 functions. The main workflow has two steps:
@@ -18,7 +18,7 @@ massive `A30` is a beta extension and `D30` remains experimental.
 
 ## Status
 
-Current development release: **AntCalc 0.3.2 β2 - Thesis Version**.
+Current development release: **AntCalc 0.3.2 β3 - Thesis Version**.
 
 The current release target is the massless antenna workflow for the NNLO SMQCD
 R-ratio, with a beta massive-`A30` extension. Before using a route in a
