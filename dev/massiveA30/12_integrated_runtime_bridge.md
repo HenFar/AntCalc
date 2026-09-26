@@ -49,8 +49,8 @@ target-solved dotted master from being relabelled as a first-principles basis
 conversion.
 
 The gate now passes exactly: both determinations give
-`C_cut = -1/4`.  The active runtime rules are consequently
-`j11100 = -4 I1` and `j21100 = -4 (I2 - a I1)/b`, where `a` and `b` are the
+`C_cut = +1/4`.  The active runtime rules are consequently
+`j11100 = 4 I1` and `j21100 = 4 (I2 - a I1)/b`, where `a` and `b` are the
 explicit numerator-reduction coefficients.  No dotted master is solved from
 the final integrated antenna.
 

@@ -337,13 +337,13 @@ IntegrateRouteObject[obj_, options_Association] :=
           Lookup[options, "ExpansionOrder", 2]
         ]
       ];
-(* Massive A30 is currently a special route: unless the caller explicitly
-
-   forces the IBP master route, the package uses the dedicated integrated
-
-   bridge module rather than the generic backend path. *)
+(* Massive A30 runs through the generic IBP backend: the package builds the
+   antenna, reduces it to the MX30 LiteRed masters, converts those to the
+   literature masters and substitutes their values.  The encoded literature
+   closed form is only returned when a developer explicitly sets
+   $MassiveA30UseLiteratureClosedForm = True, e.g. for cross-checks. *)
     If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] && quarkMassOpt
-       =!= 0 && !TrueQ[$MassiveA30ForceIBPMasterRoute],
+       =!= 0 && TrueQ[$MassiveA30UseLiteratureClosedForm],
       Module[{routeData, antennaLocal, openMasterBackendDiagnostics},
 
         antennaLocal = Lookup[data, "Antenna", $Failed];
