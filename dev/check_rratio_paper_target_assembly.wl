@@ -1,11 +1,10 @@
-(* Symbolic audit of the NNLO SMQCD R-ratio convention ledger.
-
-   This script performs no antenna build or IBP reduction.  It checks that the
-   encoded direct component targets and the observable-only convention map.
-   The Breve A22 shift is deliberately zero: arXiv:2211.08446v2 Eq. (B.7)
-   corrects the integrated source itself to contain -7 Zeta[3]/(6 epsilon). *)
+(* Symbolic audit of the NNLO SMQCD R-ratio assembly using regression targets.
+   This is a development comparison; the target expressions are not loaded by
+   the construction or integration pipeline. *)
 
 Get["AntennaPipeline.wl"];
+Get[FileNameJoin[{DirectoryName[DirectoryName[$InputFileName]], "dev",
+  "a22_literature_reference.wl"}]];
 
 ClearAll[paperFourPartonIngredients, reportClosure, task10bIngredients,
   task10bAssembly, task10bA22, task10bA31, task10bLiteralA31Nf,
@@ -62,7 +61,7 @@ reportClosure[label_String, expression_] :=
 
 Module[{eps},
   eps = FeynCalc`Epsilon;
-  task10bA22 = A22TTermTargets[0];
+  task10bA22 = A22LiteratureReferenceTargets[0];
   task10bA31 = A31IntegratedAntennaTargets[0];
   task10bLiteralA31Nf = task10bA31[[3]] + 47/(6 eps);
   task10bIngredients = Join[
@@ -88,9 +87,10 @@ Module[{eps},
   Print[SafeIntegratedResidualSimplify[
     task10bLiteralA31Nf - task10bA31[[3]]
   ]];
-  Print["Direct A22 breve term minus corrected observable breve term:"];
+  Print["Direct A22 breve term minus observable assembly breve term:"];
   Print[SafeIntegratedResidualSimplify[
-    -task10bLedger["A22OneLoopSelfPoleShift"]
+    ApplySMQCDRRatioObservableConvention[task10bIngredients]["Ingredients"]
+      ["intBreveA22"] - task10bIngredients["intBreveA22"]
   ]];
   reportClosure["Closure-normalized paper-target assembly",
     task10bAssembly["FinalExpression"]];

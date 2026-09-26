@@ -319,31 +319,22 @@ BuildRRatioSMQCDReferenceFiniteExpression[maxOrder_:NNLO] :=
     ]
   ];
 
-(* The public component conventions are intentionally preserved for direct
-   literature comparison.  The corrected Breve A22 integration itself now
-   contains the -7 Zeta[3]/(6 eps) single pole from arXiv:2211.08446 Eq.
-   (B.7), so the observable adapter must not apply the former compensating
-   self-interference shift. *)
+(* The A22 Breve result enters the observable assembly directly.  The other
+   factors here are the colour-component weights used for the four-parton
+   contributions. *)
 SMQCDRRatioObservableConventionLedger[] :=
   <|
-    "Source" -> "hep-ph/0403057",
-    "CorrectionSource" -> "arXiv:2211.08446v2",
-    "ConventionStatus" -> "CorrectedObservableAdapter",
-    "A22PublicContract" -> "DirectPaperTqq6Components",
-    "A22OneLoopSelfPoleShift" -> 0,
+    "A22PublicContract" -> "DirectAntennaComponents",
     "A40LeadingMultiplier" -> 1,
     "A40SubleadingMultiplier" -> 1/2,
     "B40Multiplier" -> 1,
-    "C40Multiplier" -> 2,
-    "Note" -> "The adapter is applied only to the observable assembly. The public A40 subleading entry is tilde A4^0 itself; its minus sign is supplied by the colour coefficient in the qqbargg assembly. The Breve A22 self-interference shift is zero because the corrected integrated result already contains the -7 Zeta[3]/(6 Epsilon) pole of arXiv:2211.08446v2 Eq. (B.7)."
+    "C40Multiplier" -> 2
   |>;
 
 ApplySMQCDRRatioObservableConvention[ingredients_Association] :=
   Module[{ledger, observableIngredients},
     ledger = SMQCDRRatioObservableConventionLedger[];
     observableIngredients = Association[ingredients];
-    observableIngredients["intBreveA22"] =
-      ingredients["intBreveA22"] + ledger["A22OneLoopSelfPoleShift"];
     observableIngredients["intA40"] =
       ledger["A40LeadingMultiplier"] ingredients["intA40"];
     observableIngredients["intTildeA40"] =

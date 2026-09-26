@@ -6,7 +6,7 @@ Get[FileNameJoin[{DirectoryName[$InputFileName], "common.wl"}]];
    The file therefore separates:
    - the literature/timelike series master;
    - the backend core using the same bracket;
-   - the backend package value built from the validated convention factors. *)
+   - the backend package value with exact loop-measure and phase factors. *)
 
 A6Source[] :=
   <|
@@ -35,13 +35,10 @@ A6BackendCoreCheck[order_:0] :=
   ];
 
 A6VirtualConventionFactor[] :=
-  1 - Pi^2 eps^2 / 6 +
-    (26 Zeta[3] / 3) eps^3 +
-    (Pi^4 / 120 - 28 Zeta[3]) eps^4;
+  Exp[2 EulerGamma eps]/Gamma[1 - eps]^2;
 
 A6TwoLoopTreeVirtualConventionFactor[] :=
-  1 - 2 Pi^2 eps^2 - (28 Zeta[3] eps^3) / 3 +
-    (2 (Pi^4 + 42 Zeta[3]) eps^4) / 3;
+  Cos[2 Pi eps];
 
 A6BackendPackageExact[] :=
   (* The Appendix bracket already carries the negative leading pole; the

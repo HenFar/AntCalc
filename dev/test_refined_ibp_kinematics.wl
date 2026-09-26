@@ -1,6 +1,8 @@
 (* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
 
 Get[FileNameJoin[{DirectoryName[DirectoryName[]], "AntennaPipeline.wl"}]];
+Get[FileNameJoin[{DirectoryName[DirectoryName[$InputFileName]], "dev",
+  "a22_literature_reference.wl"}]];
 
 eps = FeynCalc`Epsilon;
 
@@ -141,7 +143,7 @@ testComponent[component_] := Module[{antenna, profile, basisLoad, reduction, raw
   integratedFC = integrated /. eps -> FeynCalc`Epsilon;
   
   tTerms = IntegratedAntennaTTerms[{A, 2, 2}, integratedFC, ExpansionOrder -> 0, Component -> component];
-  res = A22TTermResiduals[tTerms, component, 0];
+  res = A22LiteratureReferenceResiduals[tTerms, component, 0];
   
   Print["  integrated: ", integratedFC];
   Print["  t-terms:    ", tTerms];

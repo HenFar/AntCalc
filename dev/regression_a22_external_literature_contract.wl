@@ -7,7 +7,8 @@ Get[FileNameJoin[{repoRoot, "dev", "a22_literature_reference.wl"}]];
 
 metadata = A22LiteratureReferenceMetadata[];
 paperTargets = A22LiteratureReferenceTargets[0];
-runtimeTargets = A22TTermTargets[0];
+runtimeResult = BuildAndIntegrateAntenna[A, 2, 2,
+  ExpansionOrder -> 0, UseStoredResults -> False, StoreResults -> False];
 perturbedLeading = paperTargets[[1]] + 1;
 
 report = <|
@@ -15,9 +16,10 @@ report = <|
   "Source" -> metadata["Source"],
   "Equations" -> metadata["Equations"],
   "HasFourPaperFacingComponents" -> Length[paperTargets] === 4,
-  "PaperReferenceMatchesCurrentPublicConvention" ->
-    And @@ (TrueQ[# === 0]& /@
-      (FullSimplify /@ (paperTargets - runtimeTargets))),
+  "RuntimeBuildReturnsAllComponents" -> ListQ[runtimeResult] &&
+    Length[runtimeResult] === 4,
+  "RuntimeBuildMatchesDevelopmentTargets" ->
+    TrueQ[A22LiteratureReferenceAgreementQ[runtimeResult, 0]],
   "LeadingPerturbationIsRejected" ->
     !TrueQ[A22LiteratureReferenceAgreementQ[perturbedLeading, Leading, 0]],
   "Passed" -> And @@ {
@@ -25,10 +27,10 @@ report = <|
     metadata["Equations"]["TwoLoopTreeDefinition"] === "(4.8)",
     metadata["Equations"]["TwoLoopTreeColourBrackets"] === "(4.9)",
     metadata["Equations"]["OneLoopSelfInterference"] ===
-      "(4.10); corrected by arXiv:2211.08446v2 Eq. (B.7)",
+      "(4.10) target; compare with arXiv:2211.08446v2 Eq. (B.7)",
     Length[paperTargets] === 4,
-    And @@ (TrueQ[# === 0]& /@
-      (FullSimplify /@ (paperTargets - runtimeTargets))),
+    ListQ[runtimeResult] && Length[runtimeResult] === 4,
+    TrueQ[A22LiteratureReferenceAgreementQ[runtimeResult, 0]],
     !TrueQ[A22LiteratureReferenceAgreementQ[perturbedLeading, Leading, 0]]
     }
   |>;

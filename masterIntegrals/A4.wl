@@ -45,13 +45,10 @@ A4BackendCoreCheck[] :=
   FullSimplify[A4BackendCore[] - A4PaperClosedForm[]];
 
 A4VirtualConventionFactor[] :=
-  1 - Pi^2 eps^2 / 6 +
-    (26 Zeta[3] / 3) eps^3 +
-    (Pi^4 / 120 - 28 Zeta[3]) eps^4;
+  Exp[2 EulerGamma eps]/Gamma[1 - eps]^2;
 
 A4TwoLoopTreeVirtualConventionFactor[] :=
-  1 - 2 Pi^2 eps^2 - (28 Zeta[3] eps^3) / 3 +
-    (2 (Pi^4 + 42 Zeta[3]) eps^4) / 3;
+  Cos[2 Pi eps];
 
 A4AppendixToTwoLoopTreePackageLift[] :=
   (-Pi^4 A4VirtualConventionFactor[] * A4TwoLoopTreeVirtualConventionFactor[] q2^(-2 eps) *

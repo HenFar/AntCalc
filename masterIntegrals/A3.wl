@@ -96,12 +96,10 @@ A3BackendPackageExact[] :=
 (* Literal Appendix-A.1 A3 lifted into the A22 tree/two-loop package
    convention. The R8a bridge above remains a separate, route-specific value. *)
 A3TwoLoopTreeMasterVirtualFactor[] :=
-  1 - Pi^2 eps^2 / 6 + (26 Zeta[3] eps^3) / 3 +
-    (Pi^4 / 120 - 28 Zeta[3]) eps^4;
+  Exp[2 EulerGamma eps]/Gamma[1 - eps]^2;
 
 A3TwoLoopTreeVirtualConventionFactor[] :=
-  1 - 2 Pi^2 eps^2 - (28 Zeta[3] eps^3) / 3 +
-    (2 (Pi^4 + 42 Zeta[3]) eps^4) / 3;
+  Cos[2 Pi eps];
 
 A3AppendixToTwoLoopTreePackageLift[] :=
   Pi^4 * A3TwoLoopTreeMasterVirtualFactor[] *

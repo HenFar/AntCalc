@@ -1,8 +1,10 @@
 Get["AntennaPipeline.wl"];
+Get[FileNameJoin[{DirectoryName[DirectoryName[$InputFileName]], "dev",
+  "a22_literature_reference.wl"}]];
 
 ClearAll[
   makeRuntimeBuildRRatioReport,
-  makeTargetPatchedIngredients,
+  makeTargetReferenceIngredients,
   poleSummary
 ];
 
@@ -24,36 +26,36 @@ makeRuntimeBuildRRatioReport[] :=
     {result[[1]], result[[2]]}
   ];
 
-makeTargetPatchedIngredients[ingredients_Association, which_String] :=
-  Module[{patched, a31Targets, a22Targets},
-    patched = Association[ingredients];
+makeTargetReferenceIngredients[ingredients_Association, which_String] :=
+  Module[{referenceIngredients, a31Targets, a22Targets},
+    referenceIngredients = Association[ingredients];
     a31Targets = A31IntegratedAntennaTargets[0];
-    a22Targets = A22TTermTargets[0];
+    a22Targets = A22LiteratureReferenceTargets[0];
     Switch[which,
       "A31",
-        patched["intA31"] = a31Targets[[1]];
-        patched["intTildeA31"] = a31Targets[[2]];
-        patched["intHatA31"] = a31Targets[[3]];
+        referenceIngredients["intA31"] = a31Targets[[1]];
+        referenceIngredients["intTildeA31"] = a31Targets[[2]];
+        referenceIngredients["intHatA31"] = a31Targets[[3]];
       ,
       "A22",
-        patched["intA22"] = a22Targets[[1]];
-        patched["intTildeA22"] = a22Targets[[2]];
-        patched["intHatA22"] = a22Targets[[3]];
-        patched["intBreveA22"] = a22Targets[[4]];
+        referenceIngredients["intA22"] = a22Targets[[1]];
+        referenceIngredients["intTildeA22"] = a22Targets[[2]];
+        referenceIngredients["intHatA22"] = a22Targets[[3]];
+        referenceIngredients["intBreveA22"] = a22Targets[[4]];
       ,
       "A31A22",
-        patched["intA31"] = a31Targets[[1]];
-        patched["intTildeA31"] = a31Targets[[2]];
-        patched["intHatA31"] = a31Targets[[3]];
-        patched["intA22"] = a22Targets[[1]];
-        patched["intTildeA22"] = a22Targets[[2]];
-        patched["intHatA22"] = a22Targets[[3]];
-        patched["intBreveA22"] = a22Targets[[4]];
+        referenceIngredients["intA31"] = a31Targets[[1]];
+        referenceIngredients["intTildeA31"] = a31Targets[[2]];
+        referenceIngredients["intHatA31"] = a31Targets[[3]];
+        referenceIngredients["intA22"] = a22Targets[[1]];
+        referenceIngredients["intTildeA22"] = a22Targets[[2]];
+        referenceIngredients["intHatA22"] = a22Targets[[3]];
+        referenceIngredients["intBreveA22"] = a22Targets[[4]];
       ,
       _,
         Null
     ];
-    patched
+    referenceIngredients
   ];
 
 poleSummary[expr_] :=
@@ -71,9 +73,9 @@ Module[
     diagnostics,
     ingredients,
     runtimeSummary,
-    a31PatchedExpression,
-    a22PatchedExpression,
-    bothPatchedExpression
+    a31ReferenceExpression,
+    a22ReferenceExpression,
+    bothReferenceExpression
   },
   {runtimeExpression, diagnostics} = makeRuntimeBuildRRatioReport[];
   ingredients = Lookup[diagnostics, "Ingredients", Missing["NoIngredients"]];
@@ -83,25 +85,25 @@ Module[
   ];
 
   runtimeSummary = poleSummary[runtimeExpression];
-  a31PatchedExpression =
+  a31ReferenceExpression =
     AssembleSMQCDRRatio[
-      makeTargetPatchedIngredients[ingredients, "A31"]
+      makeTargetReferenceIngredients[ingredients, "A31"]
     ]["FinalExpression"];
-  a22PatchedExpression =
+  a22ReferenceExpression =
     AssembleSMQCDRRatio[
-      makeTargetPatchedIngredients[ingredients, "A22"]
+      makeTargetReferenceIngredients[ingredients, "A22"]
     ]["FinalExpression"];
-  bothPatchedExpression =
+  bothReferenceExpression =
     AssembleSMQCDRRatio[
-      makeTargetPatchedIngredients[ingredients, "A31A22"]
+      makeTargetReferenceIngredients[ingredients, "A31A22"]
     ]["FinalExpression"];
 
   Print["Runtime summary:"];
   Print[runtimeSummary];
   Print["A31-target-substituted summary:"];
-  Print[poleSummary[a31PatchedExpression]];
+  Print[poleSummary[a31ReferenceExpression]];
   Print["A22-target-substituted summary:"];
-  Print[poleSummary[a22PatchedExpression]];
+  Print[poleSummary[a22ReferenceExpression]];
   Print["A31+A22-target-substituted summary:"];
-  Print[poleSummary[bothPatchedExpression]];
+  Print[poleSummary[bothReferenceExpression]];
 ];

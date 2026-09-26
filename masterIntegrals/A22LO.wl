@@ -47,20 +47,15 @@ A22LOBackendCoreCheck[] :=
   FullSimplify[A22LOBackendCore[] + A22LOPaperClosedForm[]];
 
 A22LOVirtualConventionFactor[] :=
-  1 - Pi^2 eps^2 / 6 +
-    (* Corrected one-loop-self convention, arXiv:2211.08446v2 Eq. (B.7). *)
-    (-2 Zeta[3] / 3) eps^3 +
-    (Pi^4 / 120) eps^4;
+  Exp[2 EulerGamma eps]/Gamma[1 - eps]^2;
 
 A22LOTwoLoopTreeVirtualConventionFactor[] :=
-  1 - 2 Pi^2 eps^2 - (28 Zeta[3] eps^3) / 3 +
-    (2 (Pi^4 + 42 Zeta[3]) eps^4) / 3;
+  Cos[2 Pi eps];
 
-(* The A22 tree/two-loop master lift uses the same virtual factor as the
-   Appendix-A.1 A4 lift. Keep it distinct from the one-loop-self factor above. *)
+(* The loop-measure conversion is shared by the tree/two-loop and one-loop-self
+   routes; the timelike phase is applied separately below. *)
 A22LOTwoLoopTreeMasterVirtualFactor[] :=
-  1 - Pi^2 eps^2 / 6 + (26 Zeta[3] eps^3) / 3 +
-    (Pi^4 / 120 - 28 Zeta[3]) eps^4;
+  A22LOVirtualConventionFactor[];
 
 A22LOPaperConventionRules[expr_] :=
   expr /. {

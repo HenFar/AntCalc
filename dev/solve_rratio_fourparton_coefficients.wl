@@ -1,25 +1,27 @@
 Get["AntennaPipeline.wl"];
+Get[FileNameJoin[{DirectoryName[DirectoryName[$InputFileName]], "dev",
+  "a22_literature_reference.wl"}]];
 
 ClearAll[
-  exactPatchedIngredients,
+  exactReferenceIngredients,
   fourPartonAnsatz,
   coefficientEquations,
   targetResidual
 ];
 
-exactPatchedIngredients[ingredients_Association] :=
-  Module[{patched, a31Targets, a22Targets},
-    patched = Association[ingredients];
+exactReferenceIngredients[ingredients_Association] :=
+  Module[{referenceIngredients, a31Targets, a22Targets},
+    referenceIngredients = Association[ingredients];
     a31Targets = A31IntegratedAntennaTargets[0];
-    a22Targets = A22TTermTargets[0];
-    patched["intA31"] = a31Targets[[1]];
-    patched["intTildeA31"] = a31Targets[[2]];
-    patched["intHatA31"] = a31Targets[[3]];
-    patched["intA22"] = a22Targets[[1]];
-    patched["intTildeA22"] = a22Targets[[2]];
-    patched["intHatA22"] = a22Targets[[3]];
-    patched["intBreveA22"] = a22Targets[[4]];
-    patched
+    a22Targets = A22LiteratureReferenceTargets[0];
+    referenceIngredients["intA31"] = a31Targets[[1]];
+    referenceIngredients["intTildeA31"] = a31Targets[[2]];
+    referenceIngredients["intHatA31"] = a31Targets[[3]];
+    referenceIngredients["intA22"] = a22Targets[[1]];
+    referenceIngredients["intTildeA22"] = a22Targets[[2]];
+    referenceIngredients["intHatA22"] = a22Targets[[3]];
+    referenceIngredients["intBreveA22"] = a22Targets[[4]];
+    referenceIngredients
   ];
 
 fourPartonAnsatz[ingredients_Association] :=
@@ -51,7 +53,7 @@ Module[
     runtime,
     diagnostics,
     ingredients,
-    patched,
+    referenceIngredients,
     alphaS,
     n,
     nf,
@@ -82,7 +84,7 @@ Module[
     Abort[]
   ];
 
-  patched = exactPatchedIngredients[ingredients];
+  referenceIngredients = exactReferenceIngredients[ingredients];
   alphaS = SMP["alpha_s"];
   n = SUNN;
   nf = Nf;
@@ -91,22 +93,22 @@ Module[
   exactTwoPartonThreeParton =
     (alphaS / (2 Pi))^2 FullSimplify[
       (n - 1 / n) (
-        n patched["intA22"] +
-        1 / n patched["intTildeA22"] +
-        nf patched["intHatA22"] +
-        (n - 1 / n) patched["intBreveA22"] +
-        n (patched["intA31"] + patched["intA21"] patched["intA30"]) -
-        1 / n (patched["intTildeA31"] + patched["intA21"] patched["intA30"]) +
-        nf patched["intHatA31"]
+        n referenceIngredients["intA22"] +
+        1 / n referenceIngredients["intTildeA22"] +
+        nf referenceIngredients["intHatA22"] +
+        (n - 1 / n) referenceIngredients["intBreveA22"] +
+        n (referenceIngredients["intA31"] + referenceIngredients["intA21"] referenceIngredients["intA30"]) -
+        1 / n (referenceIngredients["intTildeA31"] + referenceIngredients["intA21"] referenceIngredients["intA30"]) +
+        nf referenceIngredients["intHatA31"]
       )
     ];
 
-  ansatz = fourPartonAnsatz[patched];
+  ansatz = fourPartonAnsatz[referenceIngredients];
   expr =
     Collect[
       1 +
       (alphaS / (2 Pi)) FullSimplify[
-        (n - 1 / n) (patched["intA21"] + patched["intA30"])
+        (n - 1 / n) (referenceIngredients["intA21"] + referenceIngredients["intA30"])
       ] +
       exactTwoPartonThreeParton +
       ansatz,

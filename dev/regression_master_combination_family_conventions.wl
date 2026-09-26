@@ -55,7 +55,7 @@ AntennaFamilyRegressionExpectedPrefactor["A31"] :=
 
 AntennaFamilyRegressionRunCase[case_Association] :=
   Module[{family, label, key, component, elapsed, result, expression,
-      diagnostics, prefactor, expectedPrefactor, masterRules, epsilonRules,
+      diagnostics, prefactor, componentFactor, expectedPrefactor, masterRules, epsilonRules,
       tTerms, mappedTTerms, residual, structural, tex, expressionAvailable},
     family = case["Family"];
     label = case["Label"];
@@ -83,6 +83,7 @@ AntennaFamilyRegressionRunCase[case_Association] :=
     expressionAvailable = !MissingQ[expression] && expression =!= $Failed;
     prefactor = Lookup[diagnostics, "FamilyPrefactor",
       Lookup[diagnostics, "MasterCombinationPrefactor", Missing["NoFamilyPrefactor"]]];
+    componentFactor = Lookup[diagnostics, "ComponentConversionFactor", 1];
     expectedPrefactor = AntennaFamilyRegressionExpectedPrefactor[family];
     epsilonRules = {d -> 4 - 2 Epsilon, eps -> Epsilon,
       FeynCalc`Epsilon -> Epsilon, q2 -> 1, s12 -> 1};
@@ -111,7 +112,7 @@ AntennaFamilyRegressionRunCase[case_Association] :=
       Missing["NoTTermsOrFamilyPrefactor"],
       TimeConstrained[
         FunctionExpand @ FullSimplify[Together[
-          Normal[Series[prefactor (expression /. masterRules),
+          Normal[Series[prefactor componentFactor (expression /. masterRules),
             {Epsilon, 0, 0}]] -
           Normal[Series[mappedTTerms, {Epsilon, 0, 0}]]]],
         240, $TimedOut]
@@ -120,6 +121,7 @@ AntennaFamilyRegressionRunCase[case_Association] :=
     Print["SELECTED_COMPONENT = ",
       InputForm[Lookup[diagnostics, "BuildComponent", Missing[]]]];
     Print["FAMILY_PREFACTOR = ", InputForm[prefactor]];
+    Print["COMPONENT_CONVERSION_FACTOR = ", InputForm[componentFactor]];
     Print["STRUCTURAL_CHECKS = ", InputForm[structural]];
     Print["T1_RESIDUAL_THROUGH_EPS0 = ", InputForm[residual]];
     Print["INPUTFORM = ", InputForm[expression]];

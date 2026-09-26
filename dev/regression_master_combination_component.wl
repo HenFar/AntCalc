@@ -6,10 +6,9 @@
     $AntennaRegressionComponent = "Leading";
     Get["/path/to/AntCalc/dev/regression_master_combination_component.wl"]
 
-  A31 results carry one family prefactor in diagnostics.  This script applies
-  it once after substituting the runtime master values.  The A22 prefactor is
-  unity because the runtime master definitions already use the common real
-  spacelike convention.
+  A31 results carry one family prefactor in diagnostics.  The A22 Breve
+  conversion is reported separately from its rational coefficient.  This
+  script applies both metadata factors when checking the integrated T-terms.
 *)
 
 packageRoot = DirectoryName[DirectoryName[$InputFileName]];
@@ -63,9 +62,11 @@ Print["RESULT_SAVED_GLOBALLY = ",
   ValueQ[Global`AntennaRegressionMasterCombinationResult]];
 
 If[MatchQ[result, {_, _Association}],
-  Module[{masterRules, prefactor, substituted, residual, variables, latex,
+  Module[{masterRules, prefactor, componentFactor, substituted, residual, variables, latex,
       scalarSymbols, namedBare, bareResidual, countertermResidual,
-      fullResidual, rawIntegrated, tTerms, epsilonRules},
+      fullResidual, rawIntegrated, tTerms, epsilonRules, breveCoefficient,
+      breveCombinationCheck, breveFactorCheck, inputString, standardForm,
+      scalarDisplayProbe},
     Print["SELECTED_COMPONENT = ",
       InputForm[Lookup[result[[2]], "BuildComponent", Missing[]]]];
     Print["RAW_MASTER_KEY = ",
@@ -74,15 +75,36 @@ If[MatchQ[result, {_, _Association}],
       KeyExistsQ[result[[2]], "BareMasterCombination"]];
     Print["MASTER_FREE_OF_Q2_S12 = ", FreeQ[result[[1]], q2 | s12]];
     scalarSymbols = DeleteDuplicates @ Cases[result[[1]],
-      s_Symbol /; MemberQ[{"B0", "C0"},
-        SymbolName[Unevaluated[s]]], Infinity];
+      HoldPattern[AntennaPipeline`Private`PublicScalarMaster[name_String]],
+      Infinity];
     Print["MASTER_SCALAR_CONTEXTS = ",
-      InputForm[DeleteDuplicates[Context /@ scalarSymbols]]];
+      InputForm[DeleteDuplicates[Context[Head[#]]& /@ scalarSymbols]]];
     Print["NO_FEYNCALC_SCALARS = ",
       FreeQ[result[[1]], FeynCalc`B0 | FeynCalc`C0]];
     Print["FAMILY_PREFACTOR = ",
       InputForm[Lookup[result[[2]], "FamilyPrefactor",
         Lookup[result[[2]], "MasterCombinationPrefactor", Missing[]]]]];
+    componentFactor = Lookup[result[[2]], "ComponentConversionFactor", 1];
+    Print["COMPONENT_CONVERSION_FACTOR = ", InputForm[componentFactor]];
+    inputString = ToString[result[[1]], InputForm];
+    Print["NO_GLOBAL_SCALAR_CONTEXT_LEAK = ",
+      !StringContainsQ[inputString, "Global`B0" | "Global`C0"]];
+    standardForm = ToString[result[[1]], StandardForm];
+    scalarDisplayProbe = ToString[
+      AntennaPipeline`Private`PublicScalarMaster["B0"] +
+        AntennaPipeline`Private`PublicScalarMaster["C0"], StandardForm];
+    Print["RETURN_MASTER_COMBINATION_STANDARD_FORM = ", standardForm];
+    Print["B0_C0_STANDARD_FORM = ", scalarDisplayProbe];
+    If[familyName === "A22" && componentName === "Breve",
+      breveCoefficient = (-2 Epsilon^2 + Epsilon - 2)^2/
+        (16 Pi^4 Epsilon^2);
+      breveCombinationCheck = TrueQ[FullSimplify[
+        result[[1]] - breveCoefficient Global`A22LO] === 0];
+      breveFactorCheck = TrueQ[FullSimplify[
+        componentFactor + Sec[2 Pi Epsilon]] === 0];
+      Print["BREVE_RATIONAL_COMBINATION = ", breveCombinationCheck];
+      Print["BREVE_EXACT_CONVERSION_SEPARATE = ", breveFactorCheck]
+    ];
     Print["MASTER_CONVENTION = ", InputForm[Lookup[result[[2]],
       "MasterCombinationConvention", Missing[]]]];
     masterRules = If[familyName === "A22",
@@ -100,7 +122,7 @@ If[MatchQ[result, {_, _Association}],
     Print["NAMED_BARE_KEY = ", !MissingQ[namedBare]];
     residual = If[MissingQ[prefactor],
       Missing["NoMasterCombinationPrefactor"],
-      substituted = prefactor (result[[1]] /. masterRules);
+      substituted = prefactor componentFactor (result[[1]] /. masterRules);
       TimeConstrained[
         FunctionExpand @ FullSimplify[
           Together[Normal[Series[substituted, {Epsilon, 0, 0}]] -
@@ -113,21 +135,21 @@ If[MatchQ[result, {_, _Association}],
         !MissingQ[rawIntegrated] && !MissingQ[tTerms],
       bareResidual = TimeConstrained[
         FunctionExpand @ FullSimplify[Together[
-          Normal[Series[prefactor (namedBare /. masterRules),
+          Normal[Series[prefactor componentFactor (namedBare /. masterRules),
             {Epsilon, 0, 0}]] -
           Normal[Series[rawIntegrated /. epsilonRules,
             {Epsilon, 0, 0}]]]],
         120, $TimedOut];
       countertermResidual = TimeConstrained[
         FunctionExpand @ FullSimplify[Together[
-          Normal[Series[prefactor ((result[[1]] - namedBare) /.
+          Normal[Series[prefactor componentFactor ((result[[1]] - namedBare) /.
               masterRules), {Epsilon, 0, 0}]] -
           Normal[Series[(tTerms - rawIntegrated) /. epsilonRules,
             {Epsilon, 0, 0}]]]],
         120, $TimedOut];
       fullResidual = TimeConstrained[
         FunctionExpand @ FullSimplify[Together[
-          Normal[Series[prefactor (result[[1]] /. masterRules),
+          Normal[Series[prefactor componentFactor (result[[1]] /. masterRules),
             {Epsilon, 0, 0}]] -
           Normal[Series[tTerms /. epsilonRules, {Epsilon, 0, 0}]]]],
         120, $TimedOut];

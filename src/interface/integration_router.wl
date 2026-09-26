@@ -499,9 +499,7 @@ A22PublicMasterFactorForRawMaster[master_, component_] :=
     basis = First[List @@ master];
     If[CanonicalAntennaComponentName[component] === "Breve" &&
         basis === A22OneLoopSelfBasis,
-      Return[(A22LOMasterCore[] A22OneLoopSelfVirtualConventionFactor[] /
-        A22TwoLoopTreeMasterValueA22LO[]) /.
-          {eps -> Epsilon, q2 -> 1}]
+      Return[1]
     ];
     If[basis === A22OneLoopSelfBasis, Return[1]];
     label = A22TwoLoopTreeExactTopologyLabel[master, basis];
@@ -511,6 +509,20 @@ A22PublicMasterFactorForRawMaster[master_, component_] :=
     If[MissingQ[exactValue] || MissingQ[canonicalValue], Return[1]];
     Together[exactValue/canonicalValue] /.
       {eps -> Epsilon, q2 -> 1, s12 -> 1}
+  ];
+
+A22ComponentConversionFactor[key_, component_] :=
+  If[MasterCombinationFamilyTag[key] === "A22" &&
+      CanonicalAntennaComponentName[component] === "Breve",
+    -Sec[2 Pi Epsilon],
+    1
+  ];
+
+A22BreveConversionFactor[key_, component_] :=
+  If[MasterCombinationFamilyTag[key] === "A22" &&
+      CanonicalAntennaComponentName[component] === "Breve",
+    -Sec[2 Pi Epsilon],
+    Missing["NotBreveA22Component"]
   ];
 
 A22NamedMasterRules[expr_, component_] :=
@@ -534,14 +546,26 @@ A22NamedMasterRules[expr_, component_] :=
   ];
 
 PublicNamedMasterVariables["A22"] :=
-  {Global`A22LO, Global`A3, Global`A4, Global`A6, Global`B0, Global`C0};
+  {Global`A22LO, Global`A3, Global`A4, Global`A6,
+    AntennaPipeline`Private`PublicScalarMaster["B0"],
+    AntennaPipeline`Private`PublicScalarMaster["C0"]};
 
 PublicNamedMasterVariables["A31"] :=
   {Global`V5a, Global`V5b, Global`V8, Global`R3};
 
+(* The public combination uses scoped display atoms for scalar masters.  This
+   keeps B0/C0 readable without changing formatting for Global`B0/Global`C0
+   elsewhere in the user's kernel. *)
+AntennaPipeline`Private`PublicScalarMaster /:
+  MakeBoxes[AntennaPipeline`Private`PublicScalarMaster[name_String],
+    form : (StandardForm | TraditionalForm | OutputForm)] := RowBox[{name}];
+
 PublicNamedMasterCombination[expr_, "A22", component_] :=
   Module[{named},
-    named = expr /. A22NamedMasterRules[expr, component];
+    named = expr /. A22NamedMasterRules[expr, component] /. {
+      Global`B0 -> AntennaPipeline`Private`PublicScalarMaster["B0"],
+      Global`C0 -> AntennaPipeline`Private`PublicScalarMaster["C0"]
+    };
     If[!FreeQ[named, HoldPattern[LiteRed`j[___]]],
       Return[Missing["UnmappedA22Master", named]]
     ];
@@ -600,6 +624,9 @@ A22PublicMasterValueRules[] :=
         {q2 -> 1, eps -> Epsilon}),
       Global`A6 -> (A22TwoLoopTreeMasterValueA6[] /.
         {q2 -> 1, eps -> Epsilon}),
+      AntennaPipeline`Private`PublicScalarMaster["B0"] ->
+        g/(Epsilon (1 - 2 Epsilon)),
+      AntennaPipeline`Private`PublicScalarMaster["C0"] -> g/Epsilon^2,
       Global`B0 -> g/(Epsilon (1 - 2 Epsilon)),
       Global`C0 -> g/Epsilon^2
     }
@@ -623,7 +650,8 @@ MasterCombinationConventionDescription["A22"] :=
     "MasterSymbols" -> {"A22LO", "A3", "A4", "A6", "B0", "C0"},
     "MasterValues" -> "A22PublicMasterValueRules[]",
     "BreveA22LOConversion" ->
-      "The Breve coefficient includes its one-loop-self master value divided by the shared tree A22LO value."|>;
+      "The Breve coefficient multiplies A22LO; its exact conversion is returned separately.",
+    "BreveA22LOConversionFactor" -> -Sec[2 Pi Epsilon]|>;
 
 MasterCombinationConventionDescription["A31"] :=
   <|"MasterPoint" -> "A31 runtime masters at q2 = 1 in the A31 IBP convention",
@@ -681,6 +709,12 @@ RenormalizedMasterCombination[bare_, diagnostics_Association] :=
       0,
       counterterm["Coefficient"] * counterterm["LowerMasterCombination"]
     ];
+    If[family === "A22",
+      normalizedCounterterm = normalizedCounterterm /. {
+        Global`B0 -> AntennaPipeline`Private`PublicScalarMaster["B0"],
+        Global`C0 -> AntennaPipeline`Private`PublicScalarMaster["C0"]
+      }
+    ];
     innerCombination = Collect[namedBare + normalizedCounterterm,
       PublicNamedMasterVariables[family], Simplify];
     (* Keep counterterms and bare pieces at the same family master point. *)
@@ -688,7 +722,7 @@ RenormalizedMasterCombination[bare_, diagnostics_Association] :=
   ];
 
 MasterCombinationView[diagnostics_Association] :=
-  Module[{backendDiagnostics, profile, key, combination, rawCombination, masters,
+  Module[{backendDiagnostics, profile, key, component, combination, rawCombination, masters,
      basisFamily, genericDefinitions, massiveA30Q},
     backendDiagnostics = Lookup[diagnostics, "BackendDiagnostics", <||>];
     If[!AssociationQ[backendDiagnostics], backendDiagnostics = <||>];
@@ -696,6 +730,8 @@ MasterCombinationView[diagnostics_Association] :=
       Lookup[backendDiagnostics, "Profile", <||>]];
     If[!AssociationQ[profile], profile = <||>];
     key = IntegrationDiagnosticsAntennaKey[diagnostics];
+    component = Lookup[diagnostics, "BuildComponent",
+      Lookup[diagnostics, "SelectedComponent", All]];
     basisFamily = Lookup[profile, "BasisFamily",
       Lookup[backendDiagnostics, "BasisFamily", Missing["NotAvailable"]]];
     massiveA30Q =
@@ -713,6 +749,8 @@ MasterCombinationView[diagnostics_Association] :=
         "RawExpression" -> rawCombination,
         "BasisFamily" -> basisFamily,
         "AntennaKey" -> key,
+        "ComponentConversionFactor" -> A22ComponentConversionFactor[key, component],
+        "A22BreveConversionFactor" -> A22BreveConversionFactor[key, component],
         "MasterDefinitions" -> <||>,
         "SubstitutionStatus" -> "NoRuntimeMasterCombinationExposed"
       |>]
@@ -767,6 +805,8 @@ MasterCombinationView[diagnostics_Association] :=
       "RawStage" -> "RawMasterCombination",
       "BasisFamily" -> basisFamily,
       "AntennaKey" -> key,
+      "ComponentConversionFactor" -> A22ComponentConversionFactor[key, component],
+      "A22BreveConversionFactor" -> A22BreveConversionFactor[key, component],
       "MasterDefinitions" -> genericDefinitions,
       "SubstitutionStatus" -> "UnreplacedRuntimeBasis",
       "BridgeStatus" -> "NoPaperBasisBridgeAsserted"
@@ -983,6 +1023,10 @@ ResolveIntegrationPublicResult[result_, diagnostics_,
           "FamilyPrefactor" -> MasterCombinationFamilyPrefactor[key],
           (* Retain the beta.2 key as a compatibility alias. *)
           "MasterCombinationPrefactor" -> MasterCombinationFamilyPrefactor[key],
+          "ComponentConversionFactor" ->
+            A22ComponentConversionFactor[key, component],
+          "A22BreveConversionFactor" ->
+            A22BreveConversionFactor[key, component],
           "MasterCombinationConvention" ->
             MasterCombinationConventionDescription[family],
           "MasterCombinationView" -> Join[

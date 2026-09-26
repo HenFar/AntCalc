@@ -1,6 +1,8 @@
 (* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
 
 Get[FileNameJoin[{DirectoryName[DirectoryName[]], "AntennaPipeline.wl"}]];
+Get[FileNameJoin[{DirectoryName[DirectoryName[$InputFileName]], "dev",
+  "a22_literature_reference.wl"}]];
 
 components = {Leading, Subleading, Nf};
 
@@ -28,7 +30,7 @@ Do[
   Print["component: ", component];
   Print["raw: ", rawFC];
   Print["t-term: ", tterm];
-  Print["residual: ", A22TTermResiduals[tterm, component, 0]];
+  Print["residual: ", A22LiteratureReferenceResiduals[tterm, component, 0]];
   Print["---"];
   ,
   {component, components}

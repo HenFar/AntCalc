@@ -137,15 +137,15 @@ A22TwoLoopTreeMasterCoreA22LO::usage = "A22TwoLoopTreeMasterCoreA22LO[] returns 
 A22TwoLoopTreeMasterCoreA3::usage = "A22TwoLoopTreeMasterCoreA3[] returns the encoded core series for the A22 tree/two-loop A3 master.";
 A22TwoLoopTreeMasterCoreA4::usage = "A22TwoLoopTreeMasterCoreA4[] returns the encoded core series for the A22 tree/two-loop A4 master.";
 A22TwoLoopTreeMasterCoreA6::usage = "A22TwoLoopTreeMasterCoreA6[] returns the encoded core series for the A22 tree/two-loop A6 master.";
-A22VirtualTwoPartonConventionFactor::usage = "A22VirtualTwoPartonConventionFactor[] returns the virtual two-parton normalization factor used in the A22 notebook convention.";
-A22OneLoopSelfVirtualConventionFactor::usage = "A22OneLoopSelfVirtualConventionFactor[] returns the corrected virtual two-parton normalization factor used only by the Breve A22 one-loop/self branch.";
-A22TwoLoopTreeVirtualConventionFactor::usage = "A22TwoLoopTreeVirtualConventionFactor[] returns the tree/two-loop normalization factor used by the A22 exact-topology data.";
+A22VirtualTwoPartonConventionFactor::usage = "A22VirtualTwoPartonConventionFactor[] returns the exact two-loop S_Gamma to S_epsilon normalization conversion.";
+A22OneLoopSelfVirtualConventionFactor::usage = "A22OneLoopSelfVirtualConventionFactor[] returns the exact S_Gamma to S_epsilon conversion for the one-loop-self A22 route.";
+A22TwoLoopTreeVirtualConventionFactor::usage = "A22TwoLoopTreeVirtualConventionFactor[] returns the exact real timelike phase for a two-loop power.";
 A22TwoLoopTreePaperConventionRules::usage = "A22TwoLoopTreePaperConventionRules[expr] rewrites an A22 tree/two-loop expression into the paper normalization convention.";
 A22TwoLoopTreePaperConventionFactor::usage = "A22TwoLoopTreePaperConventionFactor[] returns the overall factor needed to move an A22 tree/two-loop master into the paper convention.";
-A22TwoLoopTreeMasterValueA22LO::usage = "A22TwoLoopTreeMasterValueA22LO[] returns the encoded paper-convention value of the A22_LO master.";
-A22TwoLoopTreeMasterValueA3::usage = "A22TwoLoopTreeMasterValueA3[] returns the encoded paper-convention value of the A3 master.";
-A22TwoLoopTreeMasterValueA4::usage = "A22TwoLoopTreeMasterValueA4[] returns the encoded paper-convention value of the A4 master.";
-A22TwoLoopTreeMasterValueA6::usage = "A22TwoLoopTreeMasterValueA6[] returns the encoded paper-convention value of the A6 master.";
+A22TwoLoopTreeMasterValueA22LO::usage = "A22TwoLoopTreeMasterValueA22LO[] returns the encoded runtime package-convention value of the A22_LO master.";
+A22TwoLoopTreeMasterValueA3::usage = "A22TwoLoopTreeMasterValueA3[] returns the encoded runtime package-convention value of the A3 master.";
+A22TwoLoopTreeMasterValueA4::usage = "A22TwoLoopTreeMasterValueA4[] returns the encoded runtime package-convention value of the A4 master.";
+A22TwoLoopTreeMasterValueA6::usage = "A22TwoLoopTreeMasterValueA6[] returns the encoded runtime package-convention value of the A6 master.";
 A22TwoLoopTreeMasterValueA22LOQQ::usage = "A22TwoLoopTreeMasterValueA22LOQQ[] returns the encoded value of the quark-loop variant of the A22_LO master.";
 A22TwoLoopTreeMasterValueA3Basis15Like::usage = "A22TwoLoopTreeMasterValueA3Basis15Like[] returns the encoded value for the A3 basis-15-like topology.";
 A22TwoLoopTreeMasterValueA3Sunset::usage = "A22TwoLoopTreeMasterValueA3Sunset[] returns the encoded value for the A3 sunset topology.";
@@ -156,8 +156,8 @@ A22TwoLoopTreeMasterValueA4Basis46Like::usage = "A22TwoLoopTreeMasterValueA4Basi
 A22TwoLoopTreeMasterValueA4Basis7Like::usage = "A22TwoLoopTreeMasterValueA4Basis7Like[] returns the encoded value for the A4 basis-7-like topology.";
 A22TwoLoopTreeMasterValueA4Basis8Like::usage = "A22TwoLoopTreeMasterValueA4Basis8Like[] returns the encoded value for the A4 basis-8-like topology.";
 A22TwoLoopTreeMasterValueA6Basis8Like::usage = "A22TwoLoopTreeMasterValueA6Basis8Like[] returns the encoded value for the A6 basis-8-like topology.";
-A22OneLoopSelfMasterCoefficientRules::usage = "A22OneLoopSelfMasterCoefficientRules[] returns the coefficient rules used to map the breve-A22 master into the paper convention.";
-A22TwoLoopTreeMasterCoefficientRules::usage = "A22TwoLoopTreeMasterCoefficientRules[] returns the coefficient rules used to map A22 tree/two-loop masters into the paper convention.";
+A22OneLoopSelfMasterCoefficientRules::usage = "A22OneLoopSelfMasterCoefficientRules[] returns the coefficient rules used to map the Breve A22 master into the public package convention.";
+A22TwoLoopTreeMasterCoefficientRules::usage = "A22TwoLoopTreeMasterCoefficientRules[] returns the coefficient rules used to map A22 tree/two-loop masters into the public package convention.";
 IBPMasterValues::usage = "IBPMasterValues[profile] returns the master-value association used after coefficient rules and master matching are chosen.";
 IBPPhaseSpaceMeasure::usage = "IBPPhaseSpaceMeasure[numFinalParticles] returns the analytic phase-space measure factor used by the IBP series normalizer.";
 IBPNormalization::usage = "IBPNormalization[profile] returns the overall normalization factor applied after LiteRed reduction.";
@@ -2157,41 +2157,20 @@ A22TwoLoopTreeMasterCoreA6[] :=
   A22SGamma[] (-q2)^(-2 - 2 eps) (-1 / eps^4 + 5 Pi^2 / (6 eps^2) +
      27 Zeta[3] / eps + 23 Pi^4 / 36);
 
-(* Appendix A.1 of hep-ph/0403057 gives A22,LO as the product of two
-   massless two-point functions after factoring out S_Gamma.  The LiteRed
-   source for the one-loop self-interference reduces to exactly this
-   disconnected two-bubble master.  The conversion factor below puts the
-   S_Gamma-stripped master into the same real two-parton paper convention used
-   by the T_{qq}^{(6,[1x1])} bracket. *)
+(* S_Gamma -> S_epsilon for two virtual loops. *)
 A22VirtualTwoPartonConventionFactor[] :=
-  1 - Pi^2 eps^2 / 6 +
-    (26 Zeta[3] / 3) eps^3 +
-    (Pi^4 / 120 - 28 Zeta[3]) eps^4;
+  Exp[2 EulerGamma eps]/Gamma[1 - eps]^2;
 
 A22OneLoopSelfVirtualConventionFactor[] :=
-  1 - Pi^2 eps^2 / 6 +
-    (* arXiv:2211.08446v2 Eq. (B.7): the one-loop-self bracket needs
-       a -7 Zeta[3]/3 correction at its single pole.  The reduction maps
-       one quarter of this eps^3 coefficient to that pole, so 26/3 becomes
-       -2/3. *)
-    (-2 Zeta[3] / 3) eps^3 +
-    (* The accompanying eps^4 correction keeps the finite coefficient in
-       Eq. (B.7) unchanged after expanding the two-particle normalization. *)
-    (Pi^4 / 120) eps^4;
+  A22VirtualTwoPartonConventionFactor[];
 
-(* The tree/two-loop interference uses a different external two-parton
-   convention than the one-loop self-interference.  Matching the Appendix A.1
-   masters to the bare T_{qq}^{(6,[2x0])} bracket fixes an additional factor
-   that first contributes at O(eps^3), so the highest poles are left
-   untouched. *)
+(* Real part of the timelike continuation (-q^2)^(-2 eps). *)
 A22TwoLoopTreeVirtualConventionFactor[] :=
-  1 - 2 Pi^2 eps^2 - (28 Zeta[3] eps^3) / 3 +
-    (2 (Pi^4 + 42 Zeta[3]) eps^4) / 3;
+  Cos[2 Pi eps];
 
 (* Appendix A.1 is written with timelike powers (-q^2)^alpha.  The integrated
    T-brackets are real, so the physical continuation contributes only the
-   cosine phase.  We convert those powers explicitly before applying the same
-   two-parton virtual convention used by the validated one-loop self route. *)
+   cosine phase.  We apply the loop-measure conversion separately. *)
 A22TwoLoopTreePaperConventionRules[expr_] :=
   expr /. {
     HoldPattern[Power[-q2, -2 eps]] :> q2^(-2 eps) Cos[2 Pi eps],
@@ -2203,11 +2182,8 @@ A22TwoLoopTreePaperConventionFactor[] :=
   256 Pi^8 A22VirtualTwoPartonConventionFactor[] Gamma[1 - eps]^2 /
     ((4 Pi)^(2 eps) Cos[2 Pi eps]);
 
-(* After applying the Appendix A.1 timelike continuation and the common
-   two-parton convention factor, each master collapses to a compact form in
-   the package convention.  These simplified values are what the IBP backend
-   actually substitutes, while the explicit core/rule helpers above remain as
-   the transparent derivation layer. *)
+(* The runtime values below apply the exact loop-measure conversion and the
+   real part of the timelike continuation to the Appendix A.1 masters. *)
 A22TwoLoopTreeMasterValueA22LO[] :=
   RuntimeMasterValue["A22TwoLoopTree", "A22LO"];
 
@@ -2474,20 +2450,16 @@ IBPConventionBridgeFactor[profile_Association, applyFeynCalcMS_,
     Switch[family,
       "A31",
         If[TrueQ[applyFeynCalcMS],
-          (* The A31 runtime masters are already in the S_Gamma convention
-             compensated by IBPNormalization.  A further FeynCalc-MS factor
-             shifts the verified paper poles beginning at epsilon^2. *)
+          (* The A31 runtime masters and IBPNormalization already include the
+             route's measure conversion. *)
           1
           ,
           1
         ]
       ,
       "A22OneLoopSelf" | "A22TwoLoopTree" | "A22",
-        (* The A22 master substitutions are already encoded in the explicit
-           two-parton paper convention used by hep-ph/0403057.  Applying the
-           generic Exp[2 eps EulerGamma]/Gamma[1-eps]^2 bridge again would
-           double-count that conversion and shift the paper T_{qq}^{(6)}
-           coefficients away from their exact targets. *)
+        (* The A22 master substitutions already include the exact measure
+           conversion and any route-specific real timelike phase. *)
         1
       ,
       _,
