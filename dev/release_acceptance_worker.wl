@@ -356,15 +356,15 @@ massiveA30BetaAcceptance[] :=
     runtimeRules = MassiveA30IntegratedRuntimeMasterRules[];
     runtimeRuleValues = Last /@ runtimeRules;
     checks = <|
-      "PublicDerivedMX30RouteQ" -> TrueQ[
+      "PublicIBPRouteQ" -> TrueQ[
         Quiet[Check[publicRecord["IntegratedResultKind"], $Failed]] ===
-          "ClosedDerivedMX30Series"],
+          "IBPWithLiteratureMasterValues"],
       "PublicOrderZeroReferenceMatchQ" ->
         exactZeroQ[publicResult - reference],
       "PublicResultHasNoRuntimeArtifactsQ" ->
         noRuntimeArtifactsQ[publicResult],
       "DeclaredCutMeasureFactorQ" ->
-        TrueQ[MassiveA30IntegratedCutMeasureFactor[] === -1/4],
+        TrueQ[MassiveA30IntegratedCutMeasureFactor[] === 1/4],
       "PaperToRuntimeRelationAcceptedQ" ->
         AssociationQ[paperRelation] && TrueQ[paperRelation["AcceptedForRuntimeQ"]],
       "RuntimeMasterRuleValuesHaveNoRuntimeArtifactsQ" ->

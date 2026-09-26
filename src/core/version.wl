@@ -35,6 +35,8 @@ $AntCalcReleaseHistory = {<|"Version" -> "0.3.0-beta.2", "Date" -> "2026-07-18",
    "Beta", "Summary" -> "Updated A22/A31 master-integral normalization and integration routing for the ongoing A22 master-combination validation."
   |>, <|"Version" -> "0.3.2-beta.4", "Date" -> "2026-09-26", "Stage" ->
    "Beta", "Summary" -> "Replaced truncated A22 convention series with exact loop-measure and timelike-phase factors derived from the declared normalizations; integrated results through eps^0 are unchanged."
+  |>, <|"Version" -> "0.3.2-beta.5", "Date" -> "2026-09-26", "Stage" ->
+   "Beta", "Summary" -> "Corrected the sign of the massive A30 cut-measure factor (I_paper = +j_MX30/4) and made the package-owned IBP route the default for massive A30: build, LiteRed MX30 reduction, conversion to the literature masters and master substitution. The encoded literature closed form is now opt-in via $MassiveA30UseLiteratureClosedForm."
   |>};
 
 $AntCalcVersion = Last[$AntCalcReleaseHistory]["Version"];
@@ -52,7 +54,7 @@ AntCalcVersionHistory[] :=
 AntCalcDisplayVersion::usage = "AntCalcDisplayVersion[] returns the typeset user-facing release version.";
 
 AntCalcDisplayVersion[] :=
-  Row[{"0.3.2", Style[" β ", "Text"], "4 - Thesis Version"}];
+  Row[{"0.3.2", Style[" β ", "Text"], "5 - Thesis Version"}];
 
 LiteRed2InstallationVersion::usage = "LiteRed2InstallationVersion[] reads the installed LiteRed2 release identity without loading LiteRed.";
 

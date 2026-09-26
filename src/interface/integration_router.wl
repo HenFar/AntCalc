@@ -1670,7 +1670,7 @@ LegacyIntegrateAntennaObjectImplementation[obj_AntennaObject, OptionsPattern[]] 
     ];
     If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] &&
         quarkMassOpt =!= 0 &&
-        !TrueQ[$MassiveA30ForceIBPMasterRoute],
+        TrueQ[$MassiveA30UseLiteratureClosedForm],
       Module[{routeData, antennaLocal, openMasterBackendDiagnostics},
         antennaLocal = Lookup[data, "Antenna", $Failed];
         routeData =
@@ -2179,6 +2179,16 @@ IntegratedAntennaDiagnostics[key_, unintegrated_, integrated_, profile_Associati
             integratedResidual, "Profile" -> profile|>
         ,
         {a_Symbol /; SymbolName[a] === "A", 3, 0},
+          If[Lookup[profile, "BasisFamily", None] === "MX30",
+            (* Massive A30: the massless reference below does not apply, and
+               expanding the all-epsilon hypergeometric result only to compare
+               it with that reference is both meaningless and very slow.  The
+               massive result is validated against the literature by
+               MassiveA30IntegratedRuntimeMatchReport[] instead. *)
+            <|"PaperCheckAvailable" -> False,
+              "ValidationNote" -> "Massive A30 is checked against the literature by MassiveA30IntegratedRuntimeMatchReport[].",
+              "ReturnedExpansionOrder" -> expansionOrder,
+              "Profile" -> profile|>,
           (* The public A30 route may return a deeper series, but the external
              reference retained here is published/encoded only through the
              finite term. Compare at that evidence depth rather than treating
@@ -2194,6 +2204,7 @@ IntegratedAntennaDiagnostics[key_, unintegrated_, integrated_, profile_Associati
             "ReturnedExpansionOrder" -> expansionOrder,
             "ValidationExpansionOrder" -> 0,
             "Profile" -> profile|>
+          ]
         ,
         {a_Symbol /; SymbolName[a] === "A", 4, 0},
           <|"IntegratedBackendAvailable" -> True,

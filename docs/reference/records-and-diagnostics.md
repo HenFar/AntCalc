@@ -80,7 +80,7 @@ runtime provenance.
 
 For massive `A30`, the paper numerator master is reduced explicitly into the
 MX30 basis and the common cut conversion is derived as
-`I_paper = -j_MX30/4`. The runtime rules therefore substitute both MX30
+`I_paper = j_MX30/4`. The runtime rules therefore substitute both MX30
 masters directly; the raw master-combination view remains available for
 provenance.
 

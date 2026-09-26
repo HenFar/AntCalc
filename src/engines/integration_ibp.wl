@@ -622,8 +622,8 @@ IBPProfile["MX30"] :=
     "TopologyDenominators" -> MX30BasisTopologyAssociation[],
     "ExpansionOrder" -> 2, "GenerateMissingBases" -> False,
     "ImplementationStatus" -> "Implemented",
-    "OpenMasterValuesQ" -> True,
-    "IntegratedResultKind" -> "MasterCombination",
+    "OpenMasterValuesQ" -> False,
+    "IntegratedResultKind" -> "IBPWithLiteratureMasterValues",
     "ExternalKinematics" -> <|
       "p1Squared" -> quarkMass^2,
       "p2Squared" -> quarkMass^2,
@@ -631,10 +631,10 @@ IBPProfile["MX30"] :=
       "qSquared" -> 2 quarkMass^2 + s12 + s13 + s23
     |>,
     "Notes" -> {
-      "This profile keeps the developer-facing MX30 open-master route available in symbolic master-combination mode.",
+      "Massive A30 is integrated through this profile by default: LiteRed reduction to the MX30 masters, conversion to the literature masters (I_paper = j_MX30/4 plus the explicit I2 numerator reduction), and substitution of the literature master values.",
       "The massive cut structure, term-preparation bridge, and topology bases are now encoded explicitly in the profile.",
       "The package-owned MX30 readiness check reduces the massive A30 build output to a clean linear combination of LiteRed masters.",
-      "Public IntegrateAntenna and BuildAndIntegrateAntenna calls use the derived closed MX30 route unless the developer-only $MassiveA30ForceIBPMasterRoute flag is set."
+      "The encoded literature closed form is only returned when the developer-only $MassiveA30UseLiteratureClosedForm flag is set; $MassiveA30ForceIBPMasterRoute is retained for compatibility and no longer changes the default."
     }|>;
 
 IBPProfile["X40"] :=
@@ -2253,7 +2253,7 @@ IBPMasterValues[profile_Association] :=
     "MX30",
       (* The massive A30 runtime basis is closed by the explicit paper-I2
          numerator reduction and the derived common cut factor
-         I_paper = -j_MX30/4.  Keep the rules route-owned: unlike the
+         I_paper = j_MX30/4.  Keep the rules route-owned: unlike the
          massless generic families, their closed forms carry the massive
          threshold hypergeometric dependence. *)
       MassiveA30IntegratedRuntimeMasterRules[]
@@ -2443,10 +2443,14 @@ IBPConventionBridgeSeriesOrder[profile_Association, order_Integer] :=
   ];
 
 IBPConventionBridgeFactor[profile_Association, applyFeynCalcMS_,
-   order_Integer] :=
+   order_] :=
   Module[{family, bridgeOrder},
     family = Lookup[profile, "BasisFamily", "Unknown"];
-    bridgeOrder = IBPConventionBridgeSeriesOrder[profile, order];
+    (* A non-integer order (massive A30 with ExpansionOrder -> Automatic)
+       requests the all-epsilon closed form, so there is no series depth. *)
+    bridgeOrder =
+      If[IntegerQ[order], IBPConventionBridgeSeriesOrder[profile, order],
+        Automatic];
     Switch[family,
       "A31",
         If[TrueQ[applyFeynCalcMS],
@@ -2567,19 +2571,26 @@ IBPToSeriesWithDiagnostics[rawReduced_, reduced_, profile_Association,
       ];
     conventionFactor = normalizationAssociation["ConventionBridgeFactor"];
     normalized = normalizationAssociation["NormalizedResult"];
+    (* Without an integer ExpansionOrder (massive A30 default) the result is
+       returned in closed form to all orders in epsilon, as the literature
+       masters are all-epsilon hypergeometric expressions. *)
     {seriesSeconds, series} =
       AbsoluteTiming[
-        Series[
-          normalized /. {
-            eps -> epsSeries,
-            FeynCalc`Epsilon -> epsSeries
-          },
-          {epsSeries, 0, profile["ExpansionOrder"]}
-        ] //
-        Normal //
-        FullSimplify //
-        ReplaceAll[#, epsSeries -> FeynCalc`Epsilon]& //
-        Collect[#, FeynCalc`Epsilon]&
+        If[IntegerQ[profile["ExpansionOrder"]],
+          Series[
+            normalized /. {
+              eps -> epsSeries,
+              FeynCalc`Epsilon -> epsSeries
+            },
+            {epsSeries, 0, profile["ExpansionOrder"]}
+          ] //
+          Normal //
+          FullSimplify //
+          ReplaceAll[#, epsSeries -> FeynCalc`Epsilon]& //
+          Collect[#, FeynCalc`Epsilon]&
+          ,
+          normalized
+        ]
       ];
     <|"Integrated" -> series, "Stages" -> <|"RawLiteRedCombination" ->
          rawLiteRed, "MasterMappedExpression" -> rawMapped,

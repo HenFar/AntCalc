@@ -117,7 +117,7 @@ MassiveA30IntegratedSource[] :=
       "PackageConventionCandidate is derived from the paper result only through the explicit bridge in MassiveA30IntegratedNormalizationBridge[].",
       "The current package runtime basis is not identical to the paper master basis: the package second master is the dotted LiteRed basis representative j[MX30Basis123,2,1,1,0,0], whereas the paper I2^(m,0,m) is a numerator master.",
       "The paper I2 master is defined as the s_ij-weighted antenna phase-space integral. In MX30Basis123, s13 is exactly represented by -j[MX30Basis123,1,1,1,-1,0].",
-      "The explicit numerator reduction and the two-coefficient cut-measure check fix I_paper = -j_MX30/4, so the paper masters are now converted directly into the MX30 runtime basis without solving against the final integrated antenna."
+      "The explicit numerator reduction and the two-coefficient cut-measure check fix I_paper = j_MX30/4, so the paper masters are now converted directly into the MX30 runtime basis without solving against the final integrated antenna."
     }
   |>;
 
@@ -181,7 +181,7 @@ MassiveA30IntegratedPaperConvention[] :=
 MassiveA30IntegratedInvariantBridgeRules[] :=
   {
     Ecm2 -> q2,
-    mQ^2 -> m2,
+    Power[mQ, n_Integer?EvenQ] :> m2^(n/2),
     MassiveA30IntegratedPaperR0[] -> 1 - (4 m2)/q2
   };
 
@@ -383,8 +383,8 @@ MassiveA30IntegratedDirectRuntimeMasterI2Candidate[] :=
 (* The common normalization is fixed by the two independent coefficient
    determinations in MassiveA30IntegratedCutMeasureConsistencyReport[].
    With the package's declared MX30 CutDs convention,
-     I_paper = C_cut j_MX30,  C_cut = -1/4. *)
-MassiveA30IntegratedCutMeasureFactor[] := -1/4;
+     I_paper = C_cut j_MX30,  C_cut = +1/4. *)
+MassiveA30IntegratedCutMeasureFactor[] := 1/4;
 
 (* The paper masters and LiteRed cut masters can differ only by one common
    cut-measure factor if the two bases describe the same antenna integral.
@@ -558,7 +558,7 @@ MassiveA30IntegratedRuntimeMatchReport[] :=
     <|
       "Status" -> "DerivedMX30RuntimeBridge",
       "BridgeMethod" ->
-        "Reduce the paper numerator master explicitly in MX30Basis123 and apply the common cut-measure factor C_cut = -1/4 independently verified from both runtime coefficients. No runtime master is solved against the final integrated target.",
+        "Reduce the paper numerator master explicitly in MX30Basis123 and apply the common cut-measure factor C_cut = +1/4 independently verified from both runtime coefficients. No runtime master is solved against the final integrated target.",
       "RuntimeMasterCombination" -> coefficients["Combination"],
       "RuntimeCoefficients" -> <|
         "C1" -> coefficients["C1"],

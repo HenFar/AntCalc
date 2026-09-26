@@ -100,7 +100,7 @@ MX30I2IntegratedTargetCheck[] :=
   |>;
 
 MX30I2CandidateStrategy =
-  "Reduce the paper numerator master explicitly in MX30Basis123, then apply the common conversion I_paper = -j_MX30/4 verified independently from the undotted and dotted runtime coefficients.";
+  "Reduce the paper numerator master explicitly in MX30Basis123, then apply the common conversion I_paper = j_MX30/4 verified independently from the undotted and dotted runtime coefficients.";
 
 MX30I2Report[] :=
   <|
