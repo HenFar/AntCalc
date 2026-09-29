@@ -22,9 +22,15 @@ scripts record active work, not hidden promises of completeness.
   contract passes; this verifies that the integrated subtraction is not double
   counted.
 - **2026-08-06:** massive A30 obtained a derived MX30-basis closure: the paper
-  numerator representative was reduced explicitly, the common cut-measure
-  factor was independently recovered from both master coefficients, and the
-  public order-zero route matched its runtime reference in a fresh kernel.
+  numerator representative was reduced explicitly, and the then-current
+  coefficient ratio was treated as a common cut factor. A September 2026
+  review found that ratio included the omitted factor 4 in paper Eq. (3.1);
+  the cut-measure interpretation has been withdrawn.
+- **2026-09-29:** restored the explicit factor 4 in massive A30 paper Eq. (3.1).
+  The prior massless result was one quarter of the massless antenna, and the
+  prior coefficient-derived 1/4 master ratio was not an independent measure
+  derivation. The corrected effective bridge is 1; fresh-kernel checks are
+  pending.
 - **2026-07-30:** all A22 prototype virtual colour components completed
   loop-only IBP reduction with zero unmatched terms. The leading component
   compacts from 70,899 to 567 leaves over seven exact-topology masters; the
@@ -88,7 +94,7 @@ massless contract:
 | A22 loop-level master substitutions | topology and normalization crosswalk complete: the Nf topology maps to Appendix A.1 A4 with unit Jacobian. The former runtime factor 1/2 was traced to an upstream SMQCD flavour double count (the F[3] and F[4] generation sums were each mapped to total Nf); the source now maps each class to Nf/2 and the runtime uses the direct A4 lift |
 | Catani-operator validation | not yet implemented |
 | Factorisation-limit validation | not yet implemented |
-| Massive A30 second-master derivation | complete for the beta MX30 route: explicit numerator reduction plus independently matched cut-measure factor activate the runtime dotted-master substitution |
+| Massive A30 second-master derivation | beta MX30 route uses the explicit numerator reduction and corrected effective normalization; the coefficient ratio is not claimed as an independent cut-measure derivation |
 | User-facing examples/tutorial notebooks | planned separately from `dev/` scripts |
 | Broader convention-regression coverage | deferred maintenance work |
 | Systematic massive programme, massive B4/C4, initial-state antennae | research extensions |

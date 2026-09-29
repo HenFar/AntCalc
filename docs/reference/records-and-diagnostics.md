@@ -79,10 +79,12 @@ backend `RawLiteRedCombination` retain LiteRed's original symbols for exact
 runtime provenance.
 
 For massive `A30`, the paper numerator master is reduced explicitly into the
-MX30 basis and the common cut conversion is derived as
-`I_paper = j_MX30/4`. The runtime rules therefore substitute both MX30
-masters directly; the raw master-combination view remains available for
-provenance.
+MX30 basis. The previous coefficient-derived `1/4` included a missing factor
+from paper Eq. (3.1); with the corrected antenna, the effective bridge is
+`I_paper = j_MX30`. The runtime rules substitute both MX30 masters directly;
+the raw master-combination view remains available for provenance. `CutDs`
+flags identify cut denominators but do not, by themselves, fix an overall
+phase-space normalization.
 
 ## Current intermediate-stage interface
 

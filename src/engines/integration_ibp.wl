@@ -631,7 +631,7 @@ IBPProfile["MX30"] :=
       "qSquared" -> 2 quarkMass^2 + s12 + s13 + s23
     |>,
     "Notes" -> {
-      "Massive A30 is integrated through this profile by default: LiteRed reduction to the MX30 masters, conversion to the literature masters (I_paper = j_MX30/4 plus the explicit I2 numerator reduction), and substitution of the literature master values.",
+      "Massive A30 is integrated through this profile by default: LiteRed reduction to the MX30 masters, conversion to the literature masters with the corrected effective normalization and explicit I2 numerator reduction, and substitution of the literature master values.",
       "The massive cut structure, term-preparation bridge, and topology bases are now encoded explicitly in the profile.",
       "The package-owned MX30 readiness check reduces the massive A30 build output to a clean linear combination of LiteRed masters.",
       "The encoded literature closed form is only returned when the developer-only $MassiveA30UseLiteratureClosedForm flag is set; $MassiveA30ForceIBPMasterRoute is retained for compatibility and no longer changes the default."
@@ -2252,8 +2252,8 @@ IBPMasterValues[profile_Association] :=
     ,
     "MX30",
       (* The massive A30 runtime basis is closed by the explicit paper-I2
-         numerator reduction and the derived common cut factor
-         I_paper = j_MX30/4.  Keep the rules route-owned: unlike the
+         numerator reduction and the corrected effective master conversion
+         I_paper = j_MX30.  Keep the rules route-owned: unlike the
          massless generic families, their closed forms carry the massive
          threshold hypergeometric dependence. *)
       MassiveA30IntegratedRuntimeMasterRules[]

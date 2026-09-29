@@ -75,13 +75,14 @@ the runtime and the source contract.
 
 ## Massive A30
 
-The massive route has a real runtime `MX30` reduction and a legitimate
-unintegrated antenna. The paper numerator master is explicitly reduced in the
-MX30 basis, and independent coefficient comparisons fix the common cut-measure
-conversion to `I_paper = j_MX30/4`. The resulting undotted and dotted runtime
-master rules are active in the beta integration route. The retained reports
-record this derivation chain; they are not a fit performed from the final
-closed expression.
+The massive route has a real runtime `MX30` reduction and an unintegrated
+antenna normalized with the explicit factor `4` in paper Eq. (3.1). The paper
+numerator master is explicitly reduced in the MX30 basis. The old coefficient
+ratio `1/4` mixed the omitted antenna factor with the runtime master bridge;
+after correcting the antenna, the effective paper-to-runtime conversion is
+`I_paper = j_MX30`. The coefficient report checks the undotted and dotted
+relations, while a separate derivation is required before calling this a pure
+cut-measure normalization.
 
 ## Repository roles
 

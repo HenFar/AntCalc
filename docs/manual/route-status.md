@@ -35,15 +35,16 @@ of correctness by itself.
 
 | Route | Current scope | Status |
 |---|---|---|
-| massive `A30` | dimensionally continued build, explicit MX30 numerator reduction, derived common cut factor, closed integrated route, and fresh-kernel epsilon-depth qualification through order 2 | beta |
+| massive `A30` | corrected build normalization, explicit MX30 numerator reduction, effective master bridge, and closed integrated route; corrected build/integration checks are pending | beta |
 | `D30` | source-model and diagnostic work exists; validated public antenna extraction and integration are unfinished | experimental |
 
-The massive `A30` beta route has passed end-to-end public and forced-MX30
-checks, plus fresh uncached runs at `ExpansionOrder -> 0`, `1`, and `2`. Each
-matched its corresponding runtime reference and retained no runtime masters or
-loop objects. Deeper epsilon orders are not yet claimed. Experimental routes
-can return diagnostics, partial results, or `$Failed`; `D30` must not be
-treated as supported.
+The previous massive `A30` normalization passed end-to-end public and
+forced-MX30 checks, plus fresh uncached runs at `ExpansionOrder -> 0`, `1`, and
+`2`. Those checks predate the factor-four correction and do not validate the
+corrected route. Rerun them before relying on the current beta implementation.
+Deeper epsilon orders are not claimed. Experimental routes can return
+diagnostics, partial results, or `$Failed`; `D30` must not be treated as
+supported.
 
 ## Contract principles
 

@@ -94,20 +94,22 @@ outside those component slots.
 
 ## Massive A30
 
-The unintegrated massive `A30` route is package-derived. Its integrated beta
-route reduces to the `MX30` basis and uses the derived common cut-measure
+The unintegrated massive `A30` route is package-derived and includes the
+explicit factor `4` in paper Eq. (3.1). Its integrated beta route reduces to
+the `MX30` basis and uses the corrected effective paper-to-runtime master
 conversion
 
 ```text
-I_paper = - j_MX30 / 4.
+I_paper = j_MX30.
 ```
 
-Together with the explicit reduction of the paper numerator master, this gives
-the active dotted-master substitution rather than a backwards-fitted closed
-form. Fresh-kernel public results through `ExpansionOrder -> 2` are checked
-against their runtime references; deeper epsilon orders remain outside the
-beta support claim. See the [route status](route-status.md) for the support
-boundary.
+The earlier coefficient-derived `1/4` included the omitted unintegrated
+antenna factor. The pure cut-measure normalization has not been separately
+derived: LiteRed's `CutDs` declarations do not fix it. Together with the
+explicit reduction of the paper numerator master, the effective bridge gives
+the active dotted-master substitution. The corrected route has not yet been
+rerun through the release checks; see the [route status](route-status.md) for
+the current support boundary.
 
 ## Inspecting convention state
 

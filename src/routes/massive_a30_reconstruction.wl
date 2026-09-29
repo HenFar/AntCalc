@@ -356,7 +356,7 @@ MassiveA30ThesisAntenna[OptionsPattern[]] :=
         epsilon -> Epsilon,
         q2 -> 2 qm ^ 2 + s12 + s13 + s23
       } // Together;
-    (
+    4 * (
       ((4 / 9) rawInterference /. SUNN -> 3) /
       ((4 / 3) (colourNorm /. SUNN -> 3) thesisBornOnShell)
     ) /. q2 -> 2 qm ^ 2 + s12 + s13 + s23 // Together // Simplify
@@ -402,7 +402,7 @@ MassiveA30BuildData[OptionsPattern[]] :=
           "MassiveA30Route" -> True,
           "quarkMass" -> qm,
           "NormalizationBridge" ->
-            "Notebook-style d-dimensional raw interference, s123 -> s12 + s13 + s23, and package-to-thesis normalization factor 4/3 * colourNorm. The Epsilon -> 0 limit is checked against the thesis target.",
+            "Notebook-style d-dimensional raw interference, s123 -> s12 + s13 + s23, package-to-thesis normalization factor 4/3 * colourNorm, and the explicit numerator factor 4 in paper Eq. (3.1). The Epsilon -> 0 limit is checked against the corrected target and the massless A30 limit.",
           "ThesisResidual" -> paperResidual,
           "ThesisExactMatchQ" -> TrueQ[paperResidual === 0]
         |>

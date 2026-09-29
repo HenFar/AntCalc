@@ -24,7 +24,7 @@ MassiveA30UnintegratedPaperConvention::usage =
   "MassiveA30UnintegratedPaperConvention[] returns the thesis-facing massive A30 antenna expression in the notation used for the bibliography milestone.";
 
 MassiveA30SquaredMatrixElementPaperBracket::usage =
-  "MassiveA30SquaredMatrixElementPaperBracket[] returns the bracket appearing in the thesis qqbar g squared-matrix-element expression before the overall N3 factor.";
+  "MassiveA30SquaredMatrixElementPaperBracket[] returns the numerator of the massive A30 in paper Eq. (3.1), including its explicit overall factor 4.";
 
 MassiveA30BornNormalizationPaper::usage =
   "MassiveA30BornNormalizationPaper[] returns the thesis massive qqbar normalization denominator used to define the antenna.";
@@ -46,11 +46,12 @@ MassiveA30UnintegratedSource[] :=
     "Key" -> {A, 3, 0},
     "Status" -> "Encoded",
     "ResultKind" -> "Unintegrated",
-    "PrimarySource" -> "TM_Joana_Reis.pdf",
-    "SourceSection" -> "Chapter 5",
-    "SourceEquations" -> {"(5.1.1)", "(5.1.2)", "(5.1.3)"},
+    "PrimarySource" -> "A. Gehrmann-De Ridder and M. Ritzmann, JHEP 07 (2009) 041, Eq. (3.1)",
+    "SourceSection" -> "Paper §3; thesis §4.5",
+    "SourceEquations" -> {"Paper (3.1)-(3.2)", "Thesis (4.43)-(4.48)"},
     "Notes" -> {
-      "PaperConvention preserves the thesis-facing normalization and symbols mf, s123, q2, epsilon.",
+      "PaperConvention preserves the symbols mf, s123, q2, epsilon and the explicit factor 4 multiplying the kinematic bracket in paper Eq. (3.1).",
+      "The prior transcription omitted that numerator factor while retaining the denominator factor 4, producing an erroneous overall 1/4 and a discontinuous massless limit.",
       "For the thesis-facing convention used here, s123 follows the pair-invariant sum convention s123 = s12 + s13 + s23, while q2 = s123 + 2 mf^2 in the massive kinematics.",
       "PackageConventionCandidate keeps the same mass-dependent bracket structure while being adapted to the package denominator and symbol conventions.",
       "The package candidate is chosen to reproduce the existing massless A30 target in the quarkMass -> 0 limit."
@@ -63,13 +64,14 @@ MassiveA30UnintegratedPaperBracket[] :=
     8 mf^4 (1/s23^2 + 1/s13^2);
 
 MassiveA30SquaredMatrixElementPaperBracket[] :=
-  MassiveA30UnintegratedPaperBracket[];
+  4 MassiveA30UnintegratedPaperBracket[];
 
 MassiveA30BornNormalizationPaper[] :=
   4 ((1 - epsilon) q2 + 2 mf^2);
 
 MassiveA30UnintegratedPaperConvention[] :=
-  MassiveA30UnintegratedPaperBracket[]/MassiveA30BornNormalizationPaper[];
+  MassiveA30SquaredMatrixElementPaperBracket[]/
+    MassiveA30BornNormalizationPaper[];
 
 MassiveA30UnintegratedPackageBracket[] :=
   (1 - Epsilon) (s13/s23 + s23/s13) +
