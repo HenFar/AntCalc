@@ -56,7 +56,7 @@ AntCalcVersionHistory[] :=
 AntCalcDisplayVersion::usage = "AntCalcDisplayVersion[] returns the typeset user-facing release version.";
 
 AntCalcDisplayVersion[] :=
-  Row[{"0.3.2", Style[" β ", "Text"], "5 - Thesis Version"}];
+  Row[{"0.3.2", Style[" β ", "Text"], "6 - Thesis Version"}];
 
 LiteRed2InstallationVersion::usage = "LiteRed2InstallationVersion[] reads the installed LiteRed2 release identity without loading LiteRed.";
 
