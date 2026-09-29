@@ -28,9 +28,10 @@ The runtime under `src/` is release-complete for the massless package target:
 - `BuildAllAntennae[SMQCD, maxOrder -> LO|NLO|NNLO]`
 - `BuildAndIntegrateAllAntennae[SMQCD, maxOrder -> LO|NLO|NNLO, ...]`
 
-The runtime also contains a beta extension and an experimental branch:
+The runtime also contains the first public massive route and an experimental
+branch:
 
-- massive `A30` (beta)
+- massive `A30` (integration release checks pending)
 - `D30`
 
 Those branches are kept inside `src/` because they are genuine runtime code,
@@ -263,11 +264,14 @@ operations.
 
 ## Special Runtime Branches
 
-### Massive A30 (beta)
+### Massive A30
 
 The massive `A30` runtime branch is real code and therefore lives in `src/`,
-not in `dev/`. It is a beta route with a derived MX30 master closure, qualified
-through `ExpansionOrder -> 2`; it is not part of the stable massless surface.
+not in `dev/`. It is the first public massive route, with a derived MX30
+master closure. Its corrected build passes the soft, collinear, and
+massless-limit checks. The beta qualification records that fresh
+post-correction integrated release checks remain pending; the earlier
+`ExpansionOrder -> 0`, `1`, and `2` runs predate the normalization correction.
 
 Its split files exist for a reason:
 
@@ -279,7 +283,7 @@ Its split files exist for a reason:
   records the integrated provenance layer and derived MX30 master-basis closure
 
 The design reason is traceability: the package retains the derivation chain
-while exposing the closed beta result through the public route.
+while exposing the closed result through the public route.
 
 ### D30
 

@@ -69,15 +69,18 @@ checks for large expressions; open-master identity and diagnostics for an
 unresolved master basis. Heavy-route timeouts are performance evidence, not
 physics agreement, unless a fresh equivalent completes within the same limit.
 
-The massive-A30 beta regression is:
+The massive-A30 regression is:
 
 ```sh
 WolframKernel -script dev/regression_massive_a30_beta.wl
 ```
 
 It checks the order-zero public reference, the effective master conversion and
-numerator relations, and the forced MX30 route after master substitution. The companion
-fresh-kernel epsilon-depth benchmark is
+numerator relations, and the forced MX30 route after master substitution. The
+existing runs predate the factor-four normalization correction, so rerun this
+regression and the companion fresh-kernel epsilon-depth benchmark after a
+normalization change before counting them as release evidence. The benchmark is
 `dev/benchmarks/massive_a30/run_massive_a30_epsilon_benchmark.sh`;
-both remain separate from the stable massless acceptance suite until the full
-release-acceptance run is complete.
+both remain separate from the stable massless acceptance suite. The corrected
+build's soft, collinear, and massless-limit checks pass; post-correction
+integration acceptance is still pending.

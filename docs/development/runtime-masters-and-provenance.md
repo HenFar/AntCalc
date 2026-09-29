@@ -77,12 +77,13 @@ the runtime and the source contract.
 
 The massive route has a real runtime `MX30` reduction and an unintegrated
 antenna normalized with the explicit factor `4` in paper Eq. (3.1). The paper
-numerator master is explicitly reduced in the MX30 basis. The old coefficient
-ratio `1/4` mixed the omitted antenna factor with the runtime master bridge;
-after correcting the antenna, the effective paper-to-runtime conversion is
-`I_paper = j_MX30`. The coefficient report checks the undotted and dotted
-relations, while a separate derivation is required before calling this a pure
-cut-measure normalization.
+numerator master is explicitly reduced in the MX30 basis. The earlier
+coefficient comparison gave `1/4` while the build omitted the antenna factor.
+Restoring that factor makes the effective paper-to-runtime build/integration
+bridge unit-normalised, `I_paper = j_MX30`; this does not independently
+renormalise the masters. The coefficient report checks the undotted and
+dotted relations, while a separate derivation is required before calling this
+a pure cut-measure normalization.
 
 ## Repository roles
 

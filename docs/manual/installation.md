@@ -81,13 +81,17 @@ bash dev/run_release_verification.sh
 ```
 
 This command loads the checkout in fresh kernels. Its release-acceptance slice
-covers the stable massless surface and the beta massive-`A30` public MX30
-closure; `D30` remains experimental. The expensive forced-MX30 IBP regression
-is deliberately separate from this release gate. It tests public build,
-integration, record, and driver calls. Results are `Validated`, `Unvalidated`, `Failed`, or
-`InconclusiveTimeout`; only `Validated` returns a successful exit status.
-Each JSON record states the evidence tier and scope. The command needs the
-configured `WolframKernel`; run time depends on the local backend.
+covers the stable massless surface and the public massive-`A30` MX30 closure;
+`D30` remains experimental. The corrected massive build passes its soft,
+collinear, and massless-limit checks, while its post-correction integrated
+release checks are still pending. The beta qualification records this release
+verification status; `A30` is the first public massive route. The expensive
+forced-MX30 IBP regression is deliberately separate from this release gate. It
+tests public build, integration, record, and driver calls. Results are
+`Validated`, `Unvalidated`, `Failed`, or `InconclusiveTimeout`; only
+`Validated` returns a successful exit status. Each JSON record states the
+evidence tier and scope. The command needs the configured `WolframKernel`; run
+time depends on the local backend.
 
 The physics-validation harness is developer-facing:
 
@@ -106,8 +110,9 @@ It reports `Pass`, `Fail`, `KnownIssue`, `RouteEvaluationFailed`, or
 - An IBP failure can indicate missing basis directories or runtime-master
   artifacts.
 - A `$Failed` result from `D30` is not necessarily an installation error: that
-  route is experimental. For beta massive `A30`, retain the route diagnostics
-  and master-basis report when reporting an issue.
+  route is experimental. For massive `A30`, retain the route diagnostics and
+  master-basis report when reporting an issue; its beta qualification tracks
+  the pending post-correction integrated release checks.
 - Bulk helpers currently reject nonzero `quarkMass`, lowercase `maxOrder`, and
   unsupported models such as `SUSY` and `HiggsEFT`.
 - If derivation-side master-integral files change, refresh and validate the
