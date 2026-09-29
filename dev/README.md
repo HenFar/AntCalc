@@ -11,9 +11,12 @@ The canonical release acceptance script is:
 
 - [run_release_verification.sh](run_release_verification.sh)
 
-This checks the supported massless release matrix and the beta massive-`A30`
-closure. It is the only supported release gate; `run_release_verification.wl` is a retired explanatory
-stub, kept solely to stop old commands from producing a misleading smoke-pass.
+This checks the supported massless release matrix and the public massive-`A30`
+closure. The post-correction integrated A30 checks remain to be rerun; its beta
+qualification records this release-verification gate, while A30 is the first
+public massive route. This is the only supported release gate;
+`run_release_verification.wl` is a retired explanatory stub, kept solely to
+stop old commands from producing a misleading smoke-pass.
 
 It starts one fresh Wolfram kernel per case, writes one JSON evidence report per
 case. It distinguishes `Validated`, `Unvalidated`, `Failed`, and

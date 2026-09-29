@@ -2,10 +2,13 @@
 
 > **New in 0.3.2 β6 - Thesis Version:** restored the explicit numerator factor
 > `4` in massive `A30` paper Eq. (3.1), fixing its massless limit. The earlier
-> `1/4` master conversion had absorbed that omitted factor; scaling the
-> build-side integrand predicts the corrected effective conversion
-> `I_paper = j_MX30`, pending fresh integration checks. Massive `A30` remains
-> integrated by the package's MX30 route, while `D30` remains experimental.
+> coefficient comparison gave `1/4` with the undernormalised build. Restoring
+> the factor makes the effective build/integration bridge unit-normalised,
+> `I_paper = j_MX30`; this does not independently determine a cut-measure
+> normalisation for the masters. The corrected build passes its
+> soft, collinear, and massless-limit checks; fresh integration release checks
+> remain pending. Massive `A30` is the first public massive route, while
+> `D30` remains experimental.
 
 AntCalc is a Wolfram Language package that builds and integrates QCD antenna
 functions. The main workflow has two steps:
@@ -15,16 +18,19 @@ BuildAntenna[...] → IntegrateAntenna[...]
 ```
 
 `BuildAndIntegrateAntenna[...]` runs these steps in sequence. AntCalc is
-thesis research software. The massless routes are the stable release surface;
-massive `A30` is a beta extension and `D30` remains experimental.
+thesis research software. The massless routes are the stable release surface.
+Massive `A30` is the first public massive route; its beta qualification records
+pending post-correction integration release checks, not a comparison of its
+scientific maturity with the massless routes. `D30` remains experimental.
 
 ## Status
 
 Current development release: **AntCalc 0.3.2 β6 - Thesis Version**.
 
 The current release target is the massless antenna workflow for the NNLO SMQCD
-R-ratio, with a beta massive-`A30` extension. Before using a route in a
-calculation, read the [route-status matrix](docs/manual/route-status.md).
+R-ratio. The first massive `A30` route is also public, with its corrected
+integrated release checks still pending. Before using a route in a calculation,
+read the [route-status matrix](docs/manual/route-status.md).
 
 AntCalc is active, unpublished thesis research software. It is shared for
 evaluation and academic discussion; reuse, redistribution, and relicensing
@@ -108,7 +114,8 @@ LiteRed2 2.025 β
 ## Scope
 
 AntCalc does not currently provide a public `D30` route or complete
-`SUSY`/`HiggsEFT` R-ratio workflows. The massive-`A30` beta route has a derived
-master substitution and fresh-kernel qualification through
-`ExpansionOrder -> 2`; deeper epsilon orders are not yet claimed. See the
-[route-status matrix](docs/manual/route-status.md) for the exact limits.
+`SUSY`/`HiggsEFT` R-ratio workflows. The first massive `A30` route has a
+derived master substitution. Its corrected build passes the soft, collinear,
+and massless-limit checks; fresh post-correction integration release checks
+remain pending. See the [route-status matrix](docs/manual/route-status.md) for
+the exact verification scope.

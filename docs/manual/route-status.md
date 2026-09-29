@@ -3,8 +3,10 @@
 [Manual index](index.md) · [Public API overview](public-api.md) · [Documentation home](../README.md)
 
 AntCalc is active research software. A callable route is not necessarily
-supported. The tables separate the tested massless release surface from
-experimental work and beta extensions.
+supported. The tables distinguish the massless release surface, the first
+public massive route, and experimental work. Here, “beta” describes the
+release-verification state; it does not compare the scientific maturity of
+massive and massless routes.
 
 Each route exposes release-verification metadata through
 `AntennaRouteProfileReport[A, 3, 0]["Verification"]`. It records the release,
@@ -31,20 +33,20 @@ the component order and meaning are part of the route's public contract. The
 package does not treat a stored expression that matches a target as evidence
 of correctness by itself.
 
-## Beta and experimental research tracks
+## First massive route and experimental work
 
-| Route | Current scope | Status |
+| Route | Current evidence and scope | Status |
 |---|---|---|
-| massive `A30` | corrected build normalization, explicit MX30 numerator reduction, effective master bridge, and closed integrated route; corrected build/integration checks are pending | beta |
+| massive `A30` | first public massive route; corrected build normalization, explicit MX30 numerator reduction, and effective master bridge. The corrected build passes soft, collinear, and massless-limit checks; fresh post-correction integration release checks remain pending | public; integration verification pending |
 | `D30` | source-model and diagnostic work exists; validated public antenna extraction and integration are unfinished | experimental |
 
-The previous massive `A30` normalization passed end-to-end public and
-forced-MX30 checks, plus fresh uncached runs at `ExpansionOrder -> 0`, `1`, and
-`2`. Those checks predate the factor-four correction and do not validate the
-corrected route. Rerun them before relying on the current beta implementation.
-Deeper epsilon orders are not claimed. Experimental routes can return
-diagnostics, partial results, or `$Failed`; `D30` must not be treated as
-supported.
+The current corrected build passes its soft and collinear limits and its
+massless limit. The previous massive `A30` end-to-end public and forced-MX30
+checks, including fresh uncached runs at `ExpansionOrder -> 0`, `1`, and `2`,
+predate the factor-four correction and do not verify the corrected integrated
+route. Fresh post-correction integration and release-acceptance checks remain
+to be completed. Experimental routes can return diagnostics, partial results,
+or `$Failed`; `D30` must not be treated as supported.
 
 ## Contract principles
 

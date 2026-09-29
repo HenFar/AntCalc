@@ -88,8 +88,10 @@ The unresolved point is specific and technical:
 - the first master is well aligned with the phase-space master;
 - the second paper master is numerator-type, while the package runtime master
   is dotted;
-- the old coefficient ratio `1/4` mixed the missing unintegrated factor with
-  the master conversion; the expected corrected effective conversion is `1`;
+- the coefficient comparison gave `1/4` with the build factor missing;
+  restoring it makes the effective build/integration bridge unit-normalised,
+  but does not independently determine a cut-measure normalisation for the
+  masters;
 - a separate derivation from the explicit phase-space and cut-integral
   measures is still needed before calling that ratio a pure cut-measure
   normalization.

@@ -29,8 +29,10 @@ scripts record active work, not hidden promises of completeness.
 - **2026-09-29:** restored the explicit factor 4 in massive A30 paper Eq. (3.1).
   The prior massless result was one quarter of the massless antenna, and the
   prior coefficient-derived 1/4 master ratio was not an independent measure
-  derivation. The corrected effective bridge is 1; fresh-kernel checks are
-  pending.
+  derivation. The corrected effective bridge is 1. The corrected build passes
+  its soft and collinear limits and its massless limit. Earlier end-to-end
+  integration checks predate the correction, so post-correction integrated
+  release acceptance remains pending.
 - **2026-07-30:** all A22 prototype virtual colour components completed
   loop-only IBP reduction with zero unmatched terms. The leading component
   compacts from 70,899 to 567 leaves over seven exact-topology masters; the
@@ -94,21 +96,26 @@ massless contract:
 | A22 loop-level master substitutions | topology and normalization crosswalk complete: the Nf topology maps to Appendix A.1 A4 with unit Jacobian. The former runtime factor 1/2 was traced to an upstream SMQCD flavour double count (the F[3] and F[4] generation sums were each mapped to total Nf); the source now maps each class to Nf/2 and the runtime uses the direct A4 lift |
 | Catani-operator validation | not yet implemented |
 | Factorisation-limit validation | not yet implemented |
-| Massive A30 second-master derivation | beta MX30 route uses the explicit numerator reduction and corrected effective normalization; the coefficient ratio is not claimed as an independent cut-measure derivation |
+| Massive A30 second-master derivation | first public massive route uses the explicit numerator reduction and corrected effective normalization; the coefficient ratio is not claimed as an independent cut-measure derivation. Beta qualification tracks pending post-correction integrated release checks |
 | User-facing examples/tutorial notebooks | planned separately from `dev/` scripts |
 | Broader convention-regression coverage | deferred maintenance work |
 | Systematic massive programme, massive B4/C4, initial-state antennae | research extensions |
 
-The massive A30 beta route now has the paper/runtime master-basis derivation,
-dedicated regression coverage, and fresh-kernel qualification through
-`ExpansionOrder -> 2`. Its remaining release work is inclusion in the final
-fresh-kernel acceptance run, not an unresolved master mapping.
+The first public massive A30 route has the paper/runtime master-basis
+derivation, and its corrected build passes the soft, collinear, and
+massless-limit checks. The earlier fresh-kernel public and forced-MX30 runs,
+including `ExpansionOrder -> 0`, `1`, and `2`, predate the factor-four
+correction. They do not qualify the corrected integrated route. Its remaining
+release work is fresh post-correction integration acceptance; the master
+mapping is established, while the pure cut-measure normalization has not been
+independently derived.
 
 ## Experimental inspection
 
-The massive A30 beta branch and the experimental D30 branch remain callable
-for diagnostics. Only the former has a derived integrated master closure;
-neither branch should be confused with a cached-result claim.
+The first public massive A30 route and the experimental D30 branch are
+callable. Only A30 has a derived integrated master closure. Its beta
+qualification records the pending post-correction integration release checks;
+neither route's callable status should be confused with a cached-result claim.
 
 ```wl
 BuildAntenna[A, 3, 0, quarkMass -> mQ, ReturnRecord -> True]

@@ -103,13 +103,17 @@ conversion
 I_paper = j_MX30.
 ```
 
-The earlier coefficient-derived `1/4` included the omitted unintegrated
-antenna factor. The pure cut-measure normalization has not been separately
-derived: LiteRed's `CutDs` declarations do not fix it. Together with the
-explicit reduction of the paper numerator master, the effective bridge gives
-the active dotted-master substitution. The corrected route has not yet been
-rerun through the release checks; see the [route status](route-status.md) for
-the current support boundary.
+The earlier coefficient comparison gave `1/4` with the undernormalised build.
+Restoring the build factor makes the effective build/integration bridge
+unit-normalised; this is the bookkeeping that leads to the active
+dotted-master substitution, not an independent renormalisation of the master
+integrals. The pure cut-measure normalization has not been separately
+derived: LiteRed's `CutDs` declarations do not fix it. The corrected build
+passes its soft, collinear, and massless-limit checks. The earlier end-to-end
+integration checks predate the factor-four correction, so fresh post-correction integration
+release checks remain pending; see the [route status](route-status.md) for the
+current verification scope. The beta qualification records that release gate,
+not lower scientific maturity: this is AntCalc's first public massive route.
 
 ## Inspecting convention state
 
