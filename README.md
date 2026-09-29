@@ -1,11 +1,11 @@
 # AntCalc
 
-> **New in 0.3.2 β5 - Thesis Version:** the massive `A30` cut-measure factor
-> now has the sign fixed by the package's own MX30 reduction coefficients,
-> `I_paper = +j_MX30/4`, and massive `A30` is integrated by the package itself
-> by default (LiteRed MX30 reduction, conversion to the literature masters,
-> master substitution), reproducing the literature integrated antenna. LiteRed kinematics remain isolated between routes; `D30`
-> remains an experimental research track.
+> **New in 0.3.2 β6 - Thesis Version:** restored the explicit numerator factor
+> `4` in massive `A30` paper Eq. (3.1), fixing its massless limit. The earlier
+> `1/4` master conversion had absorbed that omitted factor; scaling the
+> build-side integrand predicts the corrected effective conversion
+> `I_paper = j_MX30`, pending fresh integration checks. Massive `A30` remains
+> integrated by the package's MX30 route, while `D30` remains experimental.
 
 AntCalc is a Wolfram Language package that builds and integrates QCD antenna
 functions. The main workflow has two steps:
@@ -20,7 +20,7 @@ massive `A30` is a beta extension and `D30` remains experimental.
 
 ## Status
 
-Current development release: **AntCalc 0.3.2 β5 - Thesis Version**.
+Current development release: **AntCalc 0.3.2 β6 - Thesis Version**.
 
 The current release target is the massless antenna workflow for the NNLO SMQCD
 R-ratio, with a beta massive-`A30` extension. Before using a route in a

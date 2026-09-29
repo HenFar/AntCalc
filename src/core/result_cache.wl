@@ -256,15 +256,20 @@ NormalizeStoredResultKeyValue[value_] :=
    A22 builds before the real, scale-normalized epsilon-series boundary.
    Version 8 records explicit SeriesData truncation and the public A31 q2
    Passarino-Veltman arguments. *)
-StoredResultRouteSemanticVersion["BuildAntenna"] := 8;
-StoredResultRouteSemanticVersion["BuildAntennaObject"] := 4;
+(* Version 9 restores the numerator factor 4 in massive A30 paper Eq. (3.1).
+   It invalidates massive A30 build values normalized to one quarter of the
+   massless antenna. *)
+StoredResultRouteSemanticVersion["BuildAntenna"] := 9;
+StoredResultRouteSemanticVersion["BuildAntennaObject"] := 5;
 (* Version 5 invalidated the old Breve one-loop-self master convention.
    Version 6 invalidated public master-combination returns before their
    coupling counterterms were included. Version 7 records normalized,
    family-consistent named master combinations for every A22/A31 component.
    Version 8 enforces q2 = 1 after master naming and exposes the family factor
-   separately from the returned combination. *)
-StoredResultRouteSemanticVersion["IntegrateAntenna"] := 8;
+   separately from the returned combination. Version 9 invalidates massive
+   A30 integrated values after correcting the unintegrated normalization. *)
+StoredResultRouteSemanticVersion["IntegrateAntenna"] := 9;
+StoredResultRouteSemanticVersion["BuildAndIntegrateAntenna"] := 2;
 StoredResultRouteSemanticVersion["BuildRRatio"] := 2;
 StoredResultRouteSemanticVersion["TObject"] := 4;
 StoredResultRouteSemanticVersion[_] := 1;

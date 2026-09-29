@@ -36,7 +36,9 @@ $AntCalcReleaseHistory = {<|"Version" -> "0.3.0-beta.2", "Date" -> "2026-07-18",
   |>, <|"Version" -> "0.3.2-beta.4", "Date" -> "2026-09-26", "Stage" ->
    "Beta", "Summary" -> "Replaced truncated A22 convention series with exact loop-measure and timelike-phase factors derived from the declared normalizations; integrated results through eps^0 are unchanged."
   |>, <|"Version" -> "0.3.2-beta.5", "Date" -> "2026-09-26", "Stage" ->
-   "Beta", "Summary" -> "Corrected the sign of the massive A30 cut-measure factor (I_paper = +j_MX30/4) and made the package-owned IBP route the default for massive A30: build, LiteRed MX30 reduction, conversion to the literature masters and master substitution. The encoded literature closed form is now opt-in via $MassiveA30UseLiteratureClosedForm."
+   "Beta", "Summary" -> "At beta.5 the package-owned MX30 IBP route became the default and the coefficient-derived massive A30 ratio was treated as a cut-measure factor. Beta.6 corrects that interpretation after restoring the missing factor 4 in paper Eq. (3.1); the encoded literature closed form remains opt-in via $MassiveA30UseLiteratureClosedForm."
+  |>, <|"Version" -> "0.3.2-beta.6", "Date" -> "2026-09-29", "Stage" ->
+   "Beta", "Summary" -> "Restored the explicit factor 4 in massive A30 paper Eq. (3.1), correcting the massless limit and the effective MX30 master normalization."
   |>};
 
 $AntCalcVersion = Last[$AntCalcReleaseHistory]["Version"];

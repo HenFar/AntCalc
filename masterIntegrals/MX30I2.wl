@@ -54,7 +54,7 @@ MX30I2CutDefinition =
   ];
 
 MX30I2PhysicalRole =
-  "The dotted massive runtime master chosen by the current LiteRed basis. It is not the paper numerator master I2^(m,0,m), but its closed form is derived from the explicit numerator reduction and the common MX30 cut-measure factor.";
+  "The dotted massive runtime master chosen by the current LiteRed basis. It is not the paper numerator master I2^(m,0,m), but its closed form is derived from the explicit numerator reduction and the effective paper-to-runtime master conversion.";
 
 MX30I2BackendRelation =
   HoldForm[
@@ -100,7 +100,7 @@ MX30I2IntegratedTargetCheck[] :=
   |>;
 
 MX30I2CandidateStrategy =
-  "Reduce the paper numerator master explicitly in MX30Basis123, then apply the common conversion I_paper = j_MX30/4 verified independently from the undotted and dotted runtime coefficients.";
+  "Reduce the paper numerator master explicitly in MX30Basis123, then apply the corrected effective conversion I_paper = j_MX30. The earlier coefficient ratio 1/4 included the missing factor 4 from paper Eq. (3.1); the pure cut-measure normalization has not been separately derived.";
 
 MX30I2Report[] :=
   <|

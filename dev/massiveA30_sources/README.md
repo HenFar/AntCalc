@@ -18,15 +18,18 @@ development/provenance archive for the massive track.
 
 ## Current status
 
-- The unintegrated massive `A30` result is encoded from the thesis Chapter 5
-  `QQ̄g` formula and exposed in both:
-  - a thesis-facing paper convention;
-  - a package-convention candidate chosen to preserve the same mass-dependent
-    structure while reproducing the existing massless `A30` target in the
-    `quarkMass -> 0` limit.
-- `BuildAntenna[A, 3, 0, quarkMass -> mQ]` now returns the thesis-facing
-  massive tree-level `A30` expression that was validated in the dedicated
-  `dev/massiveA30/` reconstruction track.
+- The unintegrated massive `A30` result is encoded from the thesis Section 4.5
+  `QQ̄g` formula and checked against Gehrmann-De Ridder and Ritzmann, Eq. (3.1).
+  The paper equation has an explicit factor `4` multiplying the kinematic
+  bracket; the earlier transcription dropped it while retaining the `4` in
+  the denominator. The public massive antenna and its paper target now include
+  that factor, so `quarkMass -> 0` gives the massless `A30`.
+- The package-convention candidate remains a separate integration-planning
+  expression. It is not a substitute for the paper's massive kinematic
+  formula.
+- `BuildAntenna[A, 3, 0, quarkMass -> mQ]` now returns the corrected
+  thesis-facing massive tree-level `A30`. Earlier reconstruction checks used
+  the undernormalized target and must be rerun after the factor-four repair.
 - The integrated massive `A30` source is encoded from
   Gehrmann-De Ridder and Ritzmann in two layers:
   - a paper-facing exact result using the literature variable `r0` and the
@@ -55,22 +58,26 @@ development/provenance archive for the massive track.
   - the thesis-facing comparison is performed on the four-dimensional
     numerator (`Epsilon -> 0`);
   - the package self-interference is related to the thesis normalization by
-    an explicit factor `4/3 * colourNorm`.
+    an explicit factor `4/3 * colourNorm`;
+  - the missing Eq. (3.1) numerator factor `4` is restored in the public
+    antenna and in the corrected target.
 
 ## Unfinished boundary
 
-This track is intentionally left unfinished.
+The corrected normalization is in place; fresh build and integration checks
+are still pending.
 
-The correct claim is not "the massive `A30` case is fully integrated inside
-the package." The correct claim is:
+The current claim is:
 
 - the build-side massive `A30` reconstruction is complete enough to use and
   defend;
 - the integrated literature result is encoded correctly and can be compared
   consistently to package conventions;
-- the package `MX30` IBP route can reduce the package-built massive antenna to
-  a linear combination of package masters;
-- the final fully enclosed master-basis bridge is still missing.
+- the package `MX30` IBP route reduces the package-built massive antenna to a
+  linear combination of package masters;
+- an effective paper-to-runtime master bridge with coefficient `1` follows
+  after restoring the missing factor `4` in paper Eq. (3.1), but its corrected
+  coefficient and integrated-target checks have not yet been rerun.
 
 The unresolved point is specific and technical:
 
@@ -81,7 +88,11 @@ The unresolved point is specific and technical:
 - the first master is well aligned with the phase-space master;
 - the second paper master is numerator-type, while the package runtime master
   is dotted;
-- the exact basis-change proof between those descriptions is not yet finished.
+- the old coefficient ratio `1/4` mixed the missing unintegrated factor with
+  the master conversion; the expected corrected effective conversion is `1`;
+- a separate derivation from the explicit phase-space and cut-integral
+  measures is still needed before calling that ratio a pure cut-measure
+  normalization.
 
 Because of that, the massive integration work currently stops at the following
 honest level:
@@ -90,15 +101,16 @@ honest level:
 - genuine package-owned IBP reduction to the `MX30` master combination;
 - correctly encoded bibliography target;
 - explicit normalization/convention bridge;
-- developer-side investigation material for the missing master relation.
+- a coefficient-based numerator-master relation whose corrected checks are
+  pending.
 
 What is not yet justified strongly enough to count as finished:
 
 - claiming that the package already derives the final closed integrated
   massive `A30` result internally from its own master basis in the same
   self-contained way as the massless closed routes;
-- claiming that the package-side master substitutions are already proven in a
-  thesis-defense-ready way.
+- claiming that the package-side master substitutions have passed the
+  corrected fresh-kernel checks or that the pure cut-measure factor is derived.
 
 So if you use this directory now, the correct workflow is:
 
@@ -174,8 +186,9 @@ bash masterIntegrals/run_kernel.sh -run 'Get["dev/massiveA30_sources/reconstruct
 
 ### Unintegrated massive `A30`
 
-Primary source: Chapter 5 of the thesis
-`TM_Joana_Reis.pdf`, especially eqs. `(5.1.1)` to `(5.1.3)`.
+Primary source: A. Gehrmann-De Ridder and M. Ritzmann, Eq. (3.1), with the
+thesis reconstruction and MX30 bridge documented in Section 4.5,
+Eqs. (4.43)--(4.48), of `main.pdf`.
 
 ### Integrated massive `A30`
 

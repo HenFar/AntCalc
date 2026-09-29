@@ -363,8 +363,8 @@ massiveA30BetaAcceptance[] :=
         exactZeroQ[publicResult - reference],
       "PublicResultHasNoRuntimeArtifactsQ" ->
         noRuntimeArtifactsQ[publicResult],
-      "DeclaredCutMeasureFactorQ" ->
-        TrueQ[MassiveA30IntegratedCutMeasureFactor[] === 1/4],
+      "EffectiveMasterNormalizationQ" ->
+        TrueQ[MassiveA30IntegratedCutMeasureFactor[] === 1],
       "PaperToRuntimeRelationAcceptedQ" ->
         AssociationQ[paperRelation] && TrueQ[paperRelation["AcceptedForRuntimeQ"]],
       "RuntimeMasterRuleValuesHaveNoRuntimeArtifactsQ" ->

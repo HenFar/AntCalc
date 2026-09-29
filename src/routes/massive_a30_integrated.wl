@@ -58,16 +58,16 @@ MassiveA30IntegratedRuntimeMasterCoefficientAssociation::usage =
   "MassiveA30IntegratedRuntimeMasterCoefficientAssociation[] extracts the actual current package master-combination coefficients for the massive A30 IBP route.";
 
 MassiveA30IntegratedRuntimeMasterI2Candidate::usage =
-  "MassiveA30IntegratedRuntimeMasterI2Candidate[] returns the derived package-basis value for j[MX30Basis123,2,1,1,0,0], obtained from the explicit paper numerator-master reduction and the declared common cut-measure conversion.";
+  "MassiveA30IntegratedRuntimeMasterI2Candidate[] returns the derived package-basis value for j[MX30Basis123,2,1,1,0,0], obtained from the explicit paper numerator-master reduction and the effective normalization bridge.";
 
 MassiveA30IntegratedDirectRuntimeMasterI2Candidate::usage =
-  "MassiveA30IntegratedDirectRuntimeMasterI2Candidate[] returns the direct I2-to-MX30 dotted-master relation implied by the paper numerator definition, explicit MX30 reduction, and declared reverse-unitarity cut-measure factor.";
+  "MassiveA30IntegratedDirectRuntimeMasterI2Candidate[] returns the direct I2-to-MX30 dotted-master relation implied by the paper numerator definition, explicit MX30 reduction, and effective normalization bridge.";
 
 MassiveA30IntegratedCutMeasureFactor::usage =
-  "MassiveA30IntegratedCutMeasureFactor[] returns the declared common conversion C_cut between the paper antenna phase-space masters and the MX30 cut masters, I_paper = C_cut j_MX30.";
+  "MassiveA30IntegratedCutMeasureFactor[] returns the effective common normalization between the paper antenna phase-space masters and the MX30 runtime masters.";
 
 MassiveA30IntegratedCutMeasureConsistencyReport::usage =
-  "MassiveA30IntegratedCutMeasureConsistencyReport[] compares the common paper-phase-space-to-MX30-cut normalization independently inferred from the undotted and dotted runtime coefficients. A true MatchQ is the algebraic gate for promoting the direct numerator-master substitution.";
+  "MassiveA30IntegratedCutMeasureConsistencyReport[] compares the effective paper-to-runtime master normalization inferred from the undotted and dotted runtime coefficients. A true MatchQ is the algebraic gate for the direct numerator-master substitution.";
 
 MassiveA30IntegratedRuntimeMasterRules::usage =
   "MassiveA30IntegratedRuntimeMasterRules[] returns the active beta-route substitution rules from the package MX30 masters to closed-form expressions.";
@@ -85,13 +85,13 @@ MassiveA30IntegratedPaperNumeratorMasterReduction::usage =
   "MassiveA30IntegratedPaperNumeratorMasterReduction[] returns the explicit MX30 basis reduction of the candidate numerator-master representative used in the current dev investigation.";
 
 MassiveA30IntegratedPaperToRuntimeBasisRelation::usage =
-  "MassiveA30IntegratedPaperToRuntimeBasisRelation[] returns the derived paper-to-MX30 basis relation, including the declared common reverse-unitarity cut-measure factor.";
+  "MassiveA30IntegratedPaperToRuntimeBasisRelation[] returns the derived paper-to-MX30 basis relation, including the effective common normalization.";
 
 MassiveA30IntegratedCandidateNumeratorMasterClosedForm::usage =
   "MassiveA30IntegratedCandidateNumeratorMasterClosedForm[] returns the closed-form value of the explicitly reduced numerator representative after substituting the current development master values.";
 
 MassiveA30IntegratedExperimentalPaperI2Relation::usage =
-  "MassiveA30IntegratedExperimentalPaperI2Relation[] returns the direct paper-I2 identity induced by the explicit numerator reduction and declared cut-measure conversion. The historical name is retained for compatibility.";
+  "MassiveA30IntegratedExperimentalPaperI2Relation[] returns the direct paper-I2 identity induced by the explicit numerator reduction and effective normalization bridge. The historical name is retained for compatibility.";
 
 MassiveA30IntegratedBridgeReport::usage =
   "MassiveA30IntegratedBridgeReport[] returns the explicit normalization/convention bridge report for the integrated massive A30 bibliography layer.";
@@ -117,7 +117,7 @@ MassiveA30IntegratedSource[] :=
       "PackageConventionCandidate is derived from the paper result only through the explicit bridge in MassiveA30IntegratedNormalizationBridge[].",
       "The current package runtime basis is not identical to the paper master basis: the package second master is the dotted LiteRed basis representative j[MX30Basis123,2,1,1,0,0], whereas the paper I2^(m,0,m) is a numerator master.",
       "The paper I2 master is defined as the s_ij-weighted antenna phase-space integral. In MX30Basis123, s13 is exactly represented by -j[MX30Basis123,1,1,1,-1,0].",
-      "The explicit numerator reduction and the two-coefficient cut-measure check fix I_paper = j_MX30/4, so the paper masters are now converted directly into the MX30 runtime basis without solving against the final integrated antenna."
+      "The previous 1/4 conversion was inferred from reduced coefficients while the unintegrated Eq. (3.1) numerator factor 4 was missing. Restoring that factor predicts an effective paper-to-runtime master conversion of 1; rerun the coefficient report to validate it. CutDs flags alone do not define an overall phase-space normalization."
     }
   |>;
 
@@ -201,7 +201,7 @@ MassiveA30IntegratedNormalizationBridge[] :=
       "EnergySquared" -> q2,
       "HeavyMassSquared" -> mf^2,
       "Notes" -> {
-        "The build-side thesis track uses the unintegrated antenna normalization from Chapter 5.",
+        "The build-side thesis track uses the unintegrated antenna normalization documented in thesis Section 4.5.",
         "This integrated bibliography milestone keeps that thesis build-side normalization distinct from the literature integrated normalization."
       }
     |>,
@@ -215,14 +215,16 @@ MassiveA30IntegratedNormalizationBridge[] :=
       }
     |>,
     "InvariantMapping" -> MassiveA30IntegratedInvariantBridgeRules[],
-    "PhaseSpaceNormalizationFactor" -> 1,
+    "PhaseSpaceNormalizationFactor" -> Missing["NotSeparatelyDerived"],
     "AntennaNormalizationFactorPaperToPackage" -> 1,
+    "EffectiveMasterConversionFactor" ->
+      MassiveA30IntegratedCutMeasureFactor[],
     "CouplingColorStripping" -> "The encoded paper target and the package master combination are both treated as stripped integrated antenna objects, so no extra coupling/color factor is introduced in this bridge layer.",
     "OverallBridgeFactorPaperToPackage" -> 1,
-    "BridgeStatus" -> "InvariantRenamePlusDerivedMX30CutMeasure",
+    "BridgeStatus" -> "InvariantRenamePlusCorrectedMX30MasterBridge",
     "Notes" -> {
       "The bridge keeps paper and thesis normalizations separate instead of silently identifying them.",
-      "For the declared MX30 reverse-unitarity convention, MassiveA30IntegratedCutMeasureFactor[] fixes the common three-cut conversion I_paper = C_cut j_MX30."
+      "The effective paper-to-runtime conversion is expected to be 1 after correcting the antenna normalization; the coefficient report checks this expectation. LiteRed CutDs identifies cut denominators but does not define their overall phase-space normalization."
     }
   |>;
 
@@ -354,7 +356,7 @@ MassiveA30IntegratedPaperToRuntimeBasisRelation[] :=
     reduction = MassiveA30IntegratedPaperNumeratorMasterReduction[];
     <|
       "Meaning" ->
-        "Derived package-facing relation from the paper definition I2 = integral dPhi_X^(m,0,m) s_ij, the explicit MX30 numerator reduction, and the common cut-measure conversion.",
+      "Derived package-facing relation from the paper definition I2 = integral dPhi_X^(m,0,m) s_ij, the explicit MX30 numerator reduction, and the effective master normalization.",
       "Relation" ->
         MassiveA30IntegratedPackageMasterI2PaperCandidate[] ==
           MassiveA30IntegratedCutMeasureFactor[] (
@@ -365,7 +367,8 @@ MassiveA30IntegratedPaperToRuntimeBasisRelation[] :=
           ),
       "I1Coefficient" -> reduction["UndottedCoefficient"],
       "I2Coefficient" -> reduction["DottedCoefficient"],
-      "CutMeasureFactor" -> MassiveA30IntegratedCutMeasureFactor[],
+      "EffectiveMasterConversionFactor" ->
+        MassiveA30IntegratedCutMeasureFactor[],
       "AcceptedForRuntimeQ" -> True
     |>
   ];
@@ -380,20 +383,21 @@ MassiveA30IntegratedDirectRuntimeMasterI2Candidate[] :=
     ) / reduction["DottedCoefficient"] // Together // FullSimplify
   ];
 
-(* The common normalization is fixed by the two independent coefficient
-   determinations in MassiveA30IntegratedCutMeasureConsistencyReport[].
-   With the package's declared MX30 CutDs convention,
-     I_paper = C_cut j_MX30,  C_cut = +1/4. *)
-MassiveA30IntegratedCutMeasureFactor[] := 1/4;
+(* The common effective normalization is expected to be unity: the previous
+   coefficient-derived value 1/4 included the missing factor 4 from paper
+   Eq. (3.1). The consistency report checks this expectation after the public
+   build-side correction is evaluated. CutDs declares cut denominators, not
+   their overall measure factor. *)
+MassiveA30IntegratedCutMeasureFactor[] := 1;
 
-(* The paper masters and LiteRed cut masters can differ only by one common
-   cut-measure factor if the two bases describe the same antenna integral.
-   Do not determine that factor from master values: each coefficient below is
-   extracted before any master substitution, and the two determinations must
-   agree identically.  LiteRed's CutDs flags declare cut sectors but do not
-   define this physical phase-space normalization. *)
+(* The paper masters and LiteRed runtime masters are compared before master
+   substitution.  The common coefficient ratio includes any overall antenna
+   normalization; it is not a pure measure factor unless the integrand's
+   normalization has already been independently matched.  LiteRed's CutDs
+   flags declare cut sectors but do not define this physical normalization. *)
 MassiveA30IntegratedCutMeasureConsistencyReport[] :=
-  Module[{runtime, paper, reduction, fromUndotted, fromDotted, residual},
+  Module[{runtime, paper, reduction, fromUndotted, fromDotted, residual,
+     expectedFactor, factorMatchQ},
     runtime = MassiveA30IntegratedRuntimeMasterCoefficientAssociation[];
     paper = MassiveA30IntegratedPaperCoefficientAssociation[];
     reduction = MassiveA30IntegratedPaperNumeratorMasterReduction[];
@@ -409,17 +413,23 @@ MassiveA30IntegratedCutMeasureConsistencyReport[] :=
           (paper["I2Coefficient"] reduction["DottedCoefficient"])
       ) // Together // FullSimplify;
     residual = fromUndotted - fromDotted // Together // FullSimplify;
+    expectedFactor = MassiveA30IntegratedCutMeasureFactor[];
+    factorMatchQ =
+      TrueQ[residual === 0] &&
+        TrueQ[FullSimplify[Together[fromUndotted - expectedFactor]] === 0] &&
+        TrueQ[FullSimplify[Together[fromDotted - expectedFactor]] === 0];
     <|
       "Meaning" ->
-        "Assuming I_paper = C_cut j_MX30 for the common three-cut measure, infer C_cut separately from the undotted and dotted coefficients before substituting any master values.",
+        "Infer the effective paper-to-runtime master conversion separately from the undotted and dotted coefficients before substituting any master values. This ratio includes the antenna normalization; CutDs flags alone do not determine it.",
       "Convention" ->
-        "I1_paper = C_cut j[MX30Basis123,1,1,1,0,0]; I2_paper = C_cut (a j11100 + b j21100).",
+        "I1_paper = C_eff j[MX30Basis123,1,1,1,0,0]; I2_paper = C_eff (a j11100 + b j21100). Restoring the numerator factor 4 predicts C_eff = 1; the coefficient residuals should be checked in a fresh kernel.",
       "FactorFromUndottedCoefficient" -> fromUndotted,
       "FactorFromDottedCoefficient" -> fromDotted,
+      "ExpectedEffectiveFactor" -> expectedFactor,
       "Residual" -> residual,
-      "MatchQ" -> TrueQ[residual === 0],
+      "MatchQ" -> factorMatchQ,
       "PromotionRule" ->
-        "Promote the direct substitution only when MatchQ is True and the resulting common factor is independently tied to a declared CutDs convention."
+        "Promote the direct substitution only when both coefficient determinations agree and equal ExpectedEffectiveFactor. Do not describe this effective coefficient factor as a CutDs normalization without a separate measure derivation."
     |>
   ];
 
@@ -500,7 +510,7 @@ MassiveA30IntegratedExperimentalPaperI2Relation[] :=
         Together // FullSimplify;
     <|
       "Meaning" ->
-        "Direct paper-I2 identity after the explicit numerator reduction and derived common cut-measure conversion.",
+        "Direct paper-I2 identity after the explicit numerator reduction and effective master normalization.",
       "Relation" ->
         MassiveA30IntegratedPackageMasterI2PaperCandidate[] ==
           candidate,
@@ -549,7 +559,9 @@ MassiveA30IntegratedRuntimeMatchReport[] :=
     cutMeasureReport = MassiveA30IntegratedCutMeasureConsistencyReport[];
     paperI2Report = MassiveA30IntegratedExperimentalPaperI2Relation[];
     structuralMatchQ =
-      TrueQ[cutMeasureReport["MatchQ"]] && TrueQ[paperI2Report["MatchQ"]];
+      TrueQ[cutMeasureReport["MatchQ"]] &&
+        TrueQ[paperI2Report["MatchQ"]] &&
+        AllTrue[Values[coefficientResiduals], TrueQ[# === 0]&];
     substituted =
       coefficients["Combination"] /. rules //
         Together // FullSimplify;
@@ -558,7 +570,7 @@ MassiveA30IntegratedRuntimeMatchReport[] :=
     <|
       "Status" -> "DerivedMX30RuntimeBridge",
       "BridgeMethod" ->
-        "Reduce the paper numerator master explicitly in MX30Basis123 and apply the common cut-measure factor C_cut = +1/4 independently verified from both runtime coefficients. No runtime master is solved against the final integrated target.",
+        "Reduce the paper numerator master explicitly in MX30Basis123 and apply the effective paper-to-runtime conversion C_eff = 1, predicted after restoring the Eq. (3.1) numerator factor 4. Rerun the coefficient and target residuals to validate the corrected route. No runtime master is solved against the final integrated target.",
       "RuntimeMasterCombination" -> coefficients["Combination"],
       "RuntimeCoefficients" -> <|
         "C1" -> coefficients["C1"],
@@ -581,7 +593,7 @@ MassiveA30IntegratedRuntimeMatchReport[] :=
       "MatchQ" -> structuralMatchQ,
       "Notes" -> {
         "This report validates the direct MX30 substitutions against the integrated literature target after the explicit target-level bridge.",
-        "The authoritative checks are the independently inferred common cut factor and the direct paper-I2 numerator identity. The display-level coefficient reconstruction is retained only for diagnostics."
+        "The authoritative checks require both runtime coefficients to infer the expected effective normalization, both coefficient residuals to vanish, and the direct paper-I2 numerator identity to hold. The coefficient ratio is not presented as an independent phase-space measure derivation."
       }
     |>
   ];

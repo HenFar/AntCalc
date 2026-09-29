@@ -5,8 +5,8 @@ message: >-
   listed in docs/manual/citation-and-provenance.md.
 type: software
 title: AntCalc
-version: 0.3.2-beta.5
-date-released: 2026-09-26
+version: 0.3.2-beta.6
+date-released: 2026-09-29
 authors:
   - family-names: Farinha
     given-names: Henrique

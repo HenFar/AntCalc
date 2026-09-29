@@ -40,19 +40,19 @@ integral.  With the paper's `(i,j,k)=(1,3,2)` ordering, the corresponding
 `-j[MX30Basis123,1,1,1,-1,0]`.  Its reduction to the undotted and dotted
 `MX30` masters is explicit.
 
-`MassiveA30IntegratedCutMeasureConsistencyReport[]` now infers the one
-possible common paper-phase-space-to-LiteRed-cut factor independently from
-the undotted and dotted coefficients, before any master values are inserted.
-The direct substitution may only be activated if its `MatchQ` is `True` and
-that factor is tied to a declared cut-measure convention.  This prevents a
-target-solved dotted master from being relabelled as a first-principles basis
-conversion.
+`MassiveA30IntegratedCutMeasureConsistencyReport[]` compares the effective
+paper-to-runtime master conversion from the undotted and dotted coefficients
+before substituting master values. Its ratio includes the overall antenna
+normalization; LiteRed's `CutDs` flags do not independently define a cut
+measure.
 
-The gate now passes exactly: both determinations give
-`C_cut = +1/4`.  The active runtime rules are consequently
-`j11100 = 4 I1` and `j21100 = 4 (I2 - a I1)/b`, where `a` and `b` are the
-explicit numerator-reduction coefficients.  No dotted master is solved from
-the final integrated antenna.
+The earlier ratio `C_cut = +1/4` was found while the unintegrated expression
+was missing the explicit numerator factor `4` in paper Eq. (3.1). Scaling the
+build-side integrand by four therefore predicts `C_eff = 1`; the active rules
+use `j11100 = I1` and `j21100 = (I2 - a I1)/b`, where `a` and `b` are the
+explicit numerator-reduction coefficients. Rerun the coefficient and
+integrated-target checks before treating the corrected bridge as validated.
+No dotted master is solved from the final integrated antenna.
 
 ### Dimensional numerator requirement
 

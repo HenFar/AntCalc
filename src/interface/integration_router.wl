@@ -771,7 +771,7 @@ MasterCombinationView[diagnostics_Association] :=
             "Symbol" -> HoldForm[LiteRed`j[MX30Basis123, 1, 1, 1, 0, 0]],
             "Family" -> "MX30Basis123", "Indices" -> {1, 1, 1, 0, 0},
             "Role" -> "Undotted runtime master",
-            "PaperRelation" -> "Related to the paper I1^(m,0,m) master by the declared common cut-measure conversion."|>,
+            "PaperRelation" -> "Related to the paper I1^(m,0,m) master by the effective paper-to-runtime master conversion."|>,
           "J21100" -> <|
             "Symbol" -> HoldForm[LiteRed`j[MX30Basis123, 2, 1, 1, 0, 0]],
             "Family" -> "MX30Basis123", "Indices" -> {2, 1, 1, 0, 0},

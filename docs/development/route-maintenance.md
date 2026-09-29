@@ -56,9 +56,10 @@ Keep these layers distinct in records and documentation:
 
 For A40, the minus associated with the full-colour subleading coefficient is
 external to the public `tilde A4^0` definition. For massive A30, the
-paper/runtime mapping is a derived beta-route closure: an explicit numerator
-representative reduction and independently matched cut-measure factor replace
-the previous backwards-fitted bridge.
+paper/runtime mapping is a beta-route closure: the explicit numerator
+representative reduction is combined with the corrected overall antenna
+normalization. The resulting coefficient ratio is an effective master bridge,
+not an independently measured cut factor.
 
 ## Regression expectations
 
@@ -74,8 +75,8 @@ The massive-A30 beta regression is:
 WolframKernel -script dev/regression_massive_a30_beta.wl
 ```
 
-It checks the order-zero public reference, the derived cut-measure and numerator
-relations, and the forced MX30 route after master substitution. The companion
+It checks the order-zero public reference, the effective master conversion and
+numerator relations, and the forced MX30 route after master substitution. The companion
 fresh-kernel epsilon-depth benchmark is
 `dev/benchmarks/massive_a30/run_massive_a30_epsilon_benchmark.sh`;
 both remain separate from the stable massless acceptance suite until the full
