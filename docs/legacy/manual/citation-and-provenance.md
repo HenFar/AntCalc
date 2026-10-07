@@ -1,6 +1,11 @@
 # Citation and provenance
 
-[Manual index](index.md) · [Conventions and normalisation](conventions-and-normalisation.md) · [Documentation home](../README.md)
+This page documents the legacy Wolfram package. Shell commands and package
+asset paths below are relative to `legacy/wolfram/`; change to that directory
+before running them. The current runner is described in the
+[Kira workflow guide](../../manual/kira-workflow.md).
+
+[Manual index](index.md) · [Conventions and normalisation](conventions-and-normalisation.md) · [Documentation home](../../README.md)
 
 ## AntCalc status
 
@@ -8,14 +13,14 @@ AntCalc is active thesis research software and does **not** yet have a preferred
 scholarly citation. Its current author is Henrique Farinha (FCUL; LIP,
 Phenomenology Group; [ORCID](https://orcid.org/0009-0004-2709-899X)).
 
-The repository's [`CITATION.cff`](../../CITATION.cff) records this authorship
+The repository's [`CITATION.cff`](../../../CITATION.cff) records this authorship
 and release identity, but deliberately does not present AntCalc as a published
 research result. When a thesis, preprint, DOI, or software release becomes the
 preferred scholarly reference, this page and `CITATION.cff` should be updated
 together.
 
 Machine-readable BibTeX entries for the software and physics sources below are
-available in [`docs/citations.bib`](../citations.bib).
+available in [`docs/citations.bib`](../../citations.bib).
 
 ## Software acknowledgement
 

@@ -1,5 +1,10 @@
 # A31/A22 provenance audit
 
+This page documents the legacy Wolfram package. Shell commands and package
+asset paths below are relative to `legacy/wolfram/`; change to that directory
+before running them. The current runner is described in the
+[Kira workflow guide](../../manual/kira-workflow.md).
+
 [Developer index](README.md) · [Runtime masters and literature provenance](runtime-masters-and-provenance.md) · [Conventions and normalisation](../manual/conventions-and-normalisation.md)
 
 This is an evidence ledger for the massless integrated `A31` and `A22`
@@ -26,7 +31,7 @@ Accordingly, the release/physics records for both routes must continue to use
 ## A31 evidence chain
 
 The extraction implementation in
-[`src/engines/integrated_antenna_extraction.wl`](../../src/engines/integrated_antenna_extraction.wl)
+[`src/engines/integrated_antenna_extraction.wl`](../../../legacy/wolfram/src/engines/integrated_antenna_extraction.wl)
 states the following package-owned operations:
 
 1. Raw backend components are mapped to paper normalisation with
@@ -61,7 +66,7 @@ closure derivation.
 ## A22 evidence chain
 
 The legacy derivation source
-[`dev/src_legacy_flat_2026-06-14/integration_ibp.wl`](../../dev/src_legacy_flat_2026-06-14/integration_ibp.wl)
+[`dev/src_legacy_flat_2026-06-14/integration_ibp.wl`](../../../research/wolfram/src_legacy_flat_2026-06-14/integration_ibp.wl)
 contains the most detailed current audit trail.  It explicitly attributes the
 following to Appendix A.1 of `hep-ph/0403057`:
 

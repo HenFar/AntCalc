@@ -1,11 +1,16 @@
 # Installation, loading, and verification
 
-[Manual index](index.md) · [Route status](route-status.md) · [Documentation home](../README.md)
+This page documents the legacy Wolfram package. Shell commands and package
+asset paths below are relative to `legacy/wolfram/`; change to that directory
+before running them. The current runner is described in the
+[Kira workflow guide](../../manual/kira-workflow.md).
+
+[Manual index](index.md) · [Route status](route-status.md) · [Documentation home](../../README.md)
 
 ## Requirements
 
 For AntCalc 0.3.5's Python runcard workflow, including FORM, Kira, Fermat, and Python
-dependencies, follow the [Kira workflow setup](kira-workflow.md#environment).
+dependencies, follow the [Kira workflow setup](../../manual/kira-workflow.md#environment).
 The installation and verification steps below describe the Wolfram package.
 
 Supported workflows need a Wolfram Language kernel and these packages:
@@ -42,7 +47,7 @@ combinations.
 After cloning the complete repository, install AntCalc once:
 
 ```wl
-repoRoot = "/path/to/antenna_pipeline";
+repoRoot = "/path/to/form-kira-lab/legacy/wolfram";
 archive = CreatePacletArchive[repoRoot, $TemporaryDirectory];
 PacletInstall[archive];
 ```
@@ -68,7 +73,7 @@ If the kernel was already running when you installed the paclet, run
 While editing source files, load the checkout instead of the installed paclet:
 
 ```wl
-repoRoot = "/path/to/antenna_pipeline";
+repoRoot = "/path/to/form-kira-lab/legacy/wolfram";
 Get[FileNameJoin[{repoRoot, "AntennaPipeline.wl"}]]
 ```
 
@@ -80,7 +85,7 @@ changes. Start a new kernel so that old definitions cannot remain loaded.
 The supported release acceptance command is:
 
 ```sh
-cd /path/to/antenna_pipeline
+cd /path/to/form-kira-lab/legacy/wolfram
 bash dev/run_release_verification.sh
 ```
 
@@ -96,7 +101,7 @@ configured `WolframKernel`; run time depends on the local backend.
 The physics-validation harness is developer-facing:
 
 ```sh
-cd /path/to/antenna_pipeline
+cd /path/to/form-kira-lab/legacy/wolfram
 bash dev/run_physics_validation.sh
 ```
 

@@ -1,6 +1,6 @@
 # Documentation migration ledger
 
-[Documentation home](README.md) · [Manual](manual/index.md) · [Developer documentation](development/README.md)
+[Documentation home](../README.md) · [Manual](manual/index.md) · [Developer documentation](development/README.md)
 
 `dev/README_old.md` is preserved as the source archive while the documentation is
 being reorganised. This ledger records where each substantive section belongs;
@@ -25,7 +25,7 @@ rewritten into the public manual.
 | Shared terminology | [manual/glossary.md](manual/glossary.md) | migrated |
 | Narrative, runnable walkthroughs | `docs/tutorials/` and `examples/` | authored separately |
 
-During the transition, consult [dev/README_old.md](../dev/README_old.md) for archival
+During the transition, consult [dev/README_old.md](../../legacy/wolfram/dev/README_old.md) for archival
 detail or historical implementation notes that do not belong in the stable
 manual. A document is removed from that archive only after its destination has
 been reviewed.

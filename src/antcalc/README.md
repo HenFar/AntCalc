@@ -9,8 +9,8 @@ other tools; the runner loads Wolfram source from the checkout directly.
 From the repository root, with dependencies installed:
 
 ```sh
-python src/next/orchestrator.py            # runcards/runcard.json
-python src/next/orchestrator.py my_run     # runcards/my_run.json
+python src/antcalc/orchestrator.py            # runcards/runcard.json
+python src/antcalc/orchestrator.py my_run     # runcards/my_run.json
 ```
 
 The default card builds and integrates massless `A40`. The implemented Kira
@@ -25,14 +25,16 @@ Read the full documentation:
 ## Layout
 
 - `orchestrator.py`: runcard selection and build/integrate method dispatch.
-- `build_methods.py`, `build_pipeline.wl`: Wolfram construction and conversion.
+- `build_methods.py`: Wolfram construction and conversion through legacy loaders.
 - `integrate_kira.py`: invariant mapping, reduction, scale checks and substitution.
 - `form/`: FORM scripts; generated includes live in shared `tmp/` scratch state.
 - `kira/templates/`: configurations copied to disposable Kira working directories.
 - `masters/`: analytic masters times `C(ep,k)/Phi2` at `mu2 = q2`.
-- `integrate_methods.py`, `integrate_pipeline.wl`: legacy Wolfram integration.
-- `tests/`: integrate-only comparisons with thesis Appendix A.
-- `requirements.txt`: pinned Python dependencies.
+- `integrate_methods.py`: legacy Wolfram integration.
+- `paths.py`: repository and legacy-loader locations, independent of shell directory.
+
+Wolfram loaders live in `legacy/wolfram/loaders/`; regression tests are under
+repository-root `tests/`, and Python dependencies are in `requirements.txt`.
 
 Build results go to repository-root `results/unintegrated/` or
 `results/unintegrated_legacy/`. Kira writes component-indexed `_masters.inc`,
@@ -47,10 +49,10 @@ integrations sequentially within a checkout.
 ## Comparison suite
 
 ```sh
-python src/next/tests/run_suite.py [A30 A40 B40 C40]
+python tests/kira/run_suite.py A30 A40 B40 C40
 ```
 
 With no antenna arguments, all four cases run. Requires FORM, Kira, Fermat,
 and the Python dependencies. Set `FERMATPATH` explicitly. The suite replaces
-selected integrated outputs and writes logs plus `tests/output/summary.md`.
+selected integrated outputs and writes logs plus `tests/kira/output/summary.md`.
 `A30` is compared through `ep^2`, four-parton tree antennae through `ep^0`.

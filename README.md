@@ -24,14 +24,14 @@ See [NOTICE](NOTICE).
 ## Python / FORM / Kira quick start
 
 Run these commands from the repository root. Python dependencies are pinned in
-[src/next/requirements.txt](src/next/requirements.txt):
+[requirements.txt](requirements.txt):
 
 ```sh
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -r src/next/requirements.txt
+python -m pip install -r requirements.txt
 export FERMATPATH=/absolute/path/to/fermat/executable
-python src/next/orchestrator.py
+python src/antcalc/orchestrator.py
 ```
 
 Install FORM and Kira separately and make them available on `PATH`. Building
@@ -60,7 +60,7 @@ currently builds and integrates massless `A40` using:
 ```
 
 Copy this card to `runcards/my_run.json` and run
-`python src/next/orchestrator.py my_run` to use your own settings. Set
+`python src/antcalc/orchestrator.py my_run` to use your own settings. Set
 `build` to `0` to integrate an existing input. Set `substitute_masters` to `0`
 to stop after reduction and scale extraction.
 
@@ -84,19 +84,19 @@ when restoring scale dependence.
 | `A31`, `A22` Kira templates | present, but incompatible with the current invariant-to-family mapper |
 | Wolfram package | broader massless API, R-ratio and bulk helpers; beta massive `A30` |
 
-The Kira [comparison suite](src/next/tests/run_suite.py) integrates saved inputs
+The Kira [comparison suite](tests/kira/run_suite.py) integrates saved inputs
 and compares their coefficients with thesis Appendix A references:
 
 ```sh
-python src/next/tests/run_suite.py A30 A40 B40 C40
+python tests/kira/run_suite.py A30 A40 B40 C40
 ```
 
 It requires FORM, Kira, Fermat, and the Python dependencies. It writes logs and
-`src/next/tests/output/summary.md`, and replaces the selected antenna's files
+`tests/kira/output/summary.md`, and replaces the selected antenna's files
 in `results/integrated/`. The existence of a template or checked-in result is
 not a fresh validation run. The Wolfram package's separate support contract
-and verification procedure are in the [route-status matrix](docs/manual/route-status.md)
-and [installation guide](docs/manual/installation.md).
+and verification procedure are in the [route-status matrix](docs/legacy/manual/route-status.md)
+and [installation guide](docs/legacy/manual/installation.md).
 
 ## Legacy Wolfram Language package
 
@@ -104,8 +104,8 @@ For direct use of the legacy package interface, install the paclet from a
 notebook or kernel:
 
 ```wl
-repoRoot = "/path/to/form-kira-lab";
-archive = CreatePacletArchive[repoRoot, $TemporaryDirectory];
+legacyRoot = "/path/to/form-kira-lab/legacy/wolfram";
+archive = CreatePacletArchive[legacyRoot, $TemporaryDirectory];
 PacletInstall[archive];
 ```
 
@@ -122,24 +122,36 @@ intA30Direct = IntegrateAntenna[a30Object];
 ```
 
 While editing a checkout, load it directly with
-`Get[FileNameJoin[{repoRoot, "AntennaPipeline.wl"}]]`.
+`Get[FileNameJoin[{legacyRoot, "AntennaPipeline.wl"}]]`.
 The package uses PaVe/IBP routes, including LiteRed2 where required. Retain the
 bundled basis and runtime-master files. Its documented symbolic baseline is
 FeynCalc 10.2.1, FeynArts 3.12, FeynHelpers 2.0.0, FeynCalcLegacy 1.0.0, and
-LiteRed2 2.025 beta; see [installation](docs/manual/installation.md) for details.
+LiteRed2 2.025 beta; see [installation](docs/legacy/manual/installation.md) for details.
 
 ## Documentation and code map
 
 - [Documentation home](docs/README.md) and [manual](docs/manual/index.md)
 - [Running the Kira workflow](docs/manual/kira-workflow.md)
 - [How the Kira integration pipeline works](docs/development/kira-integration.md)
-- [Python source overview](src/next/README.md) and [Kira templates](src/next/kira/README.md)
-- [Wolfram API reference](docs/reference/README.md)
-- [Route status](docs/manual/route-status.md)
+- [Repository structure and dependency boundaries](docs/development/repository-layout.md)
+- [Regression tests](tests/README.md)
+- [Python source overview](src/antcalc/README.md) and [Kira templates](src/antcalc/kira/README.md)
+- [Wolfram API reference](docs/legacy/reference/README.md)
+- [Route status](docs/legacy/manual/route-status.md)
 - [Developer documentation](docs/development/README.md)
-- [Citation and provenance](docs/manual/citation-and-provenance.md)
+- [Citation and provenance](docs/legacy/manual/citation-and-provenance.md)
 
-`src/next/` owns the Python runner, FORM scripts, Kira templates, and analytic
-masters. `src/core/`, `src/engines/`, `src/routes/`, and `src/interface/` own
-the Wolfram package. `dev/` contains validation and research material;
-[dev/README_old.md](dev/README_old.md) is an archive.
+```text
+src/antcalc/       current runner, Python adapters, FORM/Kira assets and masters
+legacy/wolfram/   retained Wolfram package, loaders, bases and helper scripts
+tests/            current runcard checks and Kira physics comparisons
+docs/             current guides; Wolfram guides under docs/legacy/
+research/         historical source, session notes and existing evidence
+runcards/         user run configurations
+results/          calculation inputs and outputs
+requirements.txt  Python dependencies
+```
+
+The Wolfram code remains an active build dependency while its operations are
+migrated. Its directory preserves the package-relative asset layout. See
+[legacy/wolfram/README.md](legacy/wolfram/README.md) for direct use and maintenance.

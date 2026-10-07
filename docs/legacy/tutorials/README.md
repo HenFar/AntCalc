@@ -1,6 +1,11 @@
 # AntCalc tutorials
 
-[Documentation home](../README.md) · [Manual](../manual/index.md) · [Reference guide](../reference/README.md)
+This page documents the legacy Wolfram package. Shell commands and package
+asset paths below are relative to `legacy/wolfram/`; change to that directory
+before running them. The current runner is described in the
+[Kira workflow guide](../../manual/kira-workflow.md).
+
+[Documentation home](../../README.md) · [Manual](../manual/index.md) · [Reference guide](../reference/README.md)
 
 These runnable, narrative notebooks are distinct from compact executable
 examples: a tutorial explains a complete task, while an example demonstrates

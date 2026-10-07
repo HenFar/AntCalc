@@ -1,6 +1,11 @@
 # Stored results and reproducibility
 
-[Manual index](index.md) · [Glossary](glossary.md) · [Documentation home](../README.md)
+This page documents the legacy Wolfram package. Shell commands and package
+asset paths below are relative to `legacy/wolfram/`; change to that directory
+before running them. The current runner is described in the
+[Kira workflow guide](../../manual/kira-workflow.md).
+
+[Manual index](index.md) · [Glossary](glossary.md) · [Documentation home](../../README.md)
 
 Stored results are an optional replay mechanism for public-route outputs. They
 are not a derivation engine and must never be used to conceal a route that no

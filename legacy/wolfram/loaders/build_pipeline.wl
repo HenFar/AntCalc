@@ -10,10 +10,10 @@ If[!TrueQ[$AntennaPipelineBuildLoaded],
   ];
 
   packageRoot = If[StringQ[$InputFileName] && $InputFileName =!= "",
-    AbsoluteFileName[FileNameJoin[{DirectoryName[$InputFileName], "..", ".."}]],
+    AbsoluteFileName[FileNameJoin[{DirectoryName[$InputFileName], ".."}]],
     If[StringQ[$AntennaPipelineRoot] && $AntennaPipelineRoot =!= "",
       $AntennaPipelineRoot,
-      AbsoluteFileName[FileNameJoin[{Directory[], "..", ".."}]]
+      AbsoluteFileName[FileNameJoin[{Directory[], "legacy", "wolfram"}]]
     ]
   ];
 

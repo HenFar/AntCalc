@@ -1,6 +1,11 @@
 # R-ratio, T objects, and bulk helpers
 
-[Reference index](README.md) · [Manual API overview](../manual/public-api.md) · [Documentation home](../README.md)
+This page documents the legacy Wolfram package. Shell commands and package
+asset paths below are relative to `legacy/wolfram/`; change to that directory
+before running them. The current runner is described in the
+[Kira workflow guide](../../manual/kira-workflow.md).
+
+[Reference index](README.md) · [Manual API overview](../manual/public-api.md) · [Documentation home](../../README.md)
 
 ## `BuildRRatio`
 

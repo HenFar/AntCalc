@@ -1,5 +1,10 @@
 # Public API overview
 
+This page documents the legacy Wolfram package. Shell commands and package
+asset paths below are relative to `legacy/wolfram/`; change to that directory
+before running them. The current runner is described in the
+[Kira workflow guide](../../manual/kira-workflow.md).
+
 [Manual index](index.md) · [Glossary](glossary.md) · [Function reference](../reference/README.md)
 
 AntCalc has two main operations:

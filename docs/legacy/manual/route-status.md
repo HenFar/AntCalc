@@ -1,6 +1,11 @@
 # Route status and support contract
 
-[Manual index](index.md) · [Public API overview](public-api.md) · [Documentation home](../README.md)
+This page documents the legacy Wolfram package. Shell commands and package
+asset paths below are relative to `legacy/wolfram/`; change to that directory
+before running them. The current runner is described in the
+[Kira workflow guide](../../manual/kira-workflow.md).
+
+[Manual index](index.md) · [Public API overview](public-api.md) · [Documentation home](../../README.md)
 
 AntCalc is active research software. A callable route is not necessarily
 supported. The tables separate the tested massless release surface from
@@ -15,7 +20,7 @@ the public support contract; the profile data is its machine-readable record.
 
 This table describes the legacy Wolfram package API. AntCalc 0.3.5's Python /
 FORM / Kira workflow currently covers massless `A30`, `A40`, `B40`, and `C40`; see
-its [scope and input contract](kira-workflow.md#supported-inputs).
+its [scope and input contract](../../manual/kira-workflow.md#supported-inputs).
 
 | Family or workflow | Build | Integrate | Status |
 |---|---:|---:|---|

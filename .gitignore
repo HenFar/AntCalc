@@ -9,18 +9,22 @@ eps
 *.log
 *.tmp
 *.swp
-dev/tmp_src_new_parity_cache/
+legacy/wolfram/dev/tmp_src_new_parity_cache/
 THESIS_READINESS_PLAN.md
-evidence/bonn-short-audit-*/
+research/evidence/bonn-short-audit-*/
 
-stored_results/rratio/*.wl
+legacy/wolfram/stored_results/rratio/*.wl
+# Retain the existing checked-in LO reference when moving the cache directory.
+!legacy/wolfram/stored_results/rratio/buildrratio-smqcd-0-3bba5e2d4935c394d9a5b18be7cec6907f85010172ef473b8e0e87fad0bf3d6d.wl
 
-# Python layer (src/next): bytecode, FORM's scratch files, the test suite's output and runcard.
+# Python layer: bytecode, FORM's scratch files, test output and generated runcards.
 # Kira runs in the system temp folder. results/ is kept under version control.
 .venv/
 __pycache__/
 *.py[cod]
 .ipynb_checkpoints/
-src/next/tmp/
-src/next/tests/output/
+src/antcalc/tmp/
+tests/kira/output/
+tests/runcards/output/
 runcards/_suite.json
+runcards/_restructure_check.json

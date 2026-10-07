@@ -1,6 +1,11 @@
 # Runtime masters and literature provenance
 
-[Developer index](README.md) · [Research status](research-status.md) · [Documentation home](../README.md)
+This page documents the legacy Wolfram package. Shell commands and package
+asset paths below are relative to `legacy/wolfram/`; change to that directory
+before running them. The current runner is described in the
+[Kira workflow guide](../../manual/kira-workflow.md).
+
+[Developer index](README.md) · [Research status](research-status.md) · [Documentation home](../../README.md)
 
 The runtime loads checked-in A31/A22 master substitutions from:
 
@@ -17,14 +22,14 @@ input with its own provenance and validation workflow.
 After changing derivation-side files, refresh the runtime artifact:
 
 ```sh
-cd /path/to/antenna_pipeline
+cd /path/to/form-kira-lab/legacy/wolfram
 bash masterIntegrals/run_kernel.sh -run 'Get["masterIntegrals/export_runtime_master_values.wl"]; Exit[]'
 ```
 
 Validate it against the live derivation layer:
 
 ```sh
-cd /path/to/antenna_pipeline
+cd /path/to/form-kira-lab/legacy/wolfram
 bash masterIntegrals/run_kernel.sh -run 'Get["dev/validate_runtime_master_values.wl"]; Exit[]'
 ```
 
@@ -45,7 +50,7 @@ derivation to the corresponding runtime basis.
 
 The massless A22 release checks fresh, uncached direct integration and the
 `BuildAndIntegrateAntenna` wrapper against an independent transcription in
-[`dev/a22_literature_reference.wl`](../../dev/a22_literature_reference.wl).
+[`dev/a22_literature_reference.wl`](../../../legacy/wolfram/dev/a22_literature_reference.wl).
 That contract is `hep-ph/0403057v2`, Eqs. (4.8)--(4.10): its `Leading`,
 `Subleading`, and `Nf` slots are the `N`, `1/N`, and `N_f` brackets of
 Eq. (4.9), and `Breve` is the one-loop self-interference in Eq. (4.10).
@@ -61,7 +66,7 @@ release-evidence check rather than an assertion that a route matches itself.
 
 The massless A31 release compares freshly integrated public output with the
 independent reference in
-[`dev/a31_literature_reference.wl`](../../dev/a31_literature_reference.wl).
+[`dev/a31_literature_reference.wl`](../../../legacy/wolfram/dev/a31_literature_reference.wl).
 It transcribes `hep-ph/0505111v3`, Eqs. (5.18)--(5.20), which define the
 integrated leading, subleading, and `N_f` one-loop antennae (with their
 definition in Eq. (2.35)). The public integration surface sets `s123 = 1`, so

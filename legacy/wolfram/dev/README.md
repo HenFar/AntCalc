@@ -1,5 +1,10 @@
 # `dev/` Script Map
 
+This map describes `legacy/wolfram/dev/`. Run its package-relative shell
+commands from `legacy/wolfram/`. The current Python tests are in
+[tests/](../../../tests/README.md). Historical source snapshots and retired
+verification material have moved to [research/wolfram/](../../../research/wolfram/).
+
 `dev/` is not part of the canonical runtime. It contains support material for
 verification, benchmarking, provenance, and historical exploration.
 
@@ -51,7 +56,7 @@ external lower-order targets are added.
 The main benchmark entrypoint is:
 
 - [run_public_route_benchmarks.wl](run_public_route_benchmarks.wl)
-- [benchmarks/massive_a30/](benchmarks/massive_a30/), for the fresh-kernel
+- [benchmarks/massive_a30/](benchmarks/massive_a30), for the fresh-kernel
   massive-`A30` epsilon-depth benchmark
 
 Use it when you want timing data, not when you want a release pass/fail check.
@@ -60,12 +65,12 @@ Use it when you want timing data, not when you want a release pass/fail check.
 
 The main structured research areas are:
 
-- [audits/a22/](audits/a22/), for convention and master-provenance audits
-- [diagnostics/a22/](diagnostics/a22/), for focused loop-reduction and
+- [audits/a22/](audits/a22), for convention and master-provenance audits
+- [diagnostics/a22/](diagnostics/a22), for focused loop-reduction and
   release-residual diagnosis
 - [massiveA30/](massiveA30)
 - [massiveA30_sources/](massiveA30_sources)
-- [src_legacy_flat_2026-06-14/](src_legacy_flat_2026-06-14)
+- [src_legacy_flat_2026-06-14/](../../../research/wolfram/src_legacy_flat_2026-06-14)
 
 Top-level `regression_*.wl` scripts protect focused public contracts. Other
 one-off historical derivations remain retained for provenance, but are not
@@ -73,6 +78,6 @@ part of the supported package workflow.
 
 If you are new to the repo, start from:
 
-1. the top-level [README.md](../README.md)
+1. the top-level [README.md](../../../README.md)
 2. [src/README.md](../src/README.md)
 3. [run_release_verification.sh](run_release_verification.sh)
