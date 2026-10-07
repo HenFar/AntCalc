@@ -17,6 +17,7 @@ stored_results/rratio/*.wl
 
 # Python layer (src/next): bytecode, FORM's scratch files, the test suite's output and runcard.
 # Kira runs in the system temp folder. results/ is kept under version control.
+.venv/
 __pycache__/
 *.py[cod]
 .ipynb_checkpoints/
