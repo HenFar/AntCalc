@@ -1,10 +1,15 @@
 # Architecture
 
-[Developer index](README.md) · [Route maintenance](route-maintenance.md) · [Documentation home](../README.md)
+This page documents the legacy Wolfram package. Shell commands and package
+asset paths below are relative to `legacy/wolfram/`; change to that directory
+before running them. The current runner is described in the
+[Kira workflow guide](../../manual/kira-workflow.md).
+
+[Developer index](README.md) · [Route maintenance](route-maintenance.md) · [Documentation home](../../README.md)
 
 This page describes the legacy Wolfram package architecture. AntCalc 0.3.5's Python
 runcard workflow builds through a Wolfram loader and integrates through FORM
-and Kira; see [Kira integration internals](kira-integration.md) for that path.
+and Kira; see [Kira integration internals](../../development/kira-integration.md) for that path.
 
 The Wolfram package is profile-driven. Its core execution model is:
 
@@ -101,7 +106,7 @@ normalised pre-series expression.
 For A31, the current post-repair bridge is the identity: runtime master
 normalisation already supplies the public convention, so no second
 FeynCalc-MS conversion is applied at the observable boundary. The local
-regression [`dev/verify_task6_convention_bridge.wl`](../../dev/verify_task6_convention_bridge.wl)
+regression [`dev/verify_task6_convention_bridge.wl`](../../../legacy/wolfram/dev/verify_task6_convention_bridge.wl)
 checks the explicit A21 public target and inspectable A31 convention-bridge
 diagnostics. This is a regression aid, not a substitute for broader physics
 validation.

@@ -36,7 +36,7 @@ d991238d64e7"],
 
 Cell[BoxData[{
  RowBox[{
-  RowBox[{"repoRoot", "=", "\"\</path/to/antenna_pipeline\>\""}], ";"}], "\n", 
+  RowBox[{"repoRoot", "=", "\"\</path/to/form-kira-lab/legacy/wolfram\>\""}], ";"}], "\n", 
  RowBox[{
   RowBox[{"archive", "=", 
    RowBox[{"CreatePacletArchive", "[", 

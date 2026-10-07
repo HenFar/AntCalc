@@ -1,13 +1,13 @@
-# Integrate-only regression suite: each antenna goes through src/orchestrator.py with the Kira
+# Integrate-only regression suite: each antenna goes through src/antcalc/orchestrator.py with the Kira
 # integrator (fresh Kira state per expression) and is compared, order by order in ep, with the
-# integrated antennae of the thesis (Appendix A). Usage: python src/next/tests/run_suite.py [A30 A40 ...]
+# integrated antennae of the thesis (Appendix A). Usage: python tests/kira/run_suite.py [A30 A40 ...]
 import json, os, subprocess, sys, time
 from pathlib import Path
 import sympy as sp
 
 TESTS_DIR = Path(__file__).resolve().parent
-SRC_DIR = TESTS_DIR.parent
-ROOT_DIR = SRC_DIR.parent.parent
+ROOT_DIR = TESTS_DIR.parent.parent
+SRC_DIR = ROOT_DIR / "src" / "antcalc"
 OUTPUT_DIR = TESTS_DIR / "output"
 sys.path.insert(0, str(TESTS_DIR))
 from references import references, ep, pi, z3

@@ -1,6 +1,5 @@
 {
-    "_notes": "",
-    "build": 1,
+    "build": 0,
     "build_method": "pythonToWl",
     "build_print_to_terminal": 1,
     "integrate": 1,

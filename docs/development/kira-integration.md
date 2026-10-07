@@ -1,6 +1,6 @@
 # FORM / Kira integration internals
 
-[Developer index](README.md) · [User workflow](../manual/kira-workflow.md) · [Python source](../../src/next/README.md)
+[Developer index](README.md) · [User workflow](../manual/kira-workflow.md) · [Python source](../../src/antcalc/README.md)
 
 AntCalc 0.3.5's checkout runner separates construction from integration. Wolfram builds
 an invariant expression; Python maps its monomials to cut integral families;
@@ -10,18 +10,21 @@ through `AntennaIntegrationProfile` or return `AntennaRunRecord` objects.
 
 ## Source map
 
-| File or directory under `src/next/` | Responsibility |
+| File or directory under `src/antcalc/` | Responsibility |
 |---|---|
 | `orchestrator.py` | card loading, antenna checks, method dispatch, tool discovery for builds |
-| `build_methods.py`, `build_pipeline.wl` | Wolfram session, build-only loader, expression conversion |
-| `integrate_methods.py`, `integrate_pipeline.wl` | legacy Wolfram build-and-integrate adapter |
+| `build_methods.py` | Wolfram session and expression conversion via the legacy build loader |
+| `integrate_methods.py` | legacy Wolfram build-and-integrate adapter |
+| `paths.py` | checkout and legacy-loader path boundary |
 | `integrate_kira.py` | input parsing, family mapping, FORM/Kira execution, closure, scale and output checks |
 | `form/simplify_before_kira.frm` | canonicalise the input using `PolyRatFun rat` |
 | `form/simplify_after_kira.frm` | apply accumulated Kira rules and convert `num*den` to `rat` |
 | `form/substitute_masters.frm` | include the multiplicity-selected analytic masters |
 | `kira/templates/` | immutable family and kinematics inputs copied into scratch state |
 | `masters/masters_R3.inc`, `masters_R4.inc` | normalised analytic masters and fixed epsilon expansions |
-| `tests/run_suite.py`, `tests/references.py` | saved-input comparison harness and thesis series |
+
+Wolfram stage loaders live in repository-root `legacy/wolfram/loaders/`.
+The comparison harness and references live in `tests/kira/`, outside source.
 
 ## Input and family mapping
 
@@ -62,7 +65,7 @@ master from a different family.
 ## FORM boundary
 
 All scripts read `../tmp/declarations.inc` and `../tmp/antenna.inc` relative
-to `src/next/form/`. `run_form` captures FORM's printed `antenna = ...;`,
+to `src/antcalc/form/`. `run_form` captures FORM's printed `antenna = ...;`,
 removes whitespace, and overwrites `antenna.inc` with the latest expression.
 The pre-reduction FORM stage combines the input before Kira targets are
 chosen. `form_to_pairs` expects top-level coefficient–integral products with

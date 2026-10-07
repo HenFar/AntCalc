@@ -1,0 +1,105 @@
+[
+  {
+    "case": "build_python",
+    "exit": 0,
+    "seconds": 7.0,
+    "files": {
+      "results/unintegrated/unintegratedA30.m": "b3283913b99d58d2112cc9f1fb3afdaccd21236954c9af1b4f2e2271c50122a3"
+    },
+    "problems": []
+  },
+  {
+    "case": "build_legacy",
+    "exit": 0,
+    "seconds": 6.7,
+    "files": {
+      "results/unintegrated_legacy/unintegratedA30.m": "83d84017f27fce20134845196a49939d16d22e71ad0749926141f25a5a35c6f8"
+    },
+    "problems": []
+  },
+  {
+    "case": "integrate_kira",
+    "exit": 0,
+    "seconds": 6.7,
+    "files": {
+      "results/integrated/A30_0_masters.inc": "aebdf6383737cbb43803e4d2015f6bdc98a7c55a438f04c78bd263096627cb10",
+      "results/integrated/A30_0_scale.json": "ca9badcebf52af0a410dc1a54c6db5902c08fa6ac8604077af1220513421bca9",
+      "results/integrated/A30_0_integrated.inc": "82832f5230d3a13af4d4ee9ba11337bf9ed00bc0d6f0c34e5de66fbaa16cdc80"
+    },
+    "problems": []
+  },
+  {
+    "case": "integrate_legacy",
+    "exit": 0,
+    "seconds": 7.6,
+    "files": {
+      "results/integrated_legacy/integratedA30.m": "0ac6ceb12f9f346d8ae50b136862878202ef507c31e6d0de32adecedc22f5845"
+    },
+    "problems": []
+  },
+  {
+    "case": "both_pythonToWl_kira",
+    "exit": 0,
+    "seconds": 13.0,
+    "files": {
+      "results/unintegrated/unintegratedA30.m": "b3283913b99d58d2112cc9f1fb3afdaccd21236954c9af1b4f2e2271c50122a3",
+      "results/integrated/A30_0_masters.inc": "aebdf6383737cbb43803e4d2015f6bdc98a7c55a438f04c78bd263096627cb10",
+      "results/integrated/A30_0_scale.json": "ca9badcebf52af0a410dc1a54c6db5902c08fa6ac8604077af1220513421bca9",
+      "results/integrated/A30_0_integrated.inc": "82832f5230d3a13af4d4ee9ba11337bf9ed00bc0d6f0c34e5de66fbaa16cdc80"
+    },
+    "problems": []
+  },
+  {
+    "case": "both_pythonToWl_legacy",
+    "exit": 0,
+    "seconds": 13.9,
+    "files": {
+      "results/unintegrated/unintegratedA30.m": "b3283913b99d58d2112cc9f1fb3afdaccd21236954c9af1b4f2e2271c50122a3",
+      "results/integrated_legacy/integratedA30.m": "0ac6ceb12f9f346d8ae50b136862878202ef507c31e6d0de32adecedc22f5845"
+    },
+    "problems": []
+  },
+  {
+    "case": "both_legacy_kira",
+    "exit": 0,
+    "seconds": 13.4,
+    "files": {
+      "results/unintegrated_legacy/unintegratedA30.m": "83d84017f27fce20134845196a49939d16d22e71ad0749926141f25a5a35c6f8",
+      "results/integrated/A30_0_masters.inc": "aebdf6383737cbb43803e4d2015f6bdc98a7c55a438f04c78bd263096627cb10",
+      "results/integrated/A30_0_scale.json": "ca9badcebf52af0a410dc1a54c6db5902c08fa6ac8604077af1220513421bca9",
+      "results/integrated/A30_0_integrated.inc": "82832f5230d3a13af4d4ee9ba11337bf9ed00bc0d6f0c34e5de66fbaa16cdc80"
+    },
+    "problems": []
+  },
+  {
+    "case": "both_legacy_legacy",
+    "exit": 0,
+    "seconds": 14.5,
+    "files": {
+      "results/unintegrated_legacy/unintegratedA30.m": "83d84017f27fce20134845196a49939d16d22e71ad0749926141f25a5a35c6f8",
+      "results/integrated_legacy/integratedA30.m": "0ac6ceb12f9f346d8ae50b136862878202ef507c31e6d0de32adecedc22f5845"
+    },
+    "problems": []
+  },
+  {
+    "case": "manual_kira",
+    "exit": 0,
+    "seconds": 6.7,
+    "files": {
+      "results/integrated/A30_0_masters.inc": "aebdf6383737cbb43803e4d2015f6bdc98a7c55a438f04c78bd263096627cb10",
+      "results/integrated/A30_0_scale.json": "ca9badcebf52af0a410dc1a54c6db5902c08fa6ac8604077af1220513421bca9",
+      "results/integrated/A30_0_integrated.inc": "82832f5230d3a13af4d4ee9ba11337bf9ed00bc0d6f0c34e5de66fbaa16cdc80"
+    },
+    "problems": []
+  },
+  {
+    "case": "masters_only",
+    "exit": 0,
+    "seconds": 6.6,
+    "files": {
+      "results/integrated/A30_0_masters.inc": "aebdf6383737cbb43803e4d2015f6bdc98a7c55a438f04c78bd263096627cb10",
+      "results/integrated/A30_0_scale.json": "ca9badcebf52af0a410dc1a54c6db5902c08fa6ac8604077af1220513421bca9"
+    },
+    "problems": []
+  }
+]

@@ -2,7 +2,7 @@
 
 [Manual index](index.md) · [Pipeline internals](../development/kira-integration.md) · [Repository README](../../README.md)
 
-AntCalc 0.3.5's Python runner in `src/next/orchestrator.py` selects build and integration
+AntCalc 0.3.5's Python runner in `src/antcalc/orchestrator.py` selects build and integration
 methods from a JSON runcard. `integrate_method: "kira"` sends a massless
 invariant expression through FORM, Kira IBP reduction, scale checking, and
 optional analytic-master substitution. The runner is the project's main
@@ -37,7 +37,7 @@ From the repository root:
 ```sh
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -r src/next/requirements.txt
+python -m pip install -r requirements.txt
 export FERMATPATH=/absolute/path/to/fermat/executable
 ```
 
@@ -53,7 +53,7 @@ External tools:
 - Fermat: `FERMATPATH` must name the executable used by Kira. The integrator
   checks that the variable is set; it does not validate the executable itself.
 - For builds and legacy integration: `wolframscript`, a licensed Wolfram
-  kernel, and the symbolic packages described in [installation](installation.md).
+  kernel, and the symbolic packages described in [installation](../legacy/manual/installation.md).
 
 An integrate-only Kira run does not launch Wolfram, although the orchestrator
 imports the Wolfram client at startup. `pythonToWl` builds also perform a FORM
@@ -84,7 +84,7 @@ Save this as `runcards/kira_a30.json`:
 Run:
 
 ```sh
-python src/next/orchestrator.py kira_a30
+python src/antcalc/orchestrator.py kira_a30
 ```
 
 Supply the card's basename without `.json`. With no argument, the runner uses
@@ -171,7 +171,7 @@ fails. Check the current run's completion and settings before reusing outputs.
 
 ## Scratch files and repeat runs
 
-FORM uses the shared `src/next/tmp/` directory. Kira uses
+FORM uses the shared `src/antcalc/tmp/` directory. Kira uses
 `<system temp>/antcalc_kira/Xij/`, or `$ANTCALC_KIRA_DIR/Xij/` when the override
 is set before starting Python. Keep Kira's work directory outside synced
 folders: its database must remain consistent during reduction.
@@ -185,18 +185,18 @@ output names are shared, so run integrations sequentially within a checkout.
 ## Comparing with the thesis
 
 ```sh
-python src/next/tests/run_suite.py          # all four supported antennae
-python src/next/tests/run_suite.py A30      # one antenna
+python tests/kira/run_suite.py          # all four supported antennae
+python tests/kira/run_suite.py A30      # one antenna
 ```
 
 The suite runs integrate-only runcards against `results/unintegrated/`, clears
 the selected antenna's existing integrated outputs, and compares the series
-with `src/next/tests/references.py`. It checks coefficients from `ep^-4`
+with `tests/kira/references.py`. It checks coefficients from `ep^-4`
 through `ep^2` (the four-parton references end at `ep^0`). Scale factors are
 reported in the summary; the integrator itself enforces their order check.
 References for `A31` and `A22` exist in the reference file but are not suite cases.
 
-Logs and `summary.md` go to `src/next/tests/output/`. Exit status is zero only
+Logs and `summary.md` go to `tests/kira/output/`. Exit status is zero only
 if every selected antenna matches. The suite creates and then removes
 `runcards/_suite.json`; do not use that name for a personal card. If
 `FERMATPATH` is unset, the suite supplies a machine-specific default under

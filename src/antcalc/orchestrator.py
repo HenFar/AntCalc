@@ -5,9 +5,16 @@ import platform
 import subprocess
 import shutil
 
-from build_methods import build_massless_legacy, build_massless_pythonToWl
-from integrate_methods import integrate_massless_legacy
-import integrate_kira
+if __package__:
+    from .build_methods import build_massless_legacy, build_massless_pythonToWl
+    from .integrate_methods import integrate_massless_legacy
+    from .paths import REPO_ROOT, LEGACY_LOADERS_DIR
+    from . import integrate_kira
+else:
+    from build_methods import build_massless_legacy, build_massless_pythonToWl
+    from integrate_methods import integrate_massless_legacy
+    from paths import REPO_ROOT, LEGACY_LOADERS_DIR
+    import integrate_kira
 
 ########################################
 ## setup
@@ -37,7 +44,7 @@ def orchestrator(runcard_name = "runcard"):
 
 def define_general_paths(runcard_name):     # may define another runcard name
     here = Path(__file__).resolve().parent
-    repo_root = here.parent.parent                # src/next -> repository root
+    repo_root = REPO_ROOT
     results_dir = repo_root / "results"
     results_dir.mkdir(parents=True, exist_ok=True)
     os_name = platform.system()
@@ -170,11 +177,11 @@ def build_stage(build_method, antenna_family, multiplicity, loop_order, wolfram_
         case "legacy":
             output_dir = results_dir / "unintegrated_legacy"
             output_dir.mkdir(parents=True, exist_ok=True)
-            build_massless_legacy(wolfram_loc, path_to_file, output_dir, antenna_family, multiplicity, loop_order, output_destination)
+            build_massless_legacy(wolfram_loc, LEGACY_LOADERS_DIR, output_dir, antenna_family, multiplicity, loop_order, output_destination)
         case "pythonToWl":
             output_dir = results_dir / "unintegrated"
             output_dir.mkdir(parents=True, exist_ok=True)
-            build_massless_pythonToWl(wolfram_loc, path_to_file, output_dir, antenna_family, multiplicity, loop_order, output_destination)
+            build_massless_pythonToWl(wolfram_loc, LEGACY_LOADERS_DIR, output_dir, antenna_family, multiplicity, loop_order, output_destination)
         case _:
             raise Exception("Error! Expected build methods are legacy and pythonToWl.")
 
@@ -193,7 +200,7 @@ def integrate_stage(integrate_method, runcard, antenna_family, multiplicity, loo
             output_dir = results_dir / "integrated_legacy"
             output_dir.mkdir(parents=True, exist_ok=True)
             output_destination = "".join(("integrated", antenna_family, str(multiplicity), str(loop_order)))
-            integrate_massless_legacy(get_wolfram_loc(os_name), path_to_file, output_dir, antenna_family, multiplicity, loop_order, output_destination)
+            integrate_massless_legacy(get_wolfram_loc(os_name), LEGACY_LOADERS_DIR, output_dir, antenna_family, multiplicity, loop_order, output_destination)
         case "kira":
             run = integrate_kira.IntegrationRun(
                 antenna_family = antenna_family,

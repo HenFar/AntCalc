@@ -1,6 +1,11 @@
 # AntCalc reference guide
 
-[Documentation home](../README.md) · [Manual](../manual/index.md) · [Developer documentation](../development/README.md)
+This page documents the legacy Wolfram package. Shell commands and package
+asset paths below are relative to `legacy/wolfram/`; change to that directory
+before running them. The current runner is described in the
+[Kira workflow guide](../../manual/kira-workflow.md).
+
+[Documentation home](../../README.md) · [Manual](../manual/index.md) · [Developer documentation](../development/README.md)
 
 Reference pages define public contracts, return forms, and supported options.
 Tutorials explain complete workflows.

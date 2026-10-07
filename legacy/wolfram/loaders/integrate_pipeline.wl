@@ -8,7 +8,7 @@ If[!TrueQ[$AntennaPipelineIntegrateLoaded],
   thisDir = If[StringQ[$InputFileName] && $InputFileName =!= "",
     DirectoryName[$InputFileName],
     If[StringQ[$AntennaPipelineRoot] && $AntennaPipelineRoot =!= "",
-      FileNameJoin[{$AntennaPipelineRoot, "src", "next"}],
+      FileNameJoin[{$AntennaPipelineRoot, "loaders"}],
       Directory[]
     ]
   ];

@@ -1,6 +1,11 @@
 # Research-status ledger
 
-[Developer index](README.md) · [Route status](../manual/route-status.md) · [Documentation home](../README.md)
+This page documents the legacy Wolfram package. Shell commands and package
+asset paths below are relative to `legacy/wolfram/`; change to that directory
+before running them. The current runner is described in the
+[Kira workflow guide](../../manual/kira-workflow.md).
+
+[Developer index](README.md) · [Route status](../manual/route-status.md) · [Documentation home](../../README.md)
 
 This is a dated development snapshot, not the supported-route contract. For
 what AntCalc currently promises to an external user, use the [route-status
@@ -114,8 +119,8 @@ BuildAntenna[D, 3, 0, ReturnRecord -> True]
 ```
 
 Related derivation and source-route material is under
-[`dev/massiveA30`](../../dev/massiveA30),
-[`dev/massiveA30_sources`](../../dev/massiveA30_sources), and
+[`dev/massiveA30`](../../../legacy/wolfram/dev/massiveA30),
+[`dev/massiveA30_sources`](../../../legacy/wolfram/dev/massiveA30_sources), and
 the retained historical source material under `dev/`.
 
 ## Benchmarking is not acceptance

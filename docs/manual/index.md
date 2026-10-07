@@ -1,35 +1,17 @@
 # AntCalc manual
 
-[Documentation home](../README.md) · [Reference guide](../reference/README.md) · [Developer documentation](../development/README.md)
+[Documentation home](../README.md) · [Developer documentation](../development/README.md)
 
-This manual covers AntCalc 0.3.5's Python runcard workflow and the retained
-legacy Wolfram interface, with their respective route scopes and result
-conventions. Start with the Kira workflow for the current runner. Use the
-reference guide for Wolfram function and option contracts.
+The current entry point is `src/antcalc/orchestrator.py`. It reads a runcard,
+builds with the selected method, and integrates with Kira or the legacy
+Wolfram route.
 
-## Start here
+- [Running the FORM / Kira workflow](kira-workflow.md): setup, cards, inputs,
+  outputs, normalisation and troubleshooting.
+- [Repository structure](../development/repository-layout.md): where current
+  code, legacy dependencies, tests and research material live.
+- [Test guide](../../tests/README.md): operational and physics comparisons.
 
-- [Python / FORM / Kira workflow](kira-workflow.md)
-- [Route status and support contract](route-status.md)
-- [Installation and loading](installation.md)
-- [Public API overview](public-api.md)
-- [Conventions and normalisation](conventions-and-normalisation.md)
-- [Stored results and reproducibility](stored-results-and-reproducibility.md)
-- [Glossary](glossary.md)
-- [Citation and provenance](citation-and-provenance.md)
-
-## Tutorials
-
-The [tutorials](../tutorials/README.md) show complete runnable tasks. The
-reference pages remain the source for exact function and option behaviour.
-
-## Reference and development material
-
-- [Public reference guide](../reference/README.md)
-- [Developer documentation](../development/README.md)
-
-## Documentation status
-
-This manual replaces the former monolithic README. [dev/README_old.md](../../dev/README_old.md)
-is preserved as a development archive. Where the pages differ, follow this manual and the
-function reference.
+For direct use of the retained Wolfram API, use the
+[legacy package documentation](../legacy/README.md). Its version and route
+support contract are independent of AntCalc 0.3.5's runner.

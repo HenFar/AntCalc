@@ -1,5 +1,10 @@
 # A22 loop-only master crosswalk
 
+This page documents the legacy Wolfram package. Shell commands and package
+asset paths below are relative to `legacy/wolfram/`; change to that directory
+before running them. The current runner is described in the
+[Kira workflow guide](../../manual/kira-workflow.md).
+
 This note records the provenance status of the masters exposed by the A22
 loop-only IBP diagnostic. It is intentionally stricter than the integrated
 route's acceptance status: an integrated antenna can agree with its paper

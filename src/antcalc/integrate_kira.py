@@ -8,11 +8,15 @@ from dataclasses import dataclass
 from itertools import combinations
 import yaml, subprocess, shutil, os, re, json, tempfile
 
+if __package__:
+    from .paths import REPO_ROOT
+else:
+    from paths import REPO_ROOT
 
 q2, d = sp.symbols("q2 d")
 
 SRC_DIR = Path(__file__).resolve().parent
-ROOT_DIR = SRC_DIR.parent.parent                   # src/next -> repository root
+ROOT_DIR = REPO_ROOT
 TEMPLATES_DIR = SRC_DIR / "kira" / "templates"
 FORM_DIR = SRC_DIR / "form"
 MASTERS_DIR = SRC_DIR / "masters"

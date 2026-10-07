@@ -1,0 +1,12 @@
+[
+  {
+    "component": "A40 leading",
+    "verdict": "match",
+    "scale": "(q2/mu2)^(-2*ep)"
+  },
+  {
+    "component": "A40 subleading",
+    "verdict": "match",
+    "scale": "(q2/mu2)^(-2*ep)"
+  }
+]

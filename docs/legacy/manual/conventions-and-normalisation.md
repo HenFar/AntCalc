@@ -1,6 +1,11 @@
 # Conventions and normalisation
 
-[Manual index](index.md) · [Route status](route-status.md) · [Documentation home](../README.md)
+This page documents the legacy Wolfram package. Shell commands and package
+asset paths below are relative to `legacy/wolfram/`; change to that directory
+before running them. The current runner is described in the
+[Kira workflow guide](../../manual/kira-workflow.md).
+
+[Manual index](index.md) · [Route status](route-status.md) · [Documentation home](../../README.md)
 
 This page states the conventions used by supported AntCalc routes. It separates
 public antenna definitions from colour coefficients, backend expressions, and

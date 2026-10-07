@@ -108,7 +108,7 @@ So if you use this directory now, the correct workflow is:
    to inspect the encoded integrated literature result and the explicit bridge
    to package convention.
 3. Use the scripts in
-   [`dev/massiveA30/`](../../dev/massiveA30)
+   [`dev/massiveA30/`](../massiveA30)
    to generate the `MX30` bases, reduce the package-built antenna, and inspect
    the remaining basis-matching problem.
 4. Treat the final integrated closed result as bibliography/provenance rather

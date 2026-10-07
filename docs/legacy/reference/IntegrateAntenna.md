@@ -1,6 +1,11 @@
 # `IntegrateAntenna`
 
-[Reference index](README.md) · [`BuildAntenna`](BuildAntenna.md) · [Documentation home](../README.md)
+This page documents the legacy Wolfram package. Shell commands and package
+asset paths below are relative to `legacy/wolfram/`; change to that directory
+before running them. The current runner is described in the
+[Kira workflow guide](../../manual/kira-workflow.md).
+
+[Reference index](README.md) · [`BuildAntenna`](BuildAntenna.md) · [Documentation home](../../README.md)
 
 ```wl
 IntegrateAntenna[antennaObject, opts]
@@ -8,7 +13,7 @@ IntegrateAntenna[antennaObject, opts]
 
 Integrates an `AntennaObject` with its route-selected PaVe or IBP backend.
 The Python runcard setting `integrate_method: "kira"` belongs to a separate
-[checkout workflow](../manual/kira-workflow.md); it is not an option of this function.
+[checkout workflow](../../manual/kira-workflow.md); it is not an option of this function.
 Obtain an object with either:
 
 ```wl
