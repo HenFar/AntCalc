@@ -1,0 +1,103 @@
+# A22: Kira translation of the LiteRed bases used by the legacy pipeline.
+# Propagator order is the LiteRed Ds[basis] order, so j[B, a1..an] <-> B[a1,..,an].
+# Kira convention: [mom, m] = mom^2 - m, {bilinear: [[a, b], m]} = a.b - m.
+integralfamilies:
+  - name: "A22TwoLoopTreeBasis1"
+    loop_momenta: [l1, l2]
+    top_level_sectors: [127]
+    propagators:
+      - ["l1", 0]                                    #1  LiteRed: sp[l1,l1]
+      - ["-k1+l1", 0]                                #2  LiteRed: sp[-k1+l1,-k1+l1]
+      - ["l2", 0]                                    #3  LiteRed: sp[l2,l2]
+      - ["l1-q", 0]                                  #4  LiteRed: sp[l1-q,l1-q]
+      - ["-k1+l1+l2", 0]                             #5  LiteRed: sp[-k1+l1+l2,-k1+l1+l2]
+      - ["-l1+l2+q", 0]                              #6  LiteRed: sp[-l1+l2+q,-l1+l2+q]
+      - ["-k1+l2", 0]                                #7  LiteRed: sp[-k1+l2,-k1+l2]
+  - name: "A22TwoLoopTreeBasis2"
+    loop_momenta: [l1, l2]
+    top_level_sectors: [127]
+    propagators:
+      - ["l1", 0]                                    #1  LiteRed: sp[l1,l1]
+      - ["-k1+l1", 0]                                #2  LiteRed: sp[-k1+l1,-k1+l1]
+      - ["l2", 0]                                    #3  LiteRed: sp[l2,l2]
+      - ["-k1+l1+l2", 0]                             #4  LiteRed: sp[-k1+l1+l2,-k1+l1+l2]
+      - ["l1-q", 0]                                  #5  LiteRed: sp[l1-q,l1-q]
+      - ["-l1+l2+q", 0]                              #6  LiteRed: sp[-l1+l2+q,-l1+l2+q]
+      - ["-k1+l2", 0]                                #7  LiteRed: sp[-k1+l2,-k1+l2]
+  - name: "A22TwoLoopTreeBasis3"
+    loop_momenta: [l1, l2]
+    top_level_sectors: [127]
+    propagators:
+      - ["l1", 0]                                    #1  LiteRed: sp[l1,l1]
+      - ["-k1+l1", 0]                                #2  LiteRed: sp[-k1+l1,-k1+l1]
+      - ["l2", 0]                                    #3  LiteRed: sp[l2,l2]
+      - ["l1-q", 0]                                  #4  LiteRed: sp[l1-q,l1-q]
+      - ["-l1+l2+q", 0]                              #5  LiteRed: sp[-l1+l2+q,-l1+l2+q]
+      - ["-k1+l1+l2", 0]                             #6  LiteRed: sp[-k1+l1+l2,-k1+l1+l2]
+      - ["-k1+l2", 0]                                #7  LiteRed: sp[-k1+l2,-k1+l2]
+  - name: "A22TwoLoopTreeBasis4"
+    loop_momenta: [l1, l2]
+    top_level_sectors: [127]
+    propagators:
+      - ["l1", 0]                                    #1  LiteRed: sp[l1,l1]
+      - ["-k1+l1", 0]                                #2  LiteRed: sp[-k1+l1,-k1+l1]
+      - ["l2", 0]                                    #3  LiteRed: sp[l2,l2]
+      - ["l1-q", 0]                                  #4  LiteRed: sp[l1-q,l1-q]
+      - ["k1+l2-q", 0]                               #5  LiteRed: sp[k1+l2-q,k1+l2-q]
+      - ["l1+l2-q", 0]                               #6  LiteRed: sp[l1+l2-q,l1+l2-q]
+      - ["-k1+l2", 0]                                #7  LiteRed: sp[-k1+l2,-k1+l2]
+  - name: "A22TwoLoopTreeBasis5"
+    loop_momenta: [l1, l2]
+    top_level_sectors: [127]
+    propagators:
+      - ["l1", 0]                                    #1  LiteRed: sp[l1,l1]
+      - ["l2", 0]                                    #2  LiteRed: sp[l2,l2]
+      - ["l1-q", 0]                                  #3  LiteRed: sp[l1-q,l1-q]
+      - ["k1+l1-q", 0]                               #4  LiteRed: sp[k1+l1-q,k1+l1-q]
+      - ["-l1+l2+q", 0]                              #5  LiteRed: sp[-l1+l2+q,-l1+l2+q]
+      - ["-k1+l1+l2", 0]                             #6  LiteRed: sp[-k1+l1+l2,-k1+l1+l2]
+      - ["-k1+l2", 0]                                #7  LiteRed: sp[-k1+l2,-k1+l2]
+  - name: "A22TwoLoopTreeBasis6"
+    loop_momenta: [l1, l2]
+    top_level_sectors: [127]
+    propagators:
+      - ["l1", 0]                                    #1  LiteRed: sp[l1,l1]
+      - ["l2", 0]                                    #2  LiteRed: sp[l2,l2]
+      - ["-k1+l2", 0]                                #3  LiteRed: sp[-k1+l2,-k1+l2]
+      - ["l1-q", 0]                                  #4  LiteRed: sp[l1-q,l1-q]
+      - ["k1+l1-q", 0]                               #5  LiteRed: sp[k1+l1-q,k1+l1-q]
+      - ["l1+l2-q", 0]                               #6  LiteRed: sp[l1+l2-q,l1+l2-q]
+      - ["-k1+l1+l2", 0]                             #7  LiteRed: sp[-k1+l1+l2,-k1+l1+l2]
+  - name: "A22TwoLoopTreeBasis7"
+    loop_momenta: [l1, l2]
+    top_level_sectors: [127]
+    propagators:
+      - ["l1", 0]                                    #1  LiteRed: sp[l1,l1]
+      - ["l2", 0]                                    #2  LiteRed: sp[l2,l2]
+      - ["l1+l2", 0]                                 #3  LiteRed: sp[l1+l2,l1+l2]
+      - ["l2-q", 0]                                  #4  LiteRed: sp[l2-q,l2-q]
+      - ["k1+l2-q", 0]                               #5  LiteRed: sp[k1+l2-q,k1+l2-q]
+      - ["l1+q", 0]                                  #6  LiteRed: sp[l1+q,l1+q]
+      - ["-k1+l1", 0]                                #7  LiteRed: sp[-k1+l1,-k1+l1]
+  - name: "A22TwoLoopTreeBasis8"
+    loop_momenta: [l1, l2]
+    top_level_sectors: [127]
+    propagators:
+      - ["l1", 0]                                    #1  LiteRed: sp[l1,l1]
+      - ["l2", 0]                                    #2  LiteRed: sp[l2,l2]
+      - ["-k1+l2", 0]                                #3  LiteRed: sp[-k1+l2,-k1+l2]
+      - ["l1+l2", 0]                                 #4  LiteRed: sp[l1+l2,l1+l2]
+      - ["l1+q", 0]                                  #5  LiteRed: sp[l1+q,l1+q]
+      - ["-k1+l1+l2+q", 0]                           #6  LiteRed: sp[-k1+l1+l2+q,-k1+l1+l2+q]
+      - ["-k1+l1", 0]                                #7  LiteRed: sp[-k1+l1,-k1+l1]
+  - name: "A22OneLoopSelfBasis"
+    loop_momenta: [l1, l2]
+    top_level_sectors: [127]
+    propagators:
+      - ["l1", 0]                                    #1  LiteRed: sp[l1,l1]
+      - ["-k1+l1", 0]                                #2  LiteRed: sp[-k1+l1,-k1+l1]
+      - ["l1-q", 0]                                  #3  LiteRed: sp[l1-q,l1-q]
+      - ["l2", 0]                                    #4  LiteRed: sp[l2,l2]
+      - ["-k1+l2", 0]                                #5  LiteRed: sp[-k1+l2,-k1+l2]
+      - ["l2-q", 0]                                  #6  LiteRed: sp[l2-q,l2-q]
+      - ["l1-l2", 0]                                 #7  LiteRed: sp[l1-l2,l1-l2]

@@ -1,0 +1,6 @@
+{
+  "q2_power": 0,
+  "q2_ep_power": -2,
+  "factor": "(q2/mu2)^(-2*ep)",
+  "terms_checked": 3
+}
