@@ -4,6 +4,10 @@
 
 ## Requirements
 
+For AntCalc 0.3.5's Python runcard workflow, including FORM, Kira, Fermat, and Python
+dependencies, follow the [Kira workflow setup](kira-workflow.md#environment).
+The installation and verification steps below describe the Wolfram package.
+
 Supported workflows need a Wolfram Language kernel and these packages:
 
 - FeynCalc;

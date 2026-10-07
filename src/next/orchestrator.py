@@ -12,7 +12,7 @@ import integrate_kira
 ########################################
 ## setup
 
-AntCalcVersion = "AntCalc 0.3.5 - runcard preview"
+AntCalcVersion = "AntCalc 0.3.5"
 
 ########################################
 ## main

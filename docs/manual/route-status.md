@@ -13,6 +13,10 @@ the public support contract; the profile data is its machine-readable record.
 
 ## Supported massless surface
 
+This table describes the legacy Wolfram package API. AntCalc 0.3.5's Python /
+FORM / Kira workflow currently covers massless `A30`, `A40`, `B40`, and `C40`; see
+its [scope and input contract](kira-workflow.md#supported-inputs).
+
 | Family or workflow | Build | Integrate | Status |
 |---|---:|---:|---|
 | `A20` | yes | n/a | supported |

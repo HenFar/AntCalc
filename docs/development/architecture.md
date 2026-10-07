@@ -2,7 +2,11 @@
 
 [Developer index](README.md) · [Route maintenance](route-maintenance.md) · [Documentation home](../README.md)
 
-AntCalc is profile-driven. The core execution model is:
+This page describes the legacy Wolfram package architecture. AntCalc 0.3.5's Python
+runcard workflow builds through a Wolfram loader and integrates through FORM
+and Kira; see [Kira integration internals](kira-integration.md) for that path.
+
+The Wolfram package is profile-driven. Its core execution model is:
 
 ```text
 public API call
