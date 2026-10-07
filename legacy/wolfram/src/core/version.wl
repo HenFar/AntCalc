@@ -5,8 +5,11 @@
 (* This release ledger is the single source of truth for legacy Wolfram
    package versions. The Python runner has an independent project version.
    Cache schema and route semantic versions are independent
-   correctness barriers and must not be presented as release versions. Add a
-   new entry here when advancing a release; never rewrite a released entry. *)
+   correctness barriers and must not be presented as release versions. Never
+   rewrite a released entry.
+
+   Frozen: the legacy package is no longer released, so no entries are added
+   after 0.3.0-beta.1. AntCalc's project version is the Python runner's. *)
 
 $AntCalcReleaseHistory = {<|"Version" -> "0.3.0-alpha.1", "Date" -> "2026-07-18",
    "Stage" -> "Alpha", "Summary" -> "First tracked research release with the modular public build/integrate interface."
