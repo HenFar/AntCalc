@@ -48,7 +48,27 @@ PYTHONPATH=src python -m antcalc my_run
 ```
 
 The retained paclet must be archived from `legacy/wolfram/`. A project-root
-paclet archive no longer describes the intended package root.
+paclet archive no longer describes the intended package root. The paclet is
+frozen at `0.3.0-beta.1`: its version and the release ledger in
+`legacy/wolfram/src/core/version.wl` are no longer advanced.
+
+## History across the restructure
+
+The restructure was committed in two steps. Commit `cc7d93a` holds only the
+moves, 5140 files with unchanged content; the path updates and new files
+follow in `054e665`. Each moved file's history therefore continues through the
+move:
+
+```sh
+git log --follow -- legacy/wolfram/src/core/setup.wl
+```
+
+A move of this size exceeds Git's default rename limit, above which `git log`
+and `git diff` stop reporting renames. Raise it once per clone:
+
+```sh
+git config diff.renameLimit 20000
+```
 
 ## Research and legacy maintenance
 

@@ -10,11 +10,13 @@ Python runcard → Wolfram build → invariant expression → FORM → Kira
               → master combination → analytic masters → epsilon series + scale
 ```
 
-The current project version is **0.3.5**, independent of the legacy paclet's
-**0.3.0-beta.1** metadata. Paclet installation is only needed when using its
-packaged Wolfram interface; the Python runner loads the checkout's Wolfram
-build code directly. Selecting `integrate_method: "kira"` in a runcard routes
-integration through FORM and Kira.
+The current project version is **0.3.5**. The legacy Wolfram paclet is frozen
+at **0.3.0-beta.1**: it is no longer released, and its version is not advanced.
+Paclet installation is only needed when using its packaged Wolfram interface;
+the Python runner loads the checkout's Wolfram build code directly. Selecting
+`integrate_method: "kira"` in a runcard routes integration through FORM and Kira.
+Different antennae can be integrated in parallel; the same antenna only one run
+at a time (see the [Kira workflow guide](docs/manual/kira-workflow.md)).
 
 AntCalc is active, unpublished thesis research software. It is shared for
 evaluation and academic discussion; reuse, redistribution, and relicensing
