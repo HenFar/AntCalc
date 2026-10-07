@@ -3,8 +3,9 @@
 [Project README](../../README.md) · [Legacy documentation](../../docs/legacy/README.md)
 
 This directory preserves the Wolfram package, its paclet entry points, and
-its dependent runtime assets. It retains the package version `0.3.0-beta.1`;
-the current Python project version is independently 0.3.5.
+its dependent runtime assets. The paclet is frozen at `0.3.0-beta.1`: it is no
+longer released, and its version and release ledger are not advanced. AntCalc's
+project version (currently 0.3.5) is the Python runner's.
 
 ## Active dependency boundary
 
