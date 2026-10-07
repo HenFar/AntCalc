@@ -1,9 +1,9 @@
-#include ../tmp/declarations.inc
-#include ../tmp/antenna.inc
+#include declarations.inc
+#include antenna.inc
 
 .sort
 
-#include ../tmp/kira_substitutions.inc
+#include kira_substitutions.inc
 
 id num(?a)*den(?b) = rat(?a,?b);
 

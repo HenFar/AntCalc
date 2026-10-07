@@ -64,16 +64,19 @@ master from a different family.
 
 ## FORM boundary
 
-All scripts read `../tmp/declarations.inc` and `../tmp/antenna.inc` relative
-to `src/antcalc/form/`. `run_form` captures FORM's printed `antenna = ...;`,
+All scripts include `declarations.inc` and `antenna.inc` by name; `run_form`
+passes the component's scratch folder to FORM with `-I`. `integrate_antenna`
+creates that folder under `src/antcalc/tmp/` for each component, deletes it
+when the component succeeds, and keeps it, named in the error, when it fails. `run_form` captures FORM's printed `antenna = ...;`,
 removes whitespace, and overwrites `antenna.inc` with the latest expression.
 The pre-reduction FORM stage combines the input before Kira targets are
 chosen. `form_to_pairs` expects top-level coefficient–integral products with
 `rat` coefficients.
 
-The shared scratch includes are overwritten by each stage and component.
-They are diagnostic working state, not immutable run artifacts. Parallel
-runs in one checkout can interfere even when Kira work roots differ.
+Within a component, the includes are overwritten by each stage. They are
+diagnostic working state, not immutable run artifacts. Components never share
+them, so FORM no longer stops antennae from running in parallel; the Kira
+directory and output names still do for the same antenna.
 
 ## Dynamic Kira jobs and reduction closure
 
@@ -98,7 +101,7 @@ The reduction loop is:
    without a rule. Remove integrals appearing on rule left-hand sides.
 6. Feed candidates back to Kira, keeping seed limits nondecreasing and the
    original export target fixed. Append each export to
-   `tmp/kira_substitutions.inc` with a `.sort` boundary.
+   the component's `kira_substitutions.inc` with a `.sort` boundary.
 7. Stop when a pass adds no substitution rules.
 
 The initial export target is the first sorted seeded family. Subsequent

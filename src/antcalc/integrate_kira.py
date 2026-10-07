@@ -6,7 +6,7 @@ from sympy.parsing.mathematica import parse_mathematica
 from pathlib import Path
 from dataclasses import dataclass
 from itertools import combinations
-import yaml, subprocess, shutil, os, re, json, tempfile
+import yaml, subprocess, shutil, os, re, json, tempfile, time
 
 if __package__:
     from .paths import REPO_ROOT
@@ -20,7 +20,7 @@ ROOT_DIR = REPO_ROOT
 TEMPLATES_DIR = SRC_DIR / "kira" / "templates"
 FORM_DIR = SRC_DIR / "form"
 MASTERS_DIR = SRC_DIR / "masters"
-WORK_DIR = SRC_DIR / "tmp"                          # FORM's include files: the scripts read ../tmp/
+SCRATCH_DIR = SRC_DIR / "tmp"                       # FORM's include files, one subfolder per expression
 # Kira runs outside the repository: a synced folder (Dropbox) splits its database mid-run.
 KIRA_RUN_DIR = Path(os.environ.get("ANTCALC_KIRA_DIR", Path(tempfile.gettempdir()) / "antcalc_kira"))
 UNINTEGRATED_DIR = ROOT_DIR / "results" / "unintegrated"
@@ -304,7 +304,7 @@ def term_to_form(term, family_layout):
         f"*{family_name}({arguments})"
     )
 
-def create_form_declarations(integrands_list, families_list):
+def create_form_declarations(integrands_list, families_list, work_dir):
     form_symbols = {d, q2}
     for coefficient, integral in integrands_list:
         form_symbols.update(sp.sympify(coefficient).free_symbols)
@@ -317,20 +317,20 @@ def create_form_declarations(integrands_list, families_list):
     family_names = sorted({name for name, invariants in families_list})
     function_names = ",".join(["rat", "num", "den"] + family_names)
 
-    with Path(WORK_DIR / "declarations.inc").open("w") as file:
+    with (work_dir / "declarations.inc").open("w") as file:
         file.write(f"Symbols {symbol_names};\n")
         file.write(f"CFunctions {function_names};\n")
         file.write("PolyRatFun rat;\n")
 
 
-def create_form_input(integrands_list, family_layout):
+def create_form_input(integrands_list, family_layout, work_dir):
     form_terms = [
         term_to_form(term, family_layout)
         for term in integrands_list
     ]
     expression_text = "\n + ".join(form_terms) if form_terms else "0"
 
-    with Path(WORK_DIR / "antenna.inc").open("w") as file:
+    with (work_dir / "antenna.inc").open("w") as file:
         file.write(f"Local antenna = \n {expression_text};\n")
 
 # created form input
@@ -348,7 +348,7 @@ def get_form_loc():
         raise Exception("Error! Form not found.")
     return form_loc
 
-def run_form(form_loc, input_path, defines=None):
+def run_form(form_loc, input_path, work_dir, defines=None):
     script_path = Path(input_path).resolve()
     define_args = [
         argument
@@ -356,14 +356,14 @@ def run_form(form_loc, input_path, defines=None):
         for argument in ("-D", f"{name}={value}")
     ]
     proc = subprocess.run(
-        [form_loc, "-q", *define_args, str(script_path)],
+        [form_loc, "-q", "-I", str(work_dir), *define_args, str(script_path)],
         cwd=str(script_path.parent),
         capture_output=True,
         text=True,
         check=True,
     )
 
-    with Path(WORK_DIR / "antenna.inc").open("w") as file:
+    with (work_dir / "antenna.inc").open("w") as file:
         file.write(f"Local antenna = \n {form_to_python(proc)};\n")
 
     return proc
@@ -514,8 +514,8 @@ def run_kira(kira_loc, run):
         check = True,
     )
 
-def get_masters_list_kira(pattern, requested):
-    with open(WORK_DIR / "kira_substitutions.inc", "r", encoding="utf-8") as f:
+def get_masters_list_kira(pattern, requested, work_dir):
+    with open(work_dir / "kira_substitutions.inc", "r", encoding="utf-8") as f:
         content = f.read()
 
     s = 0
@@ -563,7 +563,7 @@ def clear_kira_results(run):
     shutil.rmtree(kira_dir(run), ignore_errors=True)
     shutil.copytree(template_dir(run) / "config", kira_dir(run) / "config")
 
-def run_kira_reduction_complete(run, initial_terms, pattern):
+def run_kira_reduction_complete(run, initial_terms, pattern, work_dir):
     clear_kira_results(run)
     requested = [integrand for coefficient, integrand in initial_terms]
     write_toReduce(run, initial_terms)
@@ -571,9 +571,9 @@ def run_kira_reduction_complete(run, initial_terms, pattern):
     export_file = run_kira_pass(run, target)
     shutil.copyfile(
         export_file,
-        WORK_DIR / "kira_substitutions.inc",
+        work_dir / "kira_substitutions.inc",
     )
-    masters_list, s = get_masters_list_kira(pattern, requested)
+    masters_list, s = get_masters_list_kira(pattern, requested, work_dir)
     s_prev = 0
     while s - s_prev != 0:
         s_prev = s
@@ -581,10 +581,10 @@ def run_kira_reduction_complete(run, initial_terms, pattern):
         write_toReduce(run, masters_list)
         seeds, target = write_jobs_yaml(run, masters_list, seeds, target)
         export_file = run_kira_pass(run, target)
-        with open(WORK_DIR / "kira_substitutions.inc", "a") as out:
+        with open(work_dir / "kira_substitutions.inc", "a") as out:
             out.write("\n.sort\n")
             out.write(export_file.read_text())
-        masters_list, s = get_masters_list_kira(pattern, requested)
+        masters_list, s = get_masters_list_kira(pattern, requested, work_dir)
 
     return masters_list
 
@@ -672,6 +672,19 @@ def antenna_scale(run, master_combination):
 # the antenna's scale, from the dimensions of the integrals in the master combination
 
 def integrate_antenna(run, expression, name):
+    # The expression's FORM files live in a folder of their own: deleted when the integration
+    # succeeds, kept when it fails, so the files FORM was working on can be inspected.
+    SCRATCH_DIR.mkdir(exist_ok=True)
+    work_dir = Path(tempfile.mkdtemp(prefix=f"{name}_{time.strftime('%Y%m%d-%H%M%S')}_", dir=SCRATCH_DIR))
+    try:
+        result = integrate_in(run, expression, name, work_dir)
+    except Exception as error:
+        error.add_note(f"FORM's files for {name} are kept in {work_dir}")
+        raise
+    shutil.rmtree(work_dir)
+    return result
+
+def integrate_in(run, expression, name, work_dir):
     kinematics = build_kinematics(run.multiplicity)
     families_list, family_layout = kira_integral_families(run, kinematics)
     pattern = masters_pattern(families_list)
@@ -679,13 +692,13 @@ def integrate_antenna(run, expression, name):
     monomial_list = read_to_dict_tuple((expression,), kinematics.invariants)
     integrands_list = list_to_basis(monomial_list, families_list, kinematics)
 
-    create_form_declarations(integrands_list, families_list)
-    create_form_input(integrands_list, family_layout)
-    expression_text = form_to_python(run_form(get_form_loc(), FORM_DIR / "simplify_before_kira.frm"))
+    create_form_declarations(integrands_list, families_list, work_dir)
+    create_form_input(integrands_list, family_layout, work_dir)
+    expression_text = form_to_python(run_form(get_form_loc(), FORM_DIR / "simplify_before_kira.frm", work_dir))
     terms = form_to_pairs(expression_text)
 
-    masters_list = run_kira_reduction_complete(run, terms, pattern)
-    master_combination = form_to_python(run_form(get_form_loc(), FORM_DIR / "simplify_after_kira.frm"))
+    masters_list = run_kira_reduction_complete(run, terms, pattern, work_dir)
+    master_combination = form_to_python(run_form(get_form_loc(), FORM_DIR / "simplify_after_kira.frm", work_dir))
     save_result(name, "masters", master_combination)
     scale = antenna_scale(run, master_combination)
     (INTEGRATED_DIR / f"{name}_scale.json").write_text(json.dumps(scale, indent=2) + "\n")
@@ -694,7 +707,7 @@ def integrate_antenna(run, expression, name):
 
     masters_path = masters_file(run.multiplicity)
     check_masters_covered(masters_list, masters_path, pattern, unreduced_in_kira_log(run))
-    proc_form = run_form(get_form_loc(), FORM_DIR / "substitute_masters.frm", {"MASTERS": masters_path.name})
+    proc_form = run_form(get_form_loc(), FORM_DIR / "substitute_masters.frm", work_dir, {"MASTERS": masters_path.name})
     integrated = form_to_python(proc_form)
     check_fully_substituted(integrated, pattern)
     save_result(name, "integrated", integrated)
@@ -704,7 +717,6 @@ def integrate_antenna(run, expression, name):
 
 def run_integration(run):
     order(run)                                          # refuses antennae beyond NNLO before anything runs
-    WORK_DIR.mkdir(exist_ok=True)
     input_path = get_input_path(run)
     print(f"{antenna_name(run)}: {order(run)} antenna, from {input_path}")
 

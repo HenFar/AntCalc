@@ -68,11 +68,12 @@ Runcard fields, default card selection, method choices, input paths and result
 names remain unchanged. In particular, legacy builds still write to
 `results/unintegrated_legacy/`, Kira's automatic input still reads
 `results/unintegrated/`, and legacy integration still rebuilds via Wolfram.
-The existing shared scratch and stale-output behaviours are unchanged.
+The stale-output behaviour is unchanged; FORM's scratch has since moved to one
+folder per expression (see the Kira integration guide).
 
 The restructuring changes entry-point and source locations, not physics
 conventions. The old `src/next/` command has moved to `src/antcalc/`. Tests
-have moved from `src/next/tests/` to `tests/kira/`; FORM scratch is now
+have moved from `src/next/tests/` to `tests/kira/`; FORM scratch is now under
 `src/antcalc/tmp/`. Historical paths in archived evidence are provenance,
 not current commands.
 

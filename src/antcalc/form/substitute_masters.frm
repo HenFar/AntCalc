@@ -1,5 +1,5 @@
-#include ../tmp/declarations.inc
-#include ../tmp/antenna.inc
+#include declarations.inc
+#include antenna.inc
 
 .sort
 

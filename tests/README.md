@@ -16,7 +16,7 @@ Kira integration.
 Manual input also exercises the `python -m antcalc` entry point from another
 working directory. The suite preserves the original A30 result files and writes a
 report plus subprocess logs to `tests/runcards/output/`. Run it sequentially
-with other integrations because FORM scratch files are shared.
+with other A30 integrations, which share the Kira folder and output names.
 
 To compare across a future restructure, save the first report outside the
 checkout, then run against it after the change:

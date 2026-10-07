@@ -171,7 +171,10 @@ fails. Check the current run's completion and settings before reusing outputs.
 
 ## Scratch files and repeat runs
 
-FORM uses the shared `src/antcalc/tmp/` directory. Kira uses
+FORM's include files go to a folder of their own for each input component,
+`src/antcalc/tmp/<antenna>_<i>_<time>_<id>/`. The folder is deleted when the
+component integrates successfully and kept when it fails; the error message
+names it, so the files FORM was working on can be inspected. Kira uses
 `<system temp>/antcalc_kira/Xij/`, or `$ANTCALC_KIRA_DIR/Xij/` when the override
 is set before starting Python. Keep Kira's work directory outside synced
 folders: its database must remain consistent during reduction.
@@ -179,8 +182,9 @@ folders: its database must remain consistent during reduction.
 For every input component, the integrator deletes that antenna's Kira work
 folder and copies a fresh template configuration into it. Use
 `ANTCALC_KIRA_DIR` only for disposable scratch data. After a multi-component
-run, the folder holds the last component's Kira state. These paths and final
-output names are shared, so run integrations sequentially within a checkout.
+run, the folder holds the last component's Kira state. The Kira folder and
+the output names are shared per antenna: different antennae can run in
+parallel, the same antenna only sequentially.
 
 ## Comparing with the thesis
 

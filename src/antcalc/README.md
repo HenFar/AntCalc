@@ -27,7 +27,7 @@ Read the full documentation:
 - `orchestrator.py`: runcard selection and build/integrate method dispatch.
 - `build_methods.py`: Wolfram construction and conversion through legacy loaders.
 - `integrate_kira.py`: invariant mapping, reduction, scale checks and substitution.
-- `form/`: FORM scripts; generated includes live in shared `tmp/` scratch state.
+- `form/`: FORM scripts; their generated includes live in a per-expression folder under `tmp/`.
 - `kira/templates/`: configurations copied to disposable Kira working directories.
 - `masters/`: analytic masters times `C(ep,k)/Phi2` at `mu2 = q2`.
 - `integrate_methods.py`: legacy Wolfram integration.
@@ -43,8 +43,10 @@ legacy integration writes to `results/integrated_legacy/`.
 
 Kira runs in `<system temp>/antcalc_kira/<antenna>/` or
 `$ANTCALC_KIRA_DIR/<antenna>/`. That antenna directory is deleted and recreated
-for every component. FORM scratch files and output names are shared; run
-integrations sequentially within a checkout.
+for every component. FORM's include files go to a folder of their own per
+expression, `tmp/<antenna>_<i>_<time>_<id>/`, deleted on success and kept on
+failure. Different antennae can run in parallel; the same antenna cannot, as
+its Kira directory and output names are shared.
 
 ## Comparison suite
 
