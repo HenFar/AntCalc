@@ -1,34 +1,56 @@
-# AntCalc next: Python, FORM and Kira
+# AntCalc 0.3.5: Python, FORM and Kira
 
-The refit of AntCalc's integration stage (thesis, Chapter 6): the unintegrated antenna is built by
-the Mathematica pipeline and integrated through FORM and Kira. Run from the repository root:
+This directory implements AntCalc 0.3.5's main runcard workflow. Wolfram
+constructs the unintegrated antenna; FORM and Kira integrate its invariant
+expression. The project version is independent of the legacy Wolfram paclet.
+Legacy routes remain available while they are progressively converted to
+other tools; the runner loads Wolfram source from the checkout directly.
 
-    python src/next/orchestrator.py [runcard]     # runcards/<runcard>.json, default runcard
+From the repository root, with dependencies installed:
 
-## Runcard (`runcards/runcard.json`)
+```sh
+python src/next/orchestrator.py            # runcards/runcard.json
+python src/next/orchestrator.py my_run     # runcards/my_run.json
+```
 
-- `build`, `integrate`: 1 or 0. `build_method`: `pythonToWl` or `legacy`. `integrate_method`: `kira` or `legacy`.
-- `family`, `multiplicity`, `loop_order`: the antenna, e.g. `A`, `4`, `0`.
-- `substitute_masters`: 1 to substitute the analytic masters and expand in ep, 0 to stop at the master combination.
-- `auto_input_path`: 1 to integrate `results/unintegrated/unintegratedXij.m`; 0 to use `manual_input_path`,
-  relative to the repository root.
+The default card builds and integrates massless `A40`. The implemented Kira
+scope is `A30`, `A40`, `B40`, and `C40`; `A31`/`A22` templates are preparatory.
+
+Read the full documentation:
+
+- [User guide: setup, runcards, input/output, scale and troubleshooting](../../docs/manual/kira-workflow.md)
+- [Developer guide: mapping, dynamic jobs, closure and analytic masters](../../docs/development/kira-integration.md)
+- [Kira template conventions](kira/README.md)
 
 ## Layout
 
-- `orchestrator.py`: runcard, build and integrate routing. `build_methods.py`, `build_pipeline.wl`: the build.
-- `integrate_kira.py`: the integrator. Each list element of the input is integrated separately; Kira's
-  reduction is closed by re-reducing the masters until no new rule appears, with `jobs.yaml` generated from
-  the integrals. The antenna's scale is read from the master combination, whose integer powers of q2 must cancel.
-- `form/`: FORM scripts. `masters/`: analytic masters times C(ep,k)/Phi2 at mu^2 = q2 (`masters_R3.inc`, `masters_R4.inc`).
-- `kira/templates/`: integral families per antenna. Kira itself runs in the system temp folder
-  (`antcalc_kira/`, or `ANTCALC_KIRA_DIR`), never in the repository.
-- `integrate_methods.py`, `integrate_pipeline.wl`: the legacy Mathematica integration.
-- In the repository root, `results/`: `unintegrated/` (pythonToWl build), `unintegrated_legacy/`, `integrated/`
-  (`<antenna>_<i>_masters.inc`, `_scale.json`, `_integrated.inc`) and `integrated_legacy/`.
+- `orchestrator.py`: runcard selection and build/integrate method dispatch.
+- `build_methods.py`, `build_pipeline.wl`: Wolfram construction and conversion.
+- `integrate_kira.py`: invariant mapping, reduction, scale checks and substitution.
+- `form/`: FORM scripts; generated includes live in shared `tmp/` scratch state.
+- `kira/templates/`: configurations copied to disposable Kira working directories.
+- `masters/`: analytic masters times `C(ep,k)/Phi2` at `mu2 = q2`.
+- `integrate_methods.py`, `integrate_pipeline.wl`: legacy Wolfram integration.
+- `tests/`: integrate-only comparisons with thesis Appendix A.
+- `requirements.txt`: pinned Python dependencies.
 
-## Tests
+Build results go to repository-root `results/unintegrated/` or
+`results/unintegrated_legacy/`. Kira writes component-indexed `_masters.inc`,
+`_scale.json`, and optional `_integrated.inc` files to `results/integrated/`;
+legacy integration writes to `results/integrated_legacy/`.
 
-    python src/next/tests/run_suite.py [A30 A40 B40 C40]
+Kira runs in `<system temp>/antcalc_kira/<antenna>/` or
+`$ANTCALC_KIRA_DIR/<antenna>/`. That antenna directory is deleted and recreated
+for every component. FORM scratch files and output names are shared; run
+integrations sequentially within a checkout.
 
-Integrates each antenna from `results/unintegrated/` and compares it with the thesis (Appendix A), writing
-`src/next/tests/output/summary.md`. Needs Kira, FORM and `FERMATPATH`.
+## Comparison suite
+
+```sh
+python src/next/tests/run_suite.py [A30 A40 B40 C40]
+```
+
+With no antenna arguments, all four cases run. Requires FORM, Kira, Fermat,
+and the Python dependencies. Set `FERMATPATH` explicitly. The suite replaces
+selected integrated outputs and writes logs plus `tests/output/summary.md`.
+`A30` is compared through `ep^2`, four-parton tree antennae through `ep^0`.

@@ -2,12 +2,14 @@
 
 [Documentation home](../README.md) · [Reference guide](../reference/README.md) · [Developer documentation](../development/README.md)
 
-This manual describes the public AntCalc interface, the supported routes, and
-the conventions used for returned results. Use the reference guide when you
-need a complete function or option contract.
+This manual covers AntCalc 0.3.5's Python runcard workflow and the retained
+legacy Wolfram interface, with their respective route scopes and result
+conventions. Start with the Kira workflow for the current runner. Use the
+reference guide for Wolfram function and option contracts.
 
 ## Start here
 
+- [Python / FORM / Kira workflow](kira-workflow.md)
 - [Route status and support contract](route-status.md)
 - [Installation and loading](installation.md)
 - [Public API overview](public-api.md)

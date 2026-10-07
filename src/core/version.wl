@@ -1,9 +1,10 @@
 (* ::Section:: *)
 
-(* AntCalc release identity *)
+(* Legacy Wolfram package release identity *)
 
-(* This release ledger is the single source of truth for user-facing AntCalc
-   versions. Cache schema and route semantic versions are independent
+(* This release ledger is the single source of truth for legacy Wolfram
+   package versions. The Python runner has an independent project version.
+   Cache schema and route semantic versions are independent
    correctness barriers and must not be presented as release versions. Add a
    new entry here when advancing a release; never rewrite a released entry. *)
 

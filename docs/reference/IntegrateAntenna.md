@@ -7,6 +7,8 @@ IntegrateAntenna[antennaObject, opts]
 ```
 
 Integrates an `AntennaObject` with its route-selected PaVe or IBP backend.
+The Python runcard setting `integrate_method: "kira"` belongs to a separate
+[checkout workflow](../manual/kira-workflow.md); it is not an option of this function.
 Obtain an object with either:
 
 ```wl

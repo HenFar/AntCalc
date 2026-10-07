@@ -2,6 +2,11 @@
 the release-owned implementation of the public API loaded by
 [AntennaPipeline.wl](../AntennaPipeline.wl).
 
+The [next/](next/README.md) subtree contains AntCalc 0.3.5's main Python runcard
+workflow, FORM scripts, and Kira integrator. It has its own entry point and is
+not loaded by the canonical Wolfram package loader. See the
+[Kira workflow guide](../docs/manual/kira-workflow.md).
+
 The architectural goal of `src/` is simple:
 
 ```text

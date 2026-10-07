@@ -1,111 +1,145 @@
 # AntCalc
 
-> **New in 0.3.0 β1:** massive `A30` now has a derived MX30 master-basis
-> closure and an end-to-end integrated route; invariant-only `A22` builds are
-> also available.
+AntCalc **0.3.5** builds and integrates QCD antenna functions. Its main entry
+point is the Python runcard runner, which currently builds with Wolfram
+Language and integrates with FORM and Kira. The Wolfram package is retained
+for legacy routes as the workflow moves towards other tools.
 
-AntCalc is a Wolfram Language package that builds and integrates QCD antenna
-functions. The main workflow has two steps:
-
-```wl
-BuildAntenna[...] → IntegrateAntenna[...]
+```text
+Python runcard → Wolfram build → invariant expression → FORM → Kira
+              → master combination → analytic masters → epsilon series + scale
 ```
 
-`BuildAndIntegrateAntenna[...]` runs these steps in sequence. AntCalc is
-thesis research software. The massless routes are the stable release surface;
-massive `A30` is a beta extension.
-
-## Status
-
-Current development release: **AntCalc 0.3.0 β1**.
-
-The current release target is the massless antenna workflow for the NNLO SMQCD
-R-ratio, with a beta massive-`A30` extension. Before using a route in a
-calculation, read the [route-status matrix](docs/manual/route-status.md).
+The current project version is **0.3.5**, independent of the legacy paclet's
+**0.3.0-beta.1** metadata. Paclet installation is only needed when using its
+packaged Wolfram interface; the Python runner loads the checkout's Wolfram
+build code directly. Selecting `integrate_method: "kira"` in a runcard routes
+integration through FORM and Kira.
 
 AntCalc is active, unpublished thesis research software. It is shared for
 evaluation and academic discussion; reuse, redistribution, and relicensing
 require prior written permission from the relevant rights holder or holders.
-See [NOTICE](NOTICE) for the current distribution position.
+See [NOTICE](NOTICE).
 
-## Install and load
+## Python / FORM / Kira quick start
 
-After cloning the repository, install the paclet once from a Wolfram notebook
-or kernel:
+Run these commands from the repository root. Python dependencies are pinned in
+[src/next/requirements.txt](src/next/requirements.txt):
+
+```sh
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r src/next/requirements.txt
+export FERMATPATH=/absolute/path/to/fermat/executable
+python src/next/orchestrator.py
+```
+
+Install FORM and Kira separately and make them available on `PATH`. Building
+also requires `wolframscript`, a licensed Wolfram kernel, FeynCalc, FeynArts,
+and FeynHelpers. See the [Kira workflow guide](docs/manual/kira-workflow.md)
+for setup, integrate-only runs, input conventions, and troubleshooting.
+
+The default command reads [runcards/runcard.json](runcards/runcard.json), which
+currently builds and integrates massless `A40` using:
+
+```json
+{
+  "build": 1,
+  "build_method": "pythonToWl",
+  "build_print_to_terminal": 1,
+  "integrate": 1,
+  "integrate_method": "kira",
+  "integrate_print_to_terminal": 1,
+  "substitute_masters": 1,
+  "auto_input_path": 1,
+  "manual_input_path": "",
+  "family": "A",
+  "multiplicity": 4,
+  "loop_order": 0
+}
+```
+
+Copy this card to `runcards/my_run.json` and run
+`python src/next/orchestrator.py my_run` to use your own settings. Set
+`build` to `0` to integrate an existing input. Set `substitute_masters` to `0`
+to stop after reduction and scale extraction.
+
+Build outputs go to `results/unintegrated/unintegratedXij.m`. For each input
+component, Kira integration writes to `results/integrated/`:
+
+- `Xij_0_masters.inc`: the reduced master combination;
+- `Xij_0_scale.json`: the separately checked scale factor;
+- `Xij_0_integrated.inc`: the epsilon series, when master substitution is enabled.
+
+Component indices start at zero. `A40` has leading and subleading components.
+The integrated series is evaluated at `mu2 = q2`; use the separate scale factor
+when restoring scale dependence.
+
+## Scope and validation
+
+| Workflow | Current scope |
+|---|---|
+| Python / Kira | massless `A30`, `A40` (leading and subleading), `B40`, `C40` |
+| Kira epsilon depth | `A30` through `ep^2`; four-parton tree antennae through `ep^0` |
+| `A31`, `A22` Kira templates | present, but incompatible with the current invariant-to-family mapper |
+| Wolfram package | broader massless API, R-ratio and bulk helpers; beta massive `A30` |
+
+The Kira [comparison suite](src/next/tests/run_suite.py) integrates saved inputs
+and compares their coefficients with thesis Appendix A references:
+
+```sh
+python src/next/tests/run_suite.py A30 A40 B40 C40
+```
+
+It requires FORM, Kira, Fermat, and the Python dependencies. It writes logs and
+`src/next/tests/output/summary.md`, and replaces the selected antenna's files
+in `results/integrated/`. The existence of a template or checked-in result is
+not a fresh validation run. The Wolfram package's separate support contract
+and verification procedure are in the [route-status matrix](docs/manual/route-status.md)
+and [installation guide](docs/manual/installation.md).
+
+## Legacy Wolfram Language package
+
+For direct use of the legacy package interface, install the paclet from a
+notebook or kernel:
 
 ```wl
-repoRoot = "/path/to/antenna_pipeline";
+repoRoot = "/path/to/form-kira-lab";
 archive = CreatePacletArchive[repoRoot, $TemporaryDirectory];
 PacletInstall[archive];
 ```
 
-Then restart the kernel and load AntCalc normally:
+Restart the kernel, then:
 
 ```wl
 << AntCalc`
-```
-
-If the paclet was installed while the notebook kernel was already running,
-evaluate `PacletDataRebuild[]`, restart the kernel, and try again.
-
-While actively editing a cloned checkout, load its current source directly
-instead of the installed paclet copy:
-
-```wl
-repoRoot = "/path/to/antenna_pipeline";
-Get[FileNameJoin[{repoRoot, "AntennaPipeline.wl"}]]
-```
-
-## Quick start
-
-```wl
-<< AntCalc`
-
-(* Unintegrated tree-level NLO antenna. *)
 a30 = BuildAntenna[A, 3, 0];
-
-(* One-shot construction and integration. *)
 intA30 = BuildAndIntegrateAntenna[A, 3, 0];
 
-(* The explicitly modular equivalent. *)
+(* Explicit build/integrate boundary. *)
 a30Object = BuildAntenna[A, 3, 0, IntegrableForm -> True];
 intA30Direct = IntegrateAntenna[a30Object];
 ```
 
-## Documentation
+While editing a checkout, load it directly with
+`Get[FileNameJoin[{repoRoot, "AntennaPipeline.wl"}]]`.
+The package uses PaVe/IBP routes, including LiteRed2 where required. Retain the
+bundled basis and runtime-master files. Its documented symbolic baseline is
+FeynCalc 10.2.1, FeynArts 3.12, FeynHelpers 2.0.0, FeynCalcLegacy 1.0.0, and
+LiteRed2 2.025 beta; see [installation](docs/manual/installation.md) for details.
 
-Use these pages:
+## Documentation and code map
 
-- [Documentation home](docs/README.md)
-- [Manual index](docs/manual/index.md)
-- [Route status and support contract](docs/manual/route-status.md)
-- [Tutorials and runnable examples](docs/tutorials/README.md)
-- [Reference guide](docs/reference/README.md)
+- [Documentation home](docs/README.md) and [manual](docs/manual/index.md)
+- [Running the Kira workflow](docs/manual/kira-workflow.md)
+- [How the Kira integration pipeline works](docs/development/kira-integration.md)
+- [Python source overview](src/next/README.md) and [Kira templates](src/next/kira/README.md)
+- [Wolfram API reference](docs/reference/README.md)
+- [Route status](docs/manual/route-status.md)
 - [Developer documentation](docs/development/README.md)
 - [Citation and provenance](docs/manual/citation-and-provenance.md)
-- [Documentation migration ledger](docs/migration-status.md)
 
-[dev/README_old.md](dev/README_old.md) is retained as a development archive. Start with the
-manual instead.
-
-## Dependencies
-
-Supported workflows require Wolfram Language, FeynCalc, FeynArts, and
-FeynHelpers. IBP-backed integration also requires LiteRed2. Keep the bundled
-basis and runtime-master files when copying or cloning the repository.
-
-The current beta toolchain is:
-
-```text
-FeynCalc 10.2.1 · FeynArts 3.12 (27 Mar 2025) ·
-FeynHelpers 2.0.0 · FeynCalcLegacy 1.0.0
-LiteRed2 2.025 β
-```
-
-## Scope
-
-AntCalc does not currently provide a public initial-state route or complete
-`SUSY`/`HiggsEFT` R-ratio workflows. The massive-`A30` beta route has a derived
-master substitution and fresh-kernel qualification through
-`ExpansionOrder -> 2`; deeper epsilon orders are not yet claimed. See the
-[route-status matrix](docs/manual/route-status.md) for the exact limits.
+`src/next/` owns the Python runner, FORM scripts, Kira templates, and analytic
+masters. `src/core/`, `src/engines/`, `src/routes/`, and `src/interface/` own
+the Wolfram package. `dev/` contains validation and research material;
+[dev/README_old.md](dev/README_old.md) is an archive.

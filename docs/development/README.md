@@ -7,6 +7,7 @@ contract. They are for route maintainers and thesis/research readers, not a
 substitute for the user manual.
 
 - [Architecture](architecture.md)
+- [FORM / Kira integration internals](kira-integration.md)
 - [Editing routes](editing-routes.md)
 - [Route map](route-map.md)
 - [Maintaining and adding routes](route-maintenance.md)
