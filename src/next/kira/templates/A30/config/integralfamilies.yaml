@@ -1,0 +1,11 @@
+integralfamilies:
+  - name: "A30"
+    loop_momenta: [k1, k2]
+    top_level_sectors: [31]
+    cut_propagators: [1, 2, 3]
+    propagators:
+      - ["k1",       0]   #1  k1^2           (LiteRed p1^2, cut)
+      - ["k2",       0]   #2  k2^2           (LiteRed p2^2, cut)
+      - ["q-k1-k2",  0]   #3  (q-k1-k2)^2    (cut)
+      - ["q-k2",     0]   #4  (q-k2)^2       (s13 or s23, by labelling)
+      - ["q-k1",     0]   #5  (q-k1)^2       (the other)

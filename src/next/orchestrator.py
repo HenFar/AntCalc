@@ -1,195 +1,215 @@
 import json
+import sys
 from pathlib import Path
-from wolframclient.evaluation import WolframLanguageSession
-from wolframclient.language import wl, wlexpr
 import platform
 import subprocess
+import shutil
+
+from build_methods import build_massless_legacy, build_massless_pythonToWl
+from integrate_methods import integrate_massless_legacy
+import integrate_kira
 
 ########################################
 ## setup
 
-AntCalcVersion = "AntCalc 0.4.0"
+AntCalcVersion = "AntCalc 0.3.5 - runcard preview"
 
 ########################################
-## setup
+## main
 
-# pathing for this file and the json runcard (set for just one card, may need to change later)
-here = Path(__file__).parent
-runcard = json.load(open(here.parent.parent / "runcards" / "runcard.json"))
+def orchestrator(runcard_name = "runcard"):
+    here, repo_root, results_dir, os_name, runcard = define_general_paths(runcard_name)
+    build_set, build_method, build_print, integrate_set, integrate_method, integrate_print, operations_tuple, antenna_family, multiplicity, loop_order = runcard_settings(runcard)
+    particle_tuple, running_operation = runcard_conditions(operations_tuple, antenna_family, multiplicity, loop_order)
+    antcalc_launch_print(AntCalcVersion, running_operation, antenna_family, multiplicity, loop_order, particle_tuple)
+    # runner
+    match operations_tuple:
+        case (1, 0):
+            build_runner(build_method, antenna_family, multiplicity, loop_order, operations_tuple, results_dir, here, os_name)
+        case (0, 1):
+            integrate_runner(integrate_method, runcard, antenna_family, multiplicity, loop_order, operations_tuple, results_dir, here, os_name)
+        case (1, 1):
+            build_runner(build_method, antenna_family, multiplicity, loop_order, operations_tuple, results_dir, here, os_name)
+            integrate_runner(integrate_method, runcard, antenna_family, multiplicity, loop_order, operations_tuple, results_dir, here, os_name)
+        case _:
+            raise ValueError("Error! No valid opertaion selected. The build and integrate toggles must select with 1 for active or 0 for inactive.")
 
-# define os and wolfram kernel location
-os_name = platform.system()
 
-match os_name:
-    case "Darwin":
-        kernel_loc = "MacOS/WolframKernel" # macOS
-    case "Windows":
-        kernel_loc = "WolframKernel.exe"
-    case "Linux":
-        kernel_loc = "Executables/WolframKernel"
-    case _:
-        raise Exception(f"Error! Unsupported operating system: {os_name!r}.")
+def define_general_paths(runcard_name):     # may define another runcard name
+    here = Path(__file__).resolve().parent
+    repo_root = here.parent.parent                # src/next -> repository root
+    results_dir = repo_root / "results"
+    results_dir.mkdir(parents=True, exist_ok=True)
+    os_name = platform.system()
 
-# get system dependent wolfram location
-ws_call = subprocess.run(
-    ["wolframscript", "-code", "$InstallationDirectory"],
-    capture_output=True,
-    text=True,
-)
+    runcard_path = repo_root / "runcards" / ".".join((runcard_name, "json"))
+    with open(runcard_path, encoding = "utf-8") as f:
+        runcard = json.load(f)
 
-# wolfram location
-wolfram_loc = "/".join((ws_call.stdout.strip(), kernel_loc))
+    return here, repo_root, results_dir, os_name, runcard
 
-########################################
-## runcard
+### runcard variables
 
-antenna_family = runcard["family"]        # antenna family e.g. A, B, C, ...
-multiplicity = runcard["multiplicity"]     # number of final-state particles n
-loop_order = runcard["loop_order"]         # number of loops l
+def runcard_settings(runcard):
+    # build side
+    build_set = runcard["build"]
+    build_method = runcard["build_method"]
+    build_print = runcard["build_print_to_terminal"]
+    # integrate side
+    integrate_set = runcard["integrate"]
+    integrate_method = runcard["integrate_method"]
+    integrate_print = runcard["integrate_print_to_terminal"]
+    # operations
+    operations_tuple = (build_set, integrate_set)
+    # run settings
+    antenna_family = runcard["family"]        # antenna family e.g. A, B, C, ...
+    multiplicity = runcard["multiplicity"]     # number of final-state particles n
+    loop_order = runcard["loop_order"]         # number of loops l
+    return build_set, build_method, build_print, integrate_set, integrate_method, integrate_print, operations_tuple, antenna_family, multiplicity, loop_order
 
-# particle masses
-particle1_mass = runcard["p1_mass"]
-particle2_mass = runcard["p2_mass"]
-particle3_mass = runcard["p3_mass"]
-particle4_mass = runcard["p4_mass"]
-particle_mass_tuple = (particle1_mass, particle2_mass, particle3_mass, particle4_mass)[:multiplicity]
+def runcard_conditions(operations_tuple, antenna_family, multiplicity, loop_order):
+    # sets
+    antenna_particles = {
+        "A": ("q", "barq", "g", "g"),
+        "B": ("q", "barq", "qprime", "barqprime"),
+        "C": ("q", "barq", "q", "barq")
+    }
+    if antenna_family not in antenna_particles:
+        raise ValueError(f"Unknown antenna family: {antenna_family!r}. Currently implemented families are {list(antenna_particles)}")
+    particle_tuple = antenna_particles[antenna_family][:multiplicity]
 
-# operations
-operation_tuple = (runcard["build"], runcard["integrate"])
-build_method = runcard["build_method"]
-integrate_method = runcard["integrate_method"]
+    # operations
+    operations = {
+        (1,0): "build",
+        (0,1): "integrate",
+        (1,1): "build and integrate"
+    }
+    try:
+        running_operation = operations[operations_tuple]
+    except KeyError:
+        raise ValueError("Error! No valid opertaion selected. The build and integrate toggles must select with 1 for active or 0 for inactive.")
 
-########################################
-## definitions
-antenna_particles = {
-    "A": ("q", "barq", "g", "g"),
-    "B": ("q", "barq", "qprime", "barqprime"),
-    "C": ("q", "barq", "q", "barq")
-}
-if antenna_family not in antenna_particles:
-    raise ValueError(f"Unknown antenna family: {antenna_family!r}. Currently implemented families are {list(antenna_particles)}")
-particle_tuple = antenna_particles[antenna_family][:multiplicity]
+    # definition raises
+    raise_codition_n = not (2 <= multiplicity <= 4 and multiplicity + loop_order <= 4 and loop_order <= multiplicity)
+    if(raise_codition_n):
+        raise Exception("Error! Maximum order implemented is NNLO. This makes multiplicity to be 2 <= n <= 4 and l may not be larger than n.")
+    raise_codition_B = (antenna_family == "B" and multiplicity < 4)
+    raise_codition_C = (antenna_family == "C" and multiplicity < 4)
+    if(raise_codition_B or raise_codition_C):
+        raise Exception("Error! Antenna facilies B and C are not defined for n < 4.")
 
-# build and/or integrate defs
-operations = {
-    (1,0): "build",
-    (0,1): "integrate",
-    (1,1): "build and integrate"
-}
-try:
-    running_operation = operations[operation_tuple]
-except KeyError:
-    raise ValueError("Error! No valid opertaion selected. The build and integrate toggles must select with 1 for active or 0 for inactive.")
-
-# mass defs
-if not any(particle_mass_tuple):
-    mass_condition = "massless"
-else:
-    mass_condition = "massive"
-
-# definition raises
-raise_codition_n = not (2 <= multiplicity <= 4 and multiplicity + loop_order <= 4 and loop_order <= multiplicity)
-if(raise_codition_n):
-    raise Exception("Error! Maximum order implemented is NNLO. This makes multiplicity to be 2 <= n <= 4 and l may not be larger than n.")
-raise_codition_B = (antenna_family == "B" and multiplicity < 4)
-raise_codition_C = (antenna_family == "C" and multiplicity < 4)
-if(raise_codition_B or raise_codition_C):
-    raise Exception("Error! Antenna facilies B and C are not defined for n < 4.")
-raise_condition_masses = (particle1_mass != particle2_mass or particle3_mass != particle4_mass)
-if(raise_condition_masses):
-    raise Exception("Error! At the moment only complete hard-parton massive cases are implemented.")
+    return particle_tuple, running_operation
 
 ########################################
 # initial print
-print(AntCalcVersion, "\n")
-print(f"Running {running_operation} for antenna {antenna_family}{multiplicity}{loop_order}.")
-if(mass_condition == "massless"):
+def antcalc_launch_print(AntCalcVersion, running_operation, antenna_family, multiplicity, loop_order, particle_tuple):
+    print(AntCalcVersion, "\n")
+    print(f"Running {running_operation} for antenna {antenna_family}{multiplicity}{loop_order}.")
     print(f"Ran in the full-massless regime for particles {particle_tuple}.")
-else:
-    print(f"Ran in the massive regime with masses {particle_mass_tuple} for the respective particles {particle_tuple}.")
 
+### build-side
 
-########################################
-# build stage (first prototype)
-
-output_destination_build = "".join(("build", antenna_family, str(multiplicity), str(loop_order)))
-
-def build_stage(runcard):
-    with WolframLanguageSession(wolfram_loc) as session:
-        session.evaluate(wl.Get(str(here / "build_pipeline.wl")))
-        session.evaluate(wl.Put(
-            session.evaluate(wlexpr(f"BuildAntenna[{runcard["family"]}, {runcard["multiplicity"]}, {runcard["loop_order"]}]")),
-            str(here.parent.parent / "results" / f"{output_destination_build}.m"),
-        ))
-
-output_destination_build_p1p2_massive = "".join(("build", antenna_family, str(multiplicity), str(loop_order), "p1p2Massive"))
-
-def build_stage_p1p2_massive(runcard):       # currently only works for A30
-    with WolframLanguageSession(wolfram_loc) as session:
-        session.evaluate(wl.Get(str(here / "build_pipeline.wl")))
-        session.evaluate(wl.Put(
-            session.evaluate(wlexpr(f"BuildAntenna[{runcard["family"]}, {runcard["multiplicity"]}, {runcard["loop_order"]}, quarkMass -> {runcard["p1_mass"]}]")),
-            str(here.parent.parent / "results" / f"{output_destination_build_p1p2_massive}.m"),
-        ))
-
-hard_parton_mass_tuple = particle_mass_tuple[:2]
-
-if operation_tuple[0] == 1:                 # if build
-    print("\nStarting build process...")
-    match mass_condition:
-        case "massless":
-            build_stage(runcard)
-        case "massive":
-            if(hard_parton_mass_tuple[0] != 0 and hard_parton_mass_tuple[1] != 0):
-                build_stage_p1p2_massive(runcard)
-            else:
-                raise Exception("Error! Massive topologies where only one hard parton in massive are not yet implemented.")
+def get_wolfram_loc(os_name):
+    match os_name:
+        case "Darwin":
+            kernel_loc = "MacOS/WolframKernel" # macOS
+        case "Windows":
+            kernel_loc = "WolframKernel.exe"
+        case "Linux":
+            kernel_loc = "Executables/WolframKernel"
         case _:
-            raise Exception(f"Error! Unknown mass condition: {mass_condition!r}.")
-    print("Build process completed.")
+            raise Exception(f"Error! Unsupported operating system: {os_name!r}.")
+    # get system dependent wolfram location
+    ws_call = subprocess.run(
+        ["wolframscript", "-code", "$InstallationDirectory"],
+        capture_output=True,
+        text=True,
+    )
+    # wolfram location
+    wolfram_loc = "/".join((ws_call.stdout.strip(), kernel_loc))
+    return wolfram_loc
+
+def get_form_loc():
+    form_loc = None
+
+    for binary_name in ["form", "tform", "parform"]:
+        form_locator = shutil.which(binary_name)
+        if form_locator:
+            form_loc = form_locator
+            break
+
+    if not form_loc:
+        raise Exception("Error! Form not found.")
+    return form_loc
 
 
-########################################
-# integrate stage (first prototype)
+def define_build_paths(build_method, os_name):
+    match build_method:
+        case "legacy":
+            wolfram_loc = get_wolfram_loc(os_name)
+            form_loc = None
+        case "pythonToWl":
+            wolfram_loc = get_wolfram_loc(os_name)
+            form_loc = get_form_loc()
+        case _:
+            raise Exception("Error! Expected build methods are legacy and pythonToWl.")
+    return wolfram_loc, form_loc
 
-output_destination_integrate = "".join(("integrate", antenna_family, str(multiplicity), str(loop_order)))
+#### runner
+def build_runner(build_method, antenna_family, multiplicity, loop_order, operation_tuple, results_dir, path_to_file, os_name):
+    if operation_tuple[0] == 1:                 # if build
+        print("\nStarting build process...")
+        wolfram_loc, form_loc = define_build_paths(build_method, os_name)
+        build_stage(build_method, antenna_family, multiplicity, loop_order, wolfram_loc, path_to_file, results_dir)
+        print("Build process completed.")
 
-def integrate_stage(runcard):
+def build_stage(build_method, antenna_family, multiplicity, loop_order, wolfram_loc, path_to_file, results_dir):
+    # Each build method writes unintegratedXij.m to its own folder; pythonToWl's is the integrator's input.
+    output_destination = "".join(("unintegrated", antenna_family, str(multiplicity), str(loop_order)))
+    match build_method:
+        case "legacy":
+            output_dir = results_dir / "unintegrated_legacy"
+            output_dir.mkdir(parents=True, exist_ok=True)
+            build_massless_legacy(wolfram_loc, path_to_file, output_dir, antenna_family, multiplicity, loop_order, output_destination)
+        case "pythonToWl":
+            output_dir = results_dir / "unintegrated"
+            output_dir.mkdir(parents=True, exist_ok=True)
+            build_massless_pythonToWl(wolfram_loc, path_to_file, output_dir, antenna_family, multiplicity, loop_order, output_destination)
+        case _:
+            raise Exception("Error! Expected build methods are legacy and pythonToWl.")
+
+### integrate-side
+
+#### runner
+def integrate_runner(integrate_method, runcard, antenna_family, multiplicity, loop_order, operation_tuple, results_dir, path_to_file, os_name):
+    if operation_tuple[1] == 1:                 # if integrate
+        print("\nStarting integrate process...")
+        integrate_stage(integrate_method, runcard, antenna_family, multiplicity, loop_order, path_to_file, results_dir, os_name)
+        print("Integrate process completed.")
+
+def integrate_stage(integrate_method, runcard, antenna_family, multiplicity, loop_order, path_to_file, results_dir, os_name):
     match integrate_method:
-        case "mathematica":
-            with WolframLanguageSession(wolfram_loc) as session:
-                session.evaluate(wl.Get(str(here / "build_pipeline.wl")))
-                session.evaluate(wl.Get(str(here / "integrate_pipeline.wl")))
-                session.evaluate(wl.Put(
-                    session.evaluate(wlexpr(f"BuildAndIntegrateAntenna[{runcard["family"]}, {runcard["multiplicity"]}, {runcard["loop_order"]}]")),
-                    str(here.parent.parent / "results" / f"{output_destination_integrate}.m"),
-            ))
+        case "legacy":
+            output_dir = results_dir / "integrated_legacy"
+            output_dir.mkdir(parents=True, exist_ok=True)
+            output_destination = "".join(("integrated", antenna_family, str(multiplicity), str(loop_order)))
+            integrate_massless_legacy(get_wolfram_loc(os_name), path_to_file, output_dir, antenna_family, multiplicity, loop_order, output_destination)
         case "kira":
-            raise Exception("At the moment, the reduction method via kira is under development.")
+            run = integrate_kira.IntegrationRun(
+                antenna_family = antenna_family,
+                multiplicity = multiplicity,
+                loop_order = loop_order,
+                auto_input_path = bool(runcard.get("auto_input_path", 1)),
+                manual_input_path = Path(runcard.get("manual_input_path", "")),
+                substitute_masters = bool(runcard.get("substitute_masters", 1)),
+            )
+            integrate_kira.run_integration(run)
         case _:
-            raise Exception(f"Error! Unknown integrate method: {integrate_method!r}.")
+            raise Exception("Error! Only expected integration methods are legacy and kira.")
 
-output_destination_integrate_p1p2_massive = "".join(("integrate", antenna_family, str(multiplicity), str(loop_order), "p1p2Massive"))
 
-def integrate_stage_p1p2_massive(runcard):       # currently only works for A30
-    with WolframLanguageSession(wolfram_loc) as session:
-        session.evaluate(wl.Get(str(here / "build_pipeline.wl")))
-        session.evaluate(wl.Get(str(here / "integrate_pipeline.wl")))
-        session.evaluate(wl.Put(
-            session.evaluate(wlexpr(f"BuildAndIntegrateAntenna[{runcard["family"]}, {runcard["multiplicity"]}, {runcard["loop_order"]}, quarkMass -> {runcard["p1_mass"]}]")),
-            str(here.parent.parent / "results" / f"{output_destination_integrate_p1p2_massive}.m"),
-        ))
+########################################
+# entry point
 
-if operation_tuple[1] == 1:                 # if integrate
-    print("\nStarting integrate process...")
-    match mass_condition:
-        case "massless":
-            integrate_stage(runcard)
-        case "massive":
-            if(hard_parton_mass_tuple[0] != 0 and hard_parton_mass_tuple[1] != 0):
-                integrate_stage_p1p2_massive(runcard)
-            else:
-                raise Exception("Error! Massive topologies where only one hard parton in massive are not yet implemented.")
-        case _:
-            raise Exception(f"Error! Unknown mass condition: {mass_condition!r}.")
-    print("Integrate process completed.")
+if __name__ == "__main__":
+    orchestrator(*sys.argv[1:2])            # optional runcard name, without .json; default runcard

@@ -1,0 +1,11 @@
+kinematics:
+  incoming_momenta: [q]
+  outgoing_momenta: [k1, k2]
+  momentum_conservation: [k2, q-k1]
+  kinematic_invariants:
+    - [q2, 2]
+  scalarproduct_rules:
+    - [[k1, k1], 0]
+    - [[q, q], q2]
+    - [[k1, q], q2/2]
+  symbol_to_replace_by_one: q2
