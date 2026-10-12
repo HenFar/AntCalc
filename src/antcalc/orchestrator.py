@@ -10,11 +10,13 @@ if __package__:
     from .integrate_methods import integrate_massless_legacy
     from .paths import REPO_ROOT, LEGACY_LOADERS_DIR
     from . import integrate_kira
+    from .family_generation import prepare_families
 else:
     from build_methods import build_massless_legacy, build_massless_pythonToWl
     from integrate_methods import integrate_massless_legacy
     from paths import REPO_ROOT, LEGACY_LOADERS_DIR
     import integrate_kira
+    from family_generation import prepare_families
 
 ########################################
 ## setup
@@ -28,6 +30,7 @@ def orchestrator(runcard_name = "runcard"):
     here, repo_root, results_dir, os_name, runcard = define_general_paths(runcard_name)
     build_set, build_method, build_print, integrate_set, integrate_method, integrate_print, operations_tuple, antenna_family, multiplicity, loop_order = runcard_settings(runcard)
     particle_tuple, running_operation = runcard_conditions(operations_tuple, antenna_family, multiplicity, loop_order)
+    runcard_generation_conditions(runcard)
     antcalc_launch_print(AntCalcVersion, running_operation, antenna_family, multiplicity, loop_order, particle_tuple)
     # runner
     match operations_tuple:
@@ -106,6 +109,16 @@ def runcard_conditions(operations_tuple, antenna_family, multiplicity, loop_orde
         raise Exception("Error! Antenna facilies B and C are not defined for n < 4.")
 
     return particle_tuple, running_operation
+
+def runcard_generation_conditions(runcard):
+    generate = runcard.get("generate_families", 0)
+    if generate not in (0, 1):
+        raise ValueError("Error! generate_families must be 0 (hand-written Kira templates) or 1 (families generated from the antenna).")
+    if generate and runcard["integrate"]:
+        if runcard["integrate_method"] != "kira":
+            raise ValueError("Error! generate_families is only available with integrate_method kira.")
+        if runcard.get("substitute_masters", 1):
+            raise ValueError("Error! generate_families = 1 requires substitute_masters = 0: the analytic masters in src/antcalc/masters/ exist only under the hand-written family names. Substitute the masters by hand.")
 
 ########################################
 # initial print
@@ -210,6 +223,8 @@ def integrate_stage(integrate_method, runcard, antenna_family, multiplicity, loo
                 manual_input_path = Path(runcard.get("manual_input_path", "")),
                 substitute_masters = bool(runcard.get("substitute_masters", 1)),
             )
+            if runcard.get("generate_families", 0):
+                run.families_path = prepare_families(run)
             integrate_kira.run_integration(run)
         case _:
             raise Exception("Error! Only expected integration methods are legacy and kira.")

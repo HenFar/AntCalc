@@ -16,6 +16,10 @@ python src/antcalc/orchestrator.py my_run     # runcards/my_run.json
 The default card builds and integrates massless `A40`. The implemented Kira
 scope is `A30`, `A40`, `B40`, and `C40`; `A31`/`A22` templates are preparatory.
 
+Runcard key `generate_families`: `0` (default) uses the hand-written templates;
+`1` generates the Kira families from the antenna and requires
+`substitute_masters: 0`.
+
 Read the full documentation:
 
 - [User guide: setup, runcards, input/output, scale and troubleshooting](../../docs/manual/kira-workflow.md)
@@ -27,6 +31,7 @@ Read the full documentation:
 - `orchestrator.py`: runcard selection and build/integrate method dispatch.
 - `build_methods.py`: Wolfram construction and conversion through legacy loaders.
 - `integrate_kira.py`: invariant mapping, reduction, scale checks and substitution.
+- `family_generation/`: automatic Kira integral families for runcard key `generate_families: 1`.
 - `form/`: FORM scripts; their generated includes live in a per-expression folder under `tmp/`.
 - `kira/templates/`: configurations copied to disposable Kira working directories.
 - `masters/`: analytic masters times `C(ep,k)/Phi2` at `mu2 = q2`.

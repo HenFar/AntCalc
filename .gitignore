@@ -27,4 +27,5 @@ src/antcalc/tmp/
 tests/kira/output/
 tests/runcards/output/
 runcards/_suite.json
+runcards/_generated_check.json
 runcards/_restructure_check.json

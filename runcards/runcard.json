@@ -6,6 +6,7 @@
     "integrate_method": "kira",
     "integrate_print_to_terminal": 1,
     "substitute_masters": 1,
+    "generate_families": 0,
     "auto_input_path": 1,
     "manual_input_path": "",
     "family": "A",

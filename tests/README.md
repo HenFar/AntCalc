@@ -43,6 +43,19 @@ selected files in `results/integrated/`.
 NNLO calculations can take several minutes; this suite does not impose a
 subprocess timeout.
 
+## Family generation
+
+```sh
+python -m unittest discover -s tests/family_generation -v
+python tests/family_generation/run_generated.py
+```
+
+The unit tests cover signatures, the cover, the runcard checks and the work-directory
+copy. `run_generated.py` runs the full Kira integration with `generate_families: 1`
+and `substitute_masters: 0` for `A30`, `B40`, `C40` and `A40`, then compares the
+masters and scale against the fixtures in `tests/family_generation/reference/`.
+It requires FORM, Kira and Fermat.
+
 ## Legacy Wolfram tests
 
 The retained package regressions and acceptance driver live in

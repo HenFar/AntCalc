@@ -17,8 +17,9 @@ through `AntennaIntegrationProfile` or return `AntennaRunRecord` objects.
 | `integrate_methods.py` | legacy Wolfram build-and-integrate adapter |
 | `paths.py` | checkout and legacy-loader path boundary |
 | `integrate_kira.py` | input parsing, family mapping, FORM/Kira execution, closure, scale and output checks |
+| `family_generation/` | automatic integral families for `generate_families: 1` |
 | `form/simplify_before_kira.frm` | canonicalise the input using `PolyRatFun rat` |
-| `form/simplify_after_kira.frm` | apply accumulated Kira rules and convert `num*den` to `rat` |
+| `form/simplify_after_kira.frm` | apply accumulated Kira rules, convert `num*den` to `rat`, and rewrite bare `d` and `q2` as `rat(d,1)` and `rat(q2,1)` |
 | `form/substitute_masters.frm` | include the multiplicity-selected analytic masters |
 | `kira/templates/` | immutable family and kinematics inputs copied into scratch state |
 | `masters/masters_R3.inc`, `masters_R4.inc` | normalised analytic masters and fixed epsilon expansions |
@@ -78,10 +79,37 @@ diagnostic working state, not immutable run artifacts. Components never share
 them, so FORM no longer stops antennae from running in parallel; the Kira
 directory and output names still do for the same antenna.
 
+## Automatic integral families
+
+`family_generation/` builds the family set for `generate_families: 1`:
+
+1. Signatures: each term's signature is the set of invariants in its
+   denominator.
+2. Independence: a candidate propagator set is accepted only by an exact rank
+   test that includes the `q2` direction.
+3. Completeness: a complete family has `F = N - n` free propagators, with
+   `L = n-1` and `N = L(L+1)/2 + L`. This gives 2 of 5 for `n = 3` and 5 of 9
+   for `n = 4`.
+4. Cover: an exact minimum set cover over all complete candidates (162 at
+   `n = 4`) selects the families. Every optimal cover is enumerated; ties are
+   broken by numerator cost.
+5. Ordering: the yaml order is the permutation that minimises first-fit
+   numerator cost. The permutation search is exact for at most 7 families;
+   beyond that a heuristic order is used. Families are named `basis1` to `basisK`.
+
+For `A30`, `B40`, `C40` and `A40` this gives 1, 1, 1 and 5 families, against
+1, 72, 72 and 72 in the templates. Benchmark time ratios (generated over
+hand-written) are 1.00, 0.33, 0.25 and 0.72 in that order (measured 2026-10-12
+on an Apple M4 Pro, full orchestrator run, median of 3, `substitute_masters` 0).
+
+The yaml is written to `KIRA_RUN_DIR/<antenna>_families/` and copied into
+each Kira work directory by `clear_kira_results`. Templates are never modified.
+The coverage check runs before Kira, and the mode requires `substitute_masters: 0`.
+
 ## Dynamic Kira jobs and reduction closure
 
 Every component begins with `clear_kira_results`: delete
-`KIRA_RUN_DIR / antenna_name`, then copy the template's `config/` into it.
+`KIRA_RUN_DIR / antenna_name`, then copy the template's `config/` into it, then overwrite `integralfamilies.yaml` with the generated one when `families_path` is set.
 The default root is the system temporary directory's `antcalc_kira/`;
 `ANTCALC_KIRA_DIR` is read when the module is imported. This avoids reusing
 Kira databases and sector mappings from a previous expression.

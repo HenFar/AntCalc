@@ -36,6 +36,7 @@ class IntegrationRun:
     auto_input_path: bool
     manual_input_path: Path
     substitute_masters: bool
+    families_path: Path | None = None   # generated families replace the template's
 
 def antenna_name(run):
     return "".join((run.antenna_family, str(run.multiplicity), str(run.loop_order)))
@@ -59,6 +60,8 @@ def kira_dir(run):
     return KIRA_RUN_DIR / antenna_name(run)
 
 def integralfamilies_path(run):
+    if run.families_path:
+        return run.families_path
     return template_dir(run) / "config/integralfamilies.yaml"
 
 # from the run settings
@@ -562,6 +565,8 @@ def clear_kira_results(run):
     # in a fresh Kira folder holding only the template's config.
     shutil.rmtree(kira_dir(run), ignore_errors=True)
     shutil.copytree(template_dir(run) / "config", kira_dir(run) / "config")
+    if run.families_path:
+        shutil.copyfile(run.families_path, kira_dir(run) / "config" / "integralfamilies.yaml")
 
 def run_kira_reduction_complete(run, initial_terms, pattern, work_dir):
     clear_kira_results(run)

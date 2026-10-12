@@ -23,3 +23,7 @@ the first `top_level_sectors` entry per family and seed bounds derived from
 the actual targets; bounds only grow during a component's closure passes.
 Keep template propagator order aligned with the analytic master rules in
 `src/antcalc/masters/`. A template alone does not establish integration support.
+
+Templates stay hand-written. Families generated with `generate_families: 1`
+are written to `KIRA_RUN_DIR/<antenna>_families/` and copied into the work
+directory; they are never stored here.

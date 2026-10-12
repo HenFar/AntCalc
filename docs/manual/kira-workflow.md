@@ -101,6 +101,7 @@ current directory.
 | `auto_input_path` | defaults to `1` for Kira; reads `results/unintegrated/unintegratedXij.m` |
 | `manual_input_path` | used when automatic input is off; relative paths resolve from the repository root, absolute paths also work |
 | `substitute_masters` | defaults to `1`; `0` returns only the master combination and scale |
+| `generate_families` | defaults to `0` (hand-written templates); `1` generates the Kira families from the antenna, and requires `integrate_method: "kira"` and `substitute_masters: 0` |
 | `build_print_to_terminal`, `integrate_print_to_terminal` | required by the current card reader, but not used to suppress output |
 
 Keep the build and integration method fields and both print fields even when
@@ -142,6 +143,21 @@ selection only works if the expression has the required invariant form.
 `integrate_method: "legacy"` calls Wolfram's `BuildAndIntegrateAntenna`
 and writes `results/integrated_legacy/integratedXij.m`; it rebuilds the antenna
 rather than consuming the Kira input settings.
+
+## Generated integral families
+
+With `"generate_families": 1`, the Kira family set is generated from the
+antenna's invariant expression instead of taken from the hand-written template.
+The generated file is written to `<system temp>/antcalc_kira/<antenna>_families/integralfamilies.yaml`,
+or `$ANTCALC_KIRA_DIR/<antenna>_families/` when the override is set, and copied
+into each Kira work directory; the templates are never modified.
+Masters must be substituted by hand (`substitute_masters: 0`), because the
+analytic masters exist only under the hand-written family names.
+
+Before Kira runs, the runner checks that the generated families cover every
+term. If they do not, it stops and keeps the families file for inspection.
+For `A30`, `B40`, `C40` and `A40` the generated sets have 1, 1, 1 and 5
+families, against 1, 72, 72 and 72 in the templates.
 
 ## Outputs and normalisation
 
@@ -222,3 +238,8 @@ if every selected antenna matches. The suite creates and then removes
   investigation but does not establish analytic closure.
 - Scale mismatch: retain the master combination and template; do not bypass
   the check by setting `q2` to one in the Kira configuration.
+- Generated families do not cover the antenna: the error names the antenna
+  and the kept `integralfamilies.yaml`; compare the input's denominators with
+  the families listed there.
+- `generate_families` rejected: use `0` or `1`, `integrate_method: "kira"`,
+  and `substitute_masters: 0`.

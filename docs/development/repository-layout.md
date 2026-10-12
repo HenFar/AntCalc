@@ -14,6 +14,7 @@ package is an explicit retained dependency for construction and legacy routes.
 | `legacy/wolfram/` | Wolfram package, paclet entry points, stage loaders and required assets |
 | `tests/runcards/` | real operation checks, with optional before/after output comparison |
 | `tests/kira/` | integrate-only physics comparisons and references |
+| `tests/family_generation/` | unit tests for generated Kira families and the generated-family integration check |
 | `docs/manual/`, `docs/development/` | current user and maintainer guides |
 | `docs/legacy/` | Wolfram API, package maintenance and notebook tutorials |
 | `research/` | historical notes, source snapshots and dated evidence |
